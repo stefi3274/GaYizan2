@@ -44,6 +44,8 @@ function updateHeroStats() {
   const el2 = document.getElementById('heroStatSellers');
   if (el) el.textContent = S.products.length;
   if (el2) el2.textContent = new Set(S.products.map(p => p.uid)).size;
+ const el3 = document.getElementById('heroStatCats');
+  if (el3) el3.textContent = new Set(S.products.map(function(p) { return p.cat; })).size; 
 }
 
 function pickEmoji(el) {
