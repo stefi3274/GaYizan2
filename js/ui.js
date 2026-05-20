@@ -2,7 +2,28 @@
 // UTILS
 // ════════════════════════════════
 function catLabel(c) {
-  return { formation:'Formation', electronique:'Electronique', vetement:'Vetements', fourniture:'Fournitures', digital:'Digital' }[c] || c;
+  return {
+    vetement:'👕 Vêtements & Mode',
+    chaussures:'👟 Chaussures & Accessoires',
+    electronique:'📱 Électronique & Téléphones',
+    maison:'🏠 Maison & Décoration',
+    alimentation:'🛒 Alimentation & Épicerie',
+    beaute:'💄 Beauté & Cosmétiques',
+    auto:'🚗 Auto & Moto',
+    agriculture:'🌿 Agriculture & Jardinage',
+    jouets:'🎮 Jeux & Jouets',
+    sport:'🏋️ Sport & Fitness',
+    formation:'📚 Cours & Formation',
+    digital:'💾 Produits digitaux',
+    services:'🔧 Services & Réparation',
+    artisanat:'🎨 Art & Artisanat',
+    photo:'📷 Photo & Vidéo',
+    construction:'🏗️ Construction & BTP',
+    animaux:'🐄 Animaux',
+    musique:'🎵 Musique & Instruments',
+    divers:'📦 Divers',
+    others:'🌐 Others',
+  }[c] || c;
 }
 function formatPrice(p) {
   if (!p && p !== 0) return '—';

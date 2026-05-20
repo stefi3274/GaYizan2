@@ -45,14 +45,16 @@
       <div class="hero-stat"><div class="hero-stat-val">5</div><div class="hero-stat-lbl">Catégories</div></div>
     </div>
   </div>
-  <div class="cats-scroll" id="homeCats">
-    <div class="cat-pill active" onclick="filterHomeCat(this,'all')">Tout</div>
-    <div class="cat-pill" onclick="filterHomeCat(this,'formation')">📚 Formation</div>
-    <div class="cat-pill" onclick="filterHomeCat(this,'electronique')">📱 Électronique</div>
-    <div class="cat-pill" onclick="filterHomeCat(this,'vetement')">👕 Vêtements</div>
-    <div class="cat-pill" onclick="filterHomeCat(this,'fourniture')">🎒 Fournitures</div>
-    <div class="cat-pill" onclick="filterHomeCat(this,'digital')">💾 Digital</div>
-  </div>
+ <div class="cats-scroll" id="homeCats">
+  <div class="cat-pill active" onclick="filterHomeCat(this,'all')">Tout</div>
+  <div class="cat-pill" onclick="filterHomeCat(this,'vetement')">👕 Vêtements</div>
+  <div class="cat-pill" onclick="filterHomeCat(this,'electronique')">📱 Électronique</div>
+  <div class="cat-pill" onclick="filterHomeCat(this,'alimentation')">🛒 Alimentation</div>
+  <div class="cat-pill" onclick="filterHomeCat(this,'formation')">📚 Formation</div>
+  <div class="cat-pill" onclick="filterHomeCat(this,'beaute')">💄 Beauté</div>
+  <div class="cat-pill" onclick="filterHomeCat(this,'services')">🔧 Services</div>
+  <div class="cat-pill" onclick="filterHomeCat(this,'divers')">📦 Divers</div>
+</div> 
   <div class="section-hd">
     <div class="section-title">Produits récents</div>
     <button class="see-all" onclick="navigate('market')">Voir tout →</button>
@@ -71,14 +73,16 @@
 <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     <input class="search-input" placeholder="Rechercher un produit, vendeur…" id="searchInput" oninput="renderMarket()"/>
   </div>
-  <div class="cats-scroll" id="marketCats">
-    <div class="cat-pill active" onclick="filterMktCat(this,'all')">Tout</div>
-    <div class="cat-pill" onclick="filterMktCat(this,'formation')">📚 Formation</div>
-    <div class="cat-pill" onclick="filterMktCat(this,'electronique')">📱 Électronique</div>
-    <div class="cat-pill" onclick="filterMktCat(this,'vetement')">👕 Vêtements</div>
-    <div class="cat-pill" onclick="filterMktCat(this,'fourniture')">🎒 Fournitures</div>
-    <div class="cat-pill" onclick="filterMktCat(this,'digital')">💾 Digital</div>
-  </div>
+<div class="cats-scroll" id="marketCats">
+  <div class="cat-pill active" onclick="filterMktCat(this,'all')">Tout</div>
+  <div class="cat-pill" onclick="filterMktCat(this,'vetement')">👕 Vêtements</div>
+  <div class="cat-pill" onclick="filterMktCat(this,'electronique')">📱 Électronique</div>
+  <div class="cat-pill" onclick="filterMktCat(this,'alimentation')">🛒 Alimentation</div>
+  <div class="cat-pill" onclick="filterMktCat(this,'formation')">📚 Formation</div>
+  <div class="cat-pill" onclick="filterMktCat(this,'beaute')">💄 Beauté</div>
+  <div class="cat-pill" onclick="filterMktCat(this,'services')">🔧 Services</div>
+  <div class="cat-pill" onclick="filterMktCat(this,'divers')">📦 Divers</div>
+</div> 
   <div class="sort-bar">
     <div class="sort-count" id="marketCount"><strong>—</strong> résultats</div>
   </div>
@@ -102,16 +106,35 @@
         <input id="sellPrice" type="number" min="1" placeholder="0"/>
       </div>
     </div>
-    <div class="field" style="margin-bottom:0;">
-      <label>Catégorie *</label>
-      <select id="sellCat">
-        <option value="">— Choisir —</option>
-        <option value="formation">📚 Cours & Formation</option>
-        <option value="electronique">📱 Électronique</option>
-        <option value="vetement">👕 Vêtements</option>
-        <option value="fourniture">🎒 Fournitures</option>
-        <option value="digital">💾 Produits digitaux</option>
-      </select>
+ <select id="sellCat">
+  <option value="">— Choisir —</option>
+  <optgroup label="Produits physiques">
+    <option value="vetement">👕 Vêtements & Mode</option>
+    <option value="chaussures">👟 Chaussures & Accessoires</option>
+    <option value="electronique">📱 Électronique & Téléphones</option>
+    <option value="maison">🏠 Maison & Décoration</option>
+    <option value="alimentation">🛒 Alimentation & Épicerie</option>
+    <option value="beaute">💄 Beauté & Cosmétiques</option>
+    <option value="auto">🚗 Auto & Moto</option>
+    <option value="agriculture">🌿 Agriculture & Jardinage</option>
+    <option value="jouets">🎮 Jeux & Jouets</option>
+    <option value="sport">🏋️ Sport & Fitness</option>
+  </optgroup>
+  <optgroup label="Services & Digital">
+    <option value="formation">📚 Cours & Formation</option>
+    <option value="digital">💾 Produits digitaux</option>
+    <option value="services">🔧 Services & Réparation</option>
+    <option value="artisanat">🎨 Art & Artisanat</option>
+    <option value="photo">📷 Photo & Vidéo</option>
+    <option value="construction">🏗️ Construction & BTP</option>
+  </optgroup>
+  <optgroup label="Autres">
+    <option value="animaux">🐄 Animaux</option>
+    <option value="musique">🎵 Musique & Instruments</option>
+    <option value="divers">📦 Divers</option>
+    <option value="others">🌐 Others</option>
+  </optgroup>
+</select>
     </div>
   </div>
   <div class="field" style="margin-top:14px;">
