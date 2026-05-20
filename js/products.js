@@ -53,8 +53,8 @@ function pickEmoji(el) {
 }
 
 async function publishProduct() {
-  if (!S.user) { toast('⚠️ Connecte-toi pour publier', 'error'); setTimeout(() => openAuthModal(), 600); return; }
-  if (!isProfileComplete()) { toast('⚠️ Configure d\'abord ton profil', 'error'); setTimeout(() => openEditModal(), 600); return; }
+  if (!S.user) { toast('Connecte-toi pour publier', 'error'); setTimeout(() => openAuthModal(), 600); return; }
+  if (!isProfileComplete()) { toast('Configure d\'abord ton profil', 'error'); setTimeout(() => openEditModal(), 600); return; }
 
   const name  = document.getElementById('sellName').value.trim();
   const desc  = document.getElementById('sellDesc').value.trim();
@@ -63,13 +63,17 @@ async function publishProduct() {
   const phone = document.getElementById('sellPhone').value.trim() || S.profile.whatsapp;
   const mc    = document.getElementById('sellMc').value.trim()    || S.profile.moncash;
   const nc    = document.getElementById('sellNc').value.trim()    || S.profile.natcash;
+  const fileInput = document.getElementById('sellImage');
+  const file  = fileInput && fileInput.files[0] ? fileInput.files[0] : null;
 
-  if (!name||!desc||!cat||!price) { toast('⚠️ Remplis tous les champs obligatoires', 'error'); return; }
-  if (parseInt(price) <= 0)       { toast('⚠️ Le prix doit être supérieur à 0', 'error'); return; }
-  if (!phone)                     { toast('⚠️ Saisis un numéro WhatsApp', 'error'); return; }
+  if (!name||!desc||!cat||!price) { toast('Remplis tous les champs obligatoires', 'error'); return; }
+  if (parseInt(price) <= 0)       { toast('Le prix doit etre superieur a 0', 'error'); return; }
+  if (!phone)                     { toast('Saisis un numero WhatsApp', 'error'); return; }
 
   const btn = document.getElementById('publishBtn');
   btn.disabled = true; btn.textContent = 'Publication…';
+
+  const image_url = await uploadImage(file);
 
   const { error } = await sb.from('products').insert([{
     name, description: desc, category: cat,
@@ -77,23 +81,24 @@ async function publishProduct() {
     whatsapp: phone, moncash: mc, natcash: nc,
     price: parseInt(price), views: 0,
     user_id: S.user.id, is_active: true,
+    image_url: image_url,
   }]);
 
   btn.disabled = false; btn.textContent = 'Publier le produit';
 
-  if (error) { toast('❌ Erreur lors de la publication', 'error'); return; }
+  if (error) { toast('Erreur lors de la publication', 'error'); return; }
 
   ['sellName','sellDesc','sellPrice','sellPhone','sellMc','sellNc']
-    .forEach(id => { document.getElementById(id).value = ''; });
+    .forEach(function(id) { document.getElementById(id).value = ''; });
   document.getElementById('sellCat').value = '';
-  document.querySelectorAll('.emoji-opt').forEach((e,i) => e.classList.toggle('selected', i===0));
+  if (fileInput) fileInput.value = '';
+  document.querySelectorAll('.emoji-opt').forEach(function(e,i) { e.classList.toggle('selected', i===0); });
   S.emoji = '📚';
 
-  toast('✅ Produit publié !', 'success');
+  toast('Produit publie !', 'success');
   await loadProducts();
-  setTimeout(() => navigate('my-products'), 800);
+  setTimeout(function() { navigate('my-products'); }, 800);
 }
-
 async function delProd(id) {
   if (!confirm('Supprimer ce produit ?')) return;
   const { error } = await sb.from('products').update({ is_active: false }).eq('id', id);
@@ -104,4 +109,17 @@ async function delProd(id) {
 }function openWA(phone, name, price) {
   const msg = encodeURIComponent('Bonjour ! Je suis intéressé(e) par "' + decodeURIComponent(name) + '" (Prix : ' + price + ') sur GAyizan.');
   window.open('https://wa.me/' + phone.replace(/\D/g,'') + '?text=' + msg, '_blank');
+}// ════════════════════════════════
+// UPLOAD IMAGE
+// ════════════════════════════════
+async function uploadImage(file) {
+  if (!file) return null;
+  const ext = file.name.split('.').pop();
+  const path = S.user.id + '/' + Date.now() + '.' + ext;
+  const { error } = await sb.storage
+    .from('products')
+    .upload(path, file, { contentType: file.type });
+  if (error) { toast('Erreur upload image', 'error'); return null; }
+  const { data } = sb.storage.from('products').getPublicUrl(path);
+  return data.publicUrl;
 }
