@@ -109,7 +109,7 @@ async function delProd(id) {
   await loadProducts();
   renderMyProds();
 }function openWA(phone, name, price) {
-  const msg = encodeURIComponent('Bonjour ! Je suis intéressé(e) par "' + decodeURIComponent(name) + '" (Prix : ' + price + ') sur GAyizan.');
+  const msg = encodeURIComponent('Bonjour ! Je suis intéressé(e) par "' + decodeURIComponent(name) + '" (Prix : ' + price + ') sur Ga-izan.');
   window.open('https://wa.me/' + phone.replace(/\D/g,'') + '?text=' + msg, '_blank');
 }// ════════════════════════════════
 // UPLOAD IMAGE
