@@ -263,7 +263,7 @@ function openOnboarding() {
   document.getElementById('onboardContent').innerHTML =
     '<div class="onboard-step">' +
     '<div class="onboard-icon">🎉</div>' +
-    '<div class="onboard-title">Bienvenue sur GAyizan !</div>' +
+    '<div class="onboard-title">Bienvenue sur Ga-izan !</div>' +
     '<div class="onboard-sub">Configure ton profil en 30 secondes.</div>' +
     '<div class="onboard-progress"><div class="onboard-dot active"></div><div class="onboard-dot"></div></div>' +
     '</div>' +
