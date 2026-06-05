@@ -2,7 +2,7 @@
    VARIABLES & RESET
 ════════════════════════════════ */
 :root {
-  --ink:#0D0B1A;
+  --ink:#1A1A2E;
   --ink2:#2D2847;
   --purple:#6B21E8;
   --purple-l:#8B47F0;
@@ -17,8 +17,8 @@
   --red-pale:#FEE2E2;
   --orange:#D97706;
   --orange-pale:#FEF3C7;
-  --bg:#F7F5FF;
-  --bg2:#EDE8FA;
+  --bg:#FFFFFF;
+  --bg2:#F7F5FF;
   --surface:#FFFFFF;
   --border:#E2DCFF;
   --border2:#C9BFEF;
@@ -30,7 +30,6 @@
   --r-sm:10px; --r:14px; --r-lg:20px; --r-xl:28px;
   --header-h:60px; --nav-h:68px;
 }
-
 *{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 html{ scroll-behavior:smooth; }
 body{

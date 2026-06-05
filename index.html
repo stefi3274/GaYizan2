@@ -31,30 +31,40 @@
 
 <!-- ══ PAGE ACCUEIL ══ -->
 <div class="page active" id="page-home">
-  <div class="hero">
-    <div class="hero-flag">🇭🇹 Marketplace Haïtien</div>
+
+  <!-- HERO -->
+  <div class="hero-home">
     <h2>Achetez & vendez<br><em>en toute confiance</em></h2>
     <p>La plateforme digitale pour les Haïtiens.<br>Produits locaux, paiement mobile.</p>
     <button class="hero-cta" onclick="navigate('market')">
-      Explorer le marché
-      <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      Explorer le marché →
     </button>
-    <div class="hero-stats">
-      <div class="hero-stat"><div class="hero-stat-val" id="heroStatProds">—</div><div class="hero-stat-lbl">Produits</div></div>
-      <div class="hero-stat"><div class="hero-stat-val" id="heroStatSellers">—</div><div class="hero-stat-lbl">Vendeurs</div></div>
-      <div class="hero-stat"><div class="hero-stat-val" id="heroStatCats">—</div><div class="hero-stat-lbl">Catégories</div></div>
-    </div>
   </div>
- <div class="cats-scroll" id="homeCats">
-  <div class="cat-pill active" onclick="filterHomeCat(this,'all')">Tout</div>
-  <div class="cat-pill" onclick="filterHomeCat(this,'vetement')">👕 Vêtements</div>
-  <div class="cat-pill" onclick="filterHomeCat(this,'electronique')">📱 Électronique</div>
-  <div class="cat-pill" onclick="filterHomeCat(this,'alimentation')">🛒 Alimentation</div>
-  <div class="cat-pill" onclick="filterHomeCat(this,'formation')">📚 Formation</div>
-  <div class="cat-pill" onclick="filterHomeCat(this,'beaute')">💄 Beauté</div>
-  <div class="cat-pill" onclick="filterHomeCat(this,'services')">🔧 Services</div>
-  <div class="cat-pill" onclick="filterHomeCat(this,'divers')">📦 Divers</div>
-</div> 
+
+  <!-- PRODUITS MIS EN AVANT (ADMIN) -->
+  <!-- FEATURED_START -->
+  <div id="featuredSection" style="display:none;">
+    <div class="section-hd">
+      <div class="section-title" style="color:var(--gold);">⭐ Produits mis en avant</div>
+    </div>
+    <div class="grid-2" id="featuredGrid"></div>
+    <div class="divider"></div>
+  </div>
+  <!-- FEATURED_END -->
+
+  <!-- CATEGORIES -->
+  <div class="cats-scroll" id="homeCats">
+    <div class="cat-pill active" onclick="filterHomeCat(this,'all')">Tout</div>
+    <div class="cat-pill" onclick="filterHomeCat(this,'vetement')">👕 Vêtements</div>
+    <div class="cat-pill" onclick="filterHomeCat(this,'electronique')">📱 Électronique</div>
+    <div class="cat-pill" onclick="filterHomeCat(this,'alimentation')">🛒 Alimentation</div>
+    <div class="cat-pill" onclick="filterHomeCat(this,'formation')">📚 Formation</div>
+    <div class="cat-pill" onclick="filterHomeCat(this,'beaute')">💄 Beauté</div>
+    <div class="cat-pill" onclick="filterHomeCat(this,'services')">🔧 Services</div>
+    <div class="cat-pill" onclick="filterHomeCat(this,'divers')">📦 Divers</div>
+  </div>
+
+  <!-- PRODUITS RÉCENTS -->
   <div class="section-hd">
     <div class="section-title">Produits récents</div>
     <button class="see-all" onclick="navigate('market')">Voir tout →</button>
@@ -65,8 +75,8 @@
     <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton-body"><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div></div></div>
     <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton-body"><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div></div></div>
   </div>
-</div>
 
+</div>
 <!-- ══ PAGE MARCHÉ ══ -->
 <div class="page" id="page-market">
   <div class="search-wrap">

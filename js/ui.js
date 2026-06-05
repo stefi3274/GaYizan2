@@ -103,13 +103,51 @@ function filterHomeCat(el, cat) {
   el.classList.add('active'); S.homeCat = cat; renderHome();
 }
 function renderHome() {
+  // Produits mis en avant
+  const featured = S.products.filter(function(p) { return p.is_featured; });
+  const featuredSection = document.getElementById('featuredSection');
+  const featuredGrid = document.getElementById('featuredGrid');
+  if (featuredSection && featuredGrid) {
+    if (featured.length) {
+      featuredSection.style.display = 'block';
+      featuredGrid.innerHTML = featured.map(function(p) {
+        return '<div class="prod-card" onclick="openDetail(' + p.id + ')">' +
+          '<div class="prod-card-img">' + (p.image_url ? '<img src="' + p.image_url + '" style="width:100%;height:100%;object-fit:cover;"/>' : p.emoji) +
+          '<span class="prod-card-badge" style="background:var(--gold);color:#fff;">⭐</span></div>' +
+          '<div class="prod-card-body">' +
+          '<div class="prod-card-name">' + esc(p.name) + '</div>' +
+          '<div class="prod-card-seller">par ' + esc(p.seller||'—') + '</div>' +
+          '<div class="prod-card-footer">' +
+          '<div class="prod-card-price">' + formatPrice(p.price) + '</div>' +
+          '<div class="prod-card-views">👁 ' + p.views + '</div>' +
+          '</div></div></div>';
+      }).join('');
+    } else {
+      featuredSection.style.display = 'none';
+    }
+  }
+
+  // Produits récents
   const list = S.homeCat === 'all' ? S.products : S.products.filter(function(p) { return p.cat === S.homeCat; });
   const grid = document.getElementById('homeGrid');
   if (!list.length) {
-    grid.innerHTML = '<div style="grid-column:1/-1;" class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">Aucun produit</div></div>';
+    grid.innerHTML = '<div style="grid-column:1/-1;" class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">Aucun produit</div><div class="empty-sub">Aucun produit dans cette categorie.</div></div>';
     return;
   }
   grid.innerHTML = list.slice(0,8).map(function(p) {
+    return '<div class="prod-card" onclick="openDetail(' + p.id + ')">' +
+      '<div class="prod-card-img">' + (p.image_url ? '<img src="' + p.image_url + '" style="width:100%;height:100%;object-fit:cover;"/>' : p.emoji) +
+      '<span class="prod-card-badge">' + timeAgo(p.created_at) + '</span></div>' +
+      '<div class="prod-card-body">' +
+      '<div class="prod-card-name">' + esc(p.name) + '</div>' +
+      '<div class="prod-card-seller">par ' + esc(p.seller||'—') + '</div>' +
+      '<div class="prod-card-footer">' +
+      '<div class="prod-card-price">' + formatPrice(p.price) + '</div>' +
+      '<div class="prod-card-views">👁 ' + p.views + '</div>' +
+      '</div></div></div>';
+  }).join('');
+}
+grid.innerHTML = list.slice(0,8).map(function(p) {
     return '<div class="prod-card" onclick="openDetail(' + p.id + ')">' +
       '<div class="prod-card-img">' + p.emoji + '<span class="prod-card-badge">' + timeAgo(p.created_at) + '</span></div>' +
       '<div class="prod-card-body">' +
@@ -120,7 +158,7 @@ function renderHome() {
       '<div class="prod-card-views">👁 ' + p.views + '</div>' +
       '</div></div></div>';
   }).join('');
-}
+
 
 // ════════════════════════════════
 // MARKET
