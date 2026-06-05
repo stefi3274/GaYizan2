@@ -72,6 +72,7 @@ function navigate(p) {
   if (p==='home')        renderHome();
   if (p==='market')      renderMarket();
   if (p==='my-products') { renderMyProds(); renderReceivedOrders(); }
+  if (p==='vendor-signup') loadVendorStatus();
   if (p==='profile')     renderProfile();
   if (p==='panier')      renderPanier();
   window.scrollTo({ top:0, behavior:'smooth' });

@@ -24,6 +24,7 @@ async function loadProducts() {
     views:      p.views || 0,
     uid:        p.user_id,
     created_at: p.created_at,
+is_featured: p.is_featured || false,
   }));
 
   setSyncStatus('ok');
@@ -57,14 +58,12 @@ function pickEmoji(el) {
 async function publishProduct() {
   if (!S.user) { toast('Connecte-toi pour publier', 'error'); setTimeout(() => openAuthModal(), 600); return; }
   if (!isProfileComplete()) { toast('Configure d\'abord ton profil', 'error'); setTimeout(() => openEditModal(), 600); return; }
+  if (S.profile.verification_status !== 'verified') { toast('Tu dois etre vendeur verifie pour publier', 'error'); setTimeout(() => navigate('vendor-signup'), 600); return; }
 
   const name  = document.getElementById('sellName').value.trim();
   const desc  = document.getElementById('sellDesc').value.trim();
   const cat   = document.getElementById('sellCat').value;
   const price = document.getElementById('sellPrice').value;
-  const phone = document.getElementById('sellPhone').value.trim() || S.profile.whatsapp;
-  const mc    = document.getElementById('sellMc').value.trim()    || S.profile.moncash;
-  const nc    = document.getElementById('sellNc').value.trim()    || S.profile.natcash;
   const fileInput = document.getElementById('sellImage');
   const file  = fileInput && fileInput.files[0] ? fileInput.files[0] : null;
 
@@ -79,8 +78,10 @@ async function publishProduct() {
 
   const { error } = await sb.from('products').insert([{
     name, description: desc, category: cat,
-    emoji: S.emoji, seller_name: S.profile.name,
-    whatsapp: phone, moncash: mc, natcash: nc,
+seller_name: S.profile.name,
+whatsapp: S.profile.whatsapp,
+moncash: S.profile.moncash,
+natcash: S.profile.natcash,
     price: parseInt(price), views: 0,
     user_id: S.user.id, is_active: true,
     image_url: image_url,
