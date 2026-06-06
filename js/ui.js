@@ -152,17 +152,6 @@ const list = all.filter(function(p) { return p.image_url; });
       '</div></div></div>';
   }).join('');
 }
-grid.innerHTML = list.slice(0,8).map(function(p) {
-    return '<div class="prod-card" onclick="openDetail(' + p.id + ')">' +
-      '<div class="prod-card-img">' + p.emoji + '<span class="prod-card-badge">' + timeAgo(p.created_at) + '</span></div>' +
-      '<div class="prod-card-body">' +
-      '<div class="prod-card-name">' + esc(p.name) + '</div>' +
-      '<div class="prod-card-seller">par ' + esc(p.seller||'—') + '</div>' +
-      '<div class="prod-card-footer">' +
-      '<div class="prod-card-price">' + formatPrice(p.price) + '</div>' +
-      '<div class="prod-card-views">👁 ' + p.views + '</div>' +
-      '</div></div></div>';
-  }).join('');
 
 
 // ════════════════════════════════
