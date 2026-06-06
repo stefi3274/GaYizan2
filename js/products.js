@@ -51,7 +51,7 @@ function updateHeroStats() {
 
 
 async function publishProduct() {
-  if (!S.user) { toast('Connecte-toi pour publier', 'error'); setTimeout(() => openAuthModal(), 600); return; }
+if (!S.user) { saveDraft(); toast('Connecte-toi pour finaliser ta publication', 'error'); setTimeout(function() { openAuthModal(); }, 800); return; }
   if (!isProfileComplete()) { toast('Configure d\'abord ton profil', 'error'); setTimeout(() => openEditModal(), 600); return; }
   if (S.profile.verification_status !== 'verified') { toast('Tu dois etre vendeur verifie pour publier', 'error'); setTimeout(() => navigate('vendor-signup'), 600); return; }
 

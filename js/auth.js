@@ -16,6 +16,7 @@ sb.auth.onAuthStateChange(async (event, session) => {
   if (event === 'SIGNED_IN') {
     toast('✅ Connecté !', 'success');
     closeModal('authModal');
+    setTimeout(function() { restoreDraft(); }, 1000);
     if (!S.profile.name) setTimeout(() => openOnboarding(), 600);
   }
   if (event === 'SIGNED_OUT') toast('Déconnecté');
