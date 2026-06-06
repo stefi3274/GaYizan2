@@ -49,11 +49,6 @@ function updateHeroStats() {
   if (el3) el3.textContent = new Set(S.products.map(function(p) { return p.cat; })).size; 
 }
 
-function pickEmoji(el) {
-  document.querySelectorAll('.emoji-opt').forEach(e => e.classList.remove('selected'));
-  el.classList.add('selected');
-  S.emoji = el.dataset.e;
-}
 
 async function publishProduct() {
   if (!S.user) { toast('Connecte-toi pour publier', 'error'); setTimeout(() => openAuthModal(), 600); return; }
@@ -99,8 +94,6 @@ natcash: S.profile.natcash,
     .forEach(function(id) { document.getElementById(id).value = ''; });
   document.getElementById('sellCat').value = '';
   if (fileInput) fileInput.value = '';
-  document.querySelectorAll('.emoji-opt').forEach(function(e,i) { e.classList.toggle('selected', i===0); });
-  S.emoji = '📚';
 
   toast('Produit publie !', 'success');
   await loadProducts();
