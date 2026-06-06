@@ -116,36 +116,51 @@
         <input id="sellPrice" type="number" min="1" placeholder="0"/>
       </div>
     </div>
- <select id="sellCat">
-  <option value="">— Choisir —</option>
-  <optgroup label="Produits physiques">
+<select id="sellCat" onchange="renderCategoryAttributes(this.value)">
+  <option value="">— Choisir une catégorie —</option>
+  <optgroup label="Mode & Beauté">
     <option value="vetement">👕 Vêtements & Mode</option>
     <option value="chaussures">👟 Chaussures & Accessoires</option>
-    <option value="electronique">📱 Électronique & Téléphones</option>
-    <option value="maison">🏠 Maison & Décoration</option>
-    <option value="alimentation">🛒 Alimentation & Épicerie</option>
     <option value="beaute">💄 Beauté & Cosmétiques</option>
-    <option value="auto">🚗 Auto & Moto</option>
-    <option value="agriculture">🌿 Agriculture & Jardinage</option>
-    <option value="jouets">🎮 Jeux & Jouets</option>
-    <option value="sport">🏋️ Sport & Fitness</option>
+    <option value="bijoux">💍 Bijoux & Accessoires</option>
   </optgroup>
-  <optgroup label="Services & Digital">
-    <option value="formation">📚 Cours & Formation</option>
+  <optgroup label="Technologie">
+    <option value="electronique">📱 Électronique & Téléphones</option>
     <option value="digital">💾 Produits digitaux</option>
-    <option value="services">🔧 Services & Réparation</option>
-    <option value="artisanat">🎨 Art & Artisanat</option>
-    <option value="photo">📷 Photo & Vidéo</option>
+    <option value="electrique">💡 Matériel Électrique</option>
+  </optgroup>
+  <optgroup label="Maison & Construction">
+    <option value="maison">🏠 Maison & Décoration</option>
     <option value="construction">🏗️ Construction & BTP</option>
   </optgroup>
-  <optgroup label="Autres">
+  <optgroup label="Alimentation & Nature">
+    <option value="alimentation">🛒 Alimentation & Épicerie</option>
+    <option value="agriculture">🌿 Agriculture & Jardinage</option>
     <option value="animaux">🐄 Animaux</option>
+  </optgroup>
+  <optgroup label="Sport & Loisirs">
+    <option value="sport">🏋️ Sport & Fitness</option>
+    <option value="jouets">🎮 Jeux & Jouets</option>
     <option value="musique">🎵 Musique & Instruments</option>
+  </optgroup>
+  <optgroup label="Auto & Moto">
+    <option value="auto">🚗 Auto & Moto</option>
+  </optgroup>
+  <optgroup label="Art & Culture">
+    <option value="art">🖼️ Beaux-Arts</option>
+    <option value="artisanat">🎨 Art & Artisanat</option>
+    <option value="photo">📷 Photo & Vidéo</option>
+  </optgroup>
+  <optgroup label="Formation & Services">
+    <option value="formation">📚 Cours & Formation</option>
+    <option value="services">🔧 Services & Réparation</option>
+  </optgroup>
+  <optgroup label="Autres">
     <option value="divers">📦 Divers</option>
     <option value="others">🌐 Others</option>
   </optgroup>
 </select>
-    </div>
+  </div>
   </div>
   <div class="field" style="margin-top:14px;">
     <label>Icône du produit</label>
@@ -163,8 +178,24 @@
     </div>
   </div>
   <div class="gap-md"></div>
+  <div id="attrWrap"></div>
   <button class="btn btn-primary btn-full" id="publishBtn" onclick="publishProduct()">Publier le produit</button>
 </div>    <!-- ══ PAGE MES PRODUITS ══ -->
+<div class="page" id="page-my-products">
+  <div class="section-hd" style="margin-bottom:14px;">
+    <div class="section-title">Espace Vendeur</div>
+    <button class="btn btn-primary btn-sm" onclick="navigate('sell')">+ Nouveau</button>
+  </div>
+  <div class="vendor-tabs">
+    <button class="vtab active" id="vtab-products" onclick="switchVendorTab('products')">Mes produits</button>
+    <button class="vtab" id="vtab-orders" onclick="switchVendorTab('orders')">
+      Commandes reçues
+      <span id="pendingBadge" class="vtab-badge" style="display:none;">0</span>
+    </button>
+  </div>
+  <div id="vtab-products-content"><div id="myProdList"></div></div>
+  <div id="vtab-orders-content" style="display:none;"><div id="receivedOrdersList"></div></div>
+</div>
 <!-- ══ PAGE DEVENIR VENDEUR ══ -->
 <div class="page" id="page-vendor-signup">
   <div class="sell-hero">
@@ -388,6 +419,7 @@
 <script src="js/ui.js"></script>
 <script src="js/realtime.js"></script>
 <script src="js/vendor.js"></script>
+<script src="js/attributes.js"></script>
 <script>
   // INIT
   updateCartBadge();

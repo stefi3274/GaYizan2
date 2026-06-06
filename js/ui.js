@@ -17,10 +17,13 @@ function catLabel(c) {
     digital:'💾 Produits digitaux',
     services:'🔧 Services & Réparation',
     artisanat:'🎨 Art & Artisanat',
+    art:'🖼️ Beaux-Arts',
     photo:'📷 Photo & Vidéo',
     construction:'🏗️ Construction & BTP',
     animaux:'🐄 Animaux',
     musique:'🎵 Musique & Instruments',
+    electrique:'💡 Matériel Électrique',
+    bijoux:'💍 Bijoux & Accessoires',
     divers:'📦 Divers',
     others:'🌐 Others',
   }[c] || c;
@@ -129,7 +132,8 @@ function renderHome() {
   }
 
   // Produits récents
-  const list = S.homeCat === 'all' ? S.products : S.products.filter(function(p) { return p.cat === S.homeCat; });
+const all = S.homeCat === 'all' ? S.products : S.products.filter(function(p) { return p.cat === S.homeCat; });
+const list = all.filter(function(p) { return p.image_url; });
   const grid = document.getElementById('homeGrid');
   if (!list.length) {
     grid.innerHTML = '<div style="grid-column:1/-1;" class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">Aucun produit</div><div class="empty-sub">Aucun produit dans cette categorie.</div></div>';

@@ -67,7 +67,9 @@ async function publishProduct() {
   const fileInput = document.getElementById('sellImage');
   const file  = fileInput && fileInput.files[0] ? fileInput.files[0] : null;
 
-  if (!name||!desc||!cat||!price) { toast('Remplis tous les champs obligatoires', 'error'); return; }
+if (!name||!desc||!cat||!price) { toast('Remplis tous les champs obligatoires', 'error'); return; }
+  if (parseInt(price) <= 0)       { toast('Le prix doit etre superieur a 0', 'error'); return; }
+  if (!file)                      { toast('La photo du produit est obligatoire', 'error'); return; }
   if (parseInt(price) <= 0)       { toast('Le prix doit etre superieur a 0', 'error'); return; }
   if (!phone)                     { toast('Saisis un numero WhatsApp', 'error'); return; }
 
@@ -75,6 +77,7 @@ async function publishProduct() {
   btn.disabled = true; btn.textContent = 'Publication…';
 
   const image_url = await uploadImage(file);
+  const attributes = getCategoryAttributeValues();
 
   const { error } = await sb.from('products').insert([{
     name, description: desc, category: cat,
@@ -85,6 +88,7 @@ natcash: S.profile.natcash,
     price: parseInt(price), views: 0,
     user_id: S.user.id, is_active: true,
     image_url: image_url,
+    attributes: Object.keys(attributes).length ? attributes : null,
   }]);
 
   btn.disabled = false; btn.textContent = 'Publier le produit';
