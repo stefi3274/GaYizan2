@@ -1,4 +1,15 @@
 // ════════════════════════════════
+// ÉTAT GLOBAL
+// ════════════════════════════════
+var S = {
+  user: null,
+  profile: { name:'', whatsapp:'', moncash:'', natcash:'', sales_count:0, avatar_url:'', verification_status:'' },
+  myOrders: [],
+  receivedOrders: [],
+  products: [],
+  cart: []
+};
+// ════════════════════════════════
 // UTILS
 // ════════════════════════════════
 function catLabel(c) {
