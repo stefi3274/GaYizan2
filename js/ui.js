@@ -242,7 +242,7 @@ async function loadProfile() {
   const res = await sb.from('profiles').select('*').eq('id', S.user.id).maybeSingle();
   if (res.error) { console.error('loadProfile:', res.error); return; }
   if (res.data) {
-    S.profile = { name: res.data.name||'', whatsapp: res.data.whatsapp||'', moncash: res.data.moncash||'', natcash: res.data.natcash||'', sales_count: res.data.sales_count||0 };
+S.profile = { name: res.data.name||'', whatsapp: res.data.whatsapp||'', moncash: res.data.moncash||'', natcash: res.data.natcash||'', sales_count: res.data.sales_count||0, avatar_url: res.data.avatar_url||'', verification_status: res.data.verification_status||'' };
   } else {
     await sb.from('profiles').insert({ id: S.user.id, name:'', whatsapp:'', moncash:'', natcash:'', sales_count:0 });
   }
@@ -252,7 +252,12 @@ async function loadProfile() {
 function renderProfile() {
   const name = S.profile.name || (S.user ? S.user.email.split('@')[0] : 'Mon Profil');
   document.getElementById('profileName').textContent = name;
-  document.getElementById('profileAvatar').textContent = (name[0]||'?').toUpperCase();
+var avEl = document.getElementById('profileAvatar');
+if (S.profile.avatar_url) {
+  avEl.innerHTML = '<img src="' + S.profile.avatar_url + '" style="width:100%;height:100%;object-fit:cover;border-radius:20px;"/>';
+} else {
+  avEl.textContent = (name[0]||'?').toUpperCase();
+}
   document.getElementById('profileWa').textContent = S.profile.whatsapp ? formatPhone(S.profile.whatsapp) : 'Complete ton profil';
   const mine = S.products.filter(function(p) { return S.user && p.uid === S.user.id; });
   document.getElementById('statProd').textContent  = mine.length;
@@ -268,13 +273,32 @@ function renderProfile() {
 function isProfileComplete() { return !!(S.profile.name && S.profile.whatsapp); }
 
 async function saveProfile() {
-  const name = document.getElementById('editName').value.trim();
-  const wa   = document.getElementById('editWa').value.trim();
+  var name = document.getElementById('editName').value.trim();
+  var wa   = document.getElementById('editWa').value.trim();
   if (!name) { toast('Le nom ne peut pas etre vide', 'error'); return; }
   if (!wa)   { toast('Le numero WhatsApp est obligatoire', 'error'); return; }
-  const update = { name: name, whatsapp: wa, moncash: document.getElementById('editMc').value.trim(), natcash: document.getElementById('editNc').value.trim() };
+
+  var update = {
+    name: name,
+    whatsapp: wa,
+    moncash: document.getElementById('editMc').value.trim(),
+    natcash: document.getElementById('editNc').value.trim()
+  };
+
+  var avatarFile = document.getElementById('editAvatar');
+  if (avatarFile && avatarFile.files[0]) {
+    var file = avatarFile.files[0];
+    var ext = file.name.split('.').pop();
+    var path = S.user.id + '.' + ext;
+    var up = await sb.storage.from('avatars').upload(path, file, { upsert: true });
+    if (!up.error) {
+      var urlData = sb.storage.from('avatars').getPublicUrl(path);
+      update.avatar_url = urlData.data.publicUrl;
+    }
+  }
+
   if (S.user) {
-    const res = await sb.from('profiles').upsert(Object.assign({ id: S.user.id }, update));
+    var res = await sb.from('profiles').upsert(Object.assign({ id: S.user.id }, update));
     if (res.error) { toast('Erreur lors de la sauvegarde', 'error'); return; }
   }
   S.profile = Object.assign({}, S.profile, update);
