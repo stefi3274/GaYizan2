@@ -7,26 +7,25 @@ async function loadProducts() {
     .from('products').select('*')
     .eq('is_active', true)
     .order('created_at', { ascending: false });
-
   if (error) { setSyncStatus('error'); toast('⚠️ Erreur de chargement', 'error'); return; }
-
-  S.products = (data||[]).map(p => ({
-    id:         p.id,
-    name:       p.name,
-    desc:       p.description,
-    cat:        p.category,
-    emoji:      p.emoji || '📦',
-    seller:     p.seller_name,
-    phone:      p.whatsapp,
-    mc:         p.moncash,
-    nc:         p.natcash,
-    price:      p.price,
-    views:      p.views || 0,
-    uid:        p.user_id,
-    created_at: p.created_at,
-is_featured: p.is_featured || false,
-  }));
-
+  S.products = (data||[]).map(function(p) {
+    return {
+      id: p.id,
+      name: p.name,
+      desc: p.description,
+      cat: p.category,
+      emoji: p.emoji || '📦',
+      seller: p.seller_name,
+      phone: p.whatsapp,
+      mc: p.moncash,
+      nc: p.natcash,
+      price: p.price,
+      views: p.views || 0,
+      uid: p.user_id,
+      created_at: p.created_at,
+      is_featured: p.is_featured || false,
+    };
+  });
   setSyncStatus('ok');
   updateHeroStats();
   renderHome();
@@ -44,37 +43,34 @@ function updateHeroStats() {
   const el = document.getElementById('heroStatProds');
   const el2 = document.getElementById('heroStatSellers');
   if (el) el.textContent = S.products.length;
-  if (el2) el2.textContent = new Set(S.products.map(p => p.uid)).size;
- const el3 = document.getElementById('heroStatCats');
-  if (el3) el3.textContent = new Set(S.products.map(function(p) { return p.cat; })).size; 
+  if (el2) el2.textContent = new Set(S.products.map(function(p) { return p.uid; })).size;
+  const el3 = document.getElementById('heroStatCats');
+  if (el3) el3.textContent = new Set(S.products.map(function(p) { return p.cat; })).size;
 }
-
 
 async function publishProduct() {
-if (!S.user) { saveDraft(); toast('Connecte-toi pour finaliser ta publication', 'error'); setTimeout(function() { openAuthModal(); }, 800); return; }
-  if (!isProfileComplete()) { toast('Configure d\'abord ton profil', 'error'); setTimeout(() => openEditModal(), 600); return; }
-if (S.profile.verification_status !== 'verified') {
-  if (S.profile.verification_status === 'pending') {
-    toast('⏳ Ta demande est en cours de vérification (24-48h)', 'error');
-  } else {
-    toast('⚠️ Tu dois être vendeur vérifié pour publier', 'error');
-    setTimeout(function() { navigate('vendor-signup'); }, 800);
+  if (!S.user) { saveDraft(); toast('Connecte-toi pour finaliser ta publication', 'error'); setTimeout(function() { openAuthModal(); }, 800); return; }
+  if (!isProfileComplete()) { toast('Configure d\'abord ton profil', 'error'); setTimeout(function() { openEditModal(); }, 600); return; }
+  if (S.profile.verification_status !== 'verified') {
+    if (S.profile.verification_status === 'pending') {
+      toast('⏳ Ta demande est en cours de vérification (24-48h)', 'error');
+    } else {
+      toast('⚠️ Tu dois être vendeur vérifié pour publier', 'error');
+      setTimeout(function() { navigate('vendor-signup'); }, 800);
+    }
+    return;
   }
-  return;
-}
 
-  const name  = document.getElementById('sellName').value.trim();
-  const desc  = document.getElementById('sellDesc').value.trim();
-  const cat   = document.getElementById('sellCat').value;
+  const name = document.getElementById('sellName').value.trim();
+  const desc = document.getElementById('sellDesc').value.trim();
+  const cat = document.getElementById('sellCat').value;
   const price = document.getElementById('sellPrice').value;
   const fileInput = document.getElementById('sellImage');
-  const file  = fileInput && fileInput.files[0] ? fileInput.files[0] : null;
+  const file = fileInput && fileInput.files[0] ? fileInput.files[0] : null;
 
-if (!name||!desc||!cat||!price) { toast('Remplis tous les champs obligatoires', 'error'); return; }
-  if (parseInt(price) <= 0)       { toast('Le prix doit etre superieur a 0', 'error'); return; }
-  if (!file)                      { toast('La photo du produit est obligatoire', 'error'); return; }
-  if (parseInt(price) <= 0)       { toast('Le prix doit etre superieur a 0', 'error'); return; }
-  if (!phone)                     { toast('Saisis un numero WhatsApp', 'error'); return; }
+  if (!name||!desc||!cat||!price) { toast('Remplis tous les champs obligatoires', 'error'); return; }
+  if (parseInt(price) <= 0) { toast('Le prix doit etre superieur a 0', 'error'); return; }
+  if (!file) { toast('La photo du produit est obligatoire', 'error'); return; }
 
   const btn = document.getElementById('publishBtn');
   btn.disabled = true; btn.textContent = 'Publication…';
@@ -83,11 +79,11 @@ if (!name||!desc||!cat||!price) { toast('Remplis tous les champs obligatoires', 
   const attributes = getCategoryAttributeValues();
 
   const { error } = await sb.from('products').insert([{
-    name, description: desc, category: cat,
-seller_name: S.profile.name,
-whatsapp: S.profile.whatsapp,
-moncash: S.profile.moncash,
-natcash: S.profile.natcash,
+    name: name, description: desc, category: cat,
+    seller_name: S.profile.name,
+    whatsapp: S.profile.whatsapp,
+    moncash: S.profile.moncash,
+    natcash: S.profile.natcash,
     price: parseInt(price), views: 0,
     user_id: S.user.id, is_active: true,
     image_url: image_url,
@@ -95,11 +91,12 @@ natcash: S.profile.natcash,
   }]);
 
   btn.disabled = false; btn.textContent = 'Publier le produit';
-
   if (error) { toast('Erreur lors de la publication', 'error'); return; }
 
-  ['sellName','sellDesc','sellPrice','sellPhone','sellMc','sellNc']
-    .forEach(function(id) { document.getElementById(id).value = ''; });
+  ['sellName','sellDesc','sellPrice'].forEach(function(id) {
+    var elx = document.getElementById(id);
+    if (elx) elx.value = '';
+  });
   document.getElementById('sellCat').value = '';
   if (fileInput) fileInput.value = '';
 
@@ -107,6 +104,7 @@ natcash: S.profile.natcash,
   await loadProducts();
   setTimeout(function() { navigate('my-products'); }, 800);
 }
+
 async function delProd(id) {
   if (!confirm('Supprimer ce produit ?')) return;
   const { error } = await sb.from('products').update({ is_active: false }).eq('id', id);
@@ -114,10 +112,14 @@ async function delProd(id) {
   toast('Produit supprimé');
   await loadProducts();
   renderMyProds();
-}function openWA(phone, name, price) {
+}
+
+function openWA(phone, name, price) {
   const msg = encodeURIComponent('Bonjour ! Je suis intéressé(e) par "' + decodeURIComponent(name) + '" (Prix : ' + price + ') sur Ga-izan.');
   window.open('https://wa.me/' + phone.replace(/\D/g,'') + '?text=' + msg, '_blank');
-}// ════════════════════════════════
+}
+
+// ════════════════════════════════
 // UPLOAD IMAGE
 // ════════════════════════════════
 async function uploadImage(file) {
