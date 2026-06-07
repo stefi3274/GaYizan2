@@ -103,3 +103,30 @@ async function confirmPay(id, label, method) {
     '<button class="btn btn-ghost btn-full" style="margin-top:10px;" onclick="closeModal(\'payModal\');navigate(\'panier\')">Voir mes commandes</button>' +
     '</div>';
 }
+
+function renderPanier() {
+  var el = document.getElementById('panierList');
+  if (!S.user) { el.innerHTML = '<div class="empty-state"><div class="empty-icon">🛒</div><div class="empty-title">Connecte-toi pour voir tes achats</div></div>'; return; }
+  if (!S.myOrders.length) { el.innerHTML = '<div class="empty-state"><div class="empty-icon">🛒</div><div class="empty-title">Aucune commande</div></div>'; return; }
+  el.innerHTML = S.myOrders.map(function(o) {
+    return '<div class="order-row">' +
+      '<div class="order-info"><div class="order-name">' + esc(o.product_name || '—') + '</div>' +
+      '<div class="order-meta">' + fmtDate(o.created_at) + ' · ' + (o.payment_method || '—') + '</div></div>' +
+      '<div>' + statusChip(o.status) + '</div></div>';
+  }).join('');
+}
+
+function renderMyProds() {
+  var el = document.getElementById('myProdList');
+  if (!S.user) { el.innerHTML = '<div class="empty-state"><div class="empty-icon">📦</div><div class="empty-title">Connecte-toi pour voir tes produits</div></div>'; return; }
+  var mine = S.products.filter(function(p) { return p.uid === S.user.id; });
+  if (!mine.length) { el.innerHTML = '<div class="empty-state"><div class="empty-icon">📦</div><div class="empty-title">Aucun produit publie</div></div>'; return; }
+  el.innerHTML = mine.map(function(p) {
+    return '<div class="prod-row">' +
+      '<div class="prod-row-img">' + (p.image_url ? '<img src="' + p.image_url + '" style="width:100%;height:100%;object-fit:cover;"/>' : p.emoji) + '</div>' +
+      '<div class="prod-row-info">' +
+      '<div class="prod-row-name">' + esc(p.name) + '</div>' +
+      '<div class="prod-row-desc">' + formatPrice(p.price) + '</div>' +
+      '</div></div>';
+  }).join('');
+}
