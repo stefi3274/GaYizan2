@@ -53,7 +53,15 @@ function updateHeroStats() {
 async function publishProduct() {
 if (!S.user) { saveDraft(); toast('Connecte-toi pour finaliser ta publication', 'error'); setTimeout(function() { openAuthModal(); }, 800); return; }
   if (!isProfileComplete()) { toast('Configure d\'abord ton profil', 'error'); setTimeout(() => openEditModal(), 600); return; }
-  if (S.profile.verification_status !== 'verified') { toast('Tu dois etre vendeur verifie pour publier', 'error'); setTimeout(() => navigate('vendor-signup'), 600); return; }
+if (S.profile.verification_status !== 'verified') {
+  if (S.profile.verification_status === 'pending') {
+    toast('⏳ Ta demande est en cours de vérification (24-48h)', 'error');
+  } else {
+    toast('⚠️ Tu dois être vendeur vérifié pour publier', 'error');
+    setTimeout(function() { navigate('vendor-signup'); }, 800);
+  }
+  return;
+}
 
   const name  = document.getElementById('sellName').value.trim();
   const desc  = document.getElementById('sellDesc').value.trim();
