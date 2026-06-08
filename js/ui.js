@@ -68,9 +68,12 @@ function navigate(p) {
   S.prev = S.page; S.page = p;
   document.querySelectorAll('.page').forEach(function(x) { x.classList.remove('active'); });
   document.getElementById('page-' + p).classList.add('active');
-  ['home','market','panier','profile'].forEach(function(n) {
+ ['home','market','panier','profile','sales'].forEach(function(n) {
     const el = document.getElementById('nav-' + n);
-    if (el) el.classList.toggle('active', n === p);
+    if (el) {
+      var matches = (n === p) || (n === 'sales' && p === 'my-products');
+      el.classList.toggle('active', matches);
+    }
   });
   if (p==='home')        renderHome();
   if (p==='market')      renderMarket();
