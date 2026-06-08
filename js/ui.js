@@ -78,6 +78,7 @@ function navigate(p) {
   if (p==='vendor-signup') loadVendorStatus();
   if (p==='profile')     renderProfile();
   if (p==='panier')      renderPanier();
+  if (p==='infos') document.getElementById('infoContent').innerHTML = '';
   window.scrollTo({ top:0, behavior:'smooth' });
 }
 function goBack() { navigate(S.prev || 'home'); }
@@ -349,3 +350,58 @@ async function saveOnboarding() {
   renderProfile();
   toast('Profil configure !', 'success');
 }
+// ════════════════════════════════
+// PAGE INFOS
+// ════════════════════════════════
+var GAIZAN_WA = '50955108873';
+
+function showInfoSection(section) {
+  var el = document.getElementById('infoContent');
+  if (section === 'apropos') {
+    el.innerHTML = '<div class="info-box"><h3 style="font-family:\'Playfair Display\',serif;margin-bottom:10px;">À propos de Ga-izan</h3>' +
+      '<p style="line-height:1.7;color:var(--muted);">Ga-izan est une marketplace haïtienne qui connecte acheteurs et vendeurs partout dans le pays. Notre mission : permettre à chaque Haïtien.ne d\'acheter et vendre des produits locaux en toute confiance, avec le paiement mobile MonCash et NatCash.</p></div>';
+  } else if (section === 'contact') {
+    el.innerHTML = '<div class="info-box">' +
+      '<h3 style="font-family:\'Playfair Display\',serif;margin-bottom:14px;">Nous contacter</h3>' +
+      '<div class="field"><label>Ton nom *</label><input id="contactName" placeholder="Ton nom" maxlength="60"/></div>' +
+      '<div class="field"><label>Objet *</label><input id="contactSubject" placeholder="Ex : Mettre un produit en avant" maxlength="80"/></div>' +
+      '<div class="field"><label>Message *</label><textarea id="contactMsg" rows="4" placeholder="Ton message…" maxlength="500"></textarea></div>' +
+      '<button class="btn btn-primary btn-full" onclick="sendContact()">Envoyer sur WhatsApp</button></div>';
+  } else if (section === 'legal') {
+    el.innerHTML = '<div class="info-box"><h3 style="font-family:\'Playfair Display\',serif;margin-bottom:10px;">Mentions légales</h3>' +
+      '<p style="line-height:1.7;color:var(--muted);">Ga-izan est une plateforme de mise en relation entre acheteurs et vendeurs. Les transactions et paiements sont effectués directement entre les parties. Ga-izan ne saurait être tenu responsable des litiges entre utilisateurs. En utilisant cette plateforme, vous acceptez ces conditions.<br><br>Tous droits réservés · SteFi Services</p></div>';
+  }
+}
+
+function sendContact() {
+  var name = document.getElementById('contactName').value.trim();
+  var subject = document.getElementById('contactSubject').value.trim();
+  var msg = document.getElementById('contactMsg').value.trim();
+  if (!name || !subject || !msg) { toast('Remplis tous les champs', 'error'); return; }
+  var text = encodeURIComponent('Bonjour Ga-izan !\n\nNom : ' + name + '\nObjet : ' + subject + '\n\n' + msg);
+  window.open('https://wa.me/' + GAIZAN_WA + '?text=' + text, '_blank');
+}
+
+// ════════════════════════════════
+// INSTALLATION PWA
+// ════════════════════════════════
+var deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredPrompt = e;
+  var b = document.getElementById('installBtnHeader');
+  if (b) b.style.display = 'flex';
+});
+function installPWA() {
+  if (!deferredPrompt) { toast('Utilise le menu du navigateur pour installer', 'error'); return; }
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(function() {
+    deferredPrompt = null;
+    var b = document.getElementById('installBtnHeader');
+    if (b) b.style.display = 'none';
+  });
+}
+window.addEventListener('appinstalled', function() {
+  var b = document.getElementById('installBtnHeader');
+  if (b) b.style.display = 'none';
+});
