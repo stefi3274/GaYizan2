@@ -67,6 +67,7 @@ async function publishProduct() {
   const price = document.getElementById('sellPrice').value;
   const fileInput = document.getElementById('sellImage');
   const file = fileInput && fileInput.files[0] ? fileInput.files[0] : null;
+  var affiliationActive = document.getElementById('sellAffiliation') ? document.getElementById('sellAffiliation').checked : false;
 
   if (!name||!desc||!cat||!price) { toast('Remplis tous les champs obligatoires', 'error'); return; }
   if (parseInt(price) <= 0) { toast('Le prix doit etre superieur a 0', 'error'); return; }
@@ -87,6 +88,7 @@ async function publishProduct() {
     price: parseInt(price), views: 0,
     user_id: S.user.id, is_active: true,
     image_url: image_url,
+    affiliation_active: affiliationActive,
     attributes: Object.keys(attributes).length ? attributes : null,
   }]);
 
@@ -99,6 +101,7 @@ async function publishProduct() {
   });
   document.getElementById('sellCat').value = '';
   if (fileInput) fileInput.value = '';
+  if (document.getElementById('sellAffiliation')) document.getElementById('sellAffiliation').checked = false;
 
   toast('Produit publie !', 'success');
   await loadProducts();

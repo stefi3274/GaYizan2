@@ -246,7 +246,7 @@ async function loadProfile() {
   const res = await sb.from('profiles').select('*').eq('id', S.user.id).maybeSingle();
   if (res.error) { console.error('loadProfile:', res.error); return; }
   if (res.data) {
-S.profile = { name: res.data.name||'', whatsapp: res.data.whatsapp||'', moncash: res.data.moncash||'', natcash: res.data.natcash||'', sales_count: res.data.sales_count||0, avatar_url: res.data.avatar_url||'', verification_status: res.data.verification_status||'' };
+S.profile = { name: res.data.name||'', whatsapp: res.data.whatsapp||'', moncash: res.data.moncash||'', natcash: res.data.natcash||'', sales_count: res.data.sales_count||0, avatar_url: res.data.avatar_url||'', verification_status: res.data.verification_status||'', is_affiliate: res.data.is_affiliate||false };
   } else {
     await sb.from('profiles').insert({ id: S.user.id, name:'', whatsapp:'', moncash:'', natcash:'', sales_count:0 });
   }
@@ -370,9 +370,21 @@ function showInfoSection(section) {
       '<div class="field"><label>Objet *</label><input id="contactSubject" placeholder="Ex : Mettre un produit en avant" maxlength="80"/></div>' +
       '<div class="field"><label>Message *</label><textarea id="contactMsg" rows="4" placeholder="Ton message…" maxlength="500"></textarea></div>' +
       '<button class="btn btn-primary btn-full" onclick="sendContact()">Envoyer sur WhatsApp</button></div>';
-  } else if (section === 'legal') {
+} else if (section === 'legal') {
     el.innerHTML = '<div class="info-box"><h3 style="font-family:\'Playfair Display\',serif;margin-bottom:10px;">Mentions légales</h3>' +
-      '<p style="line-height:1.7;color:var(--muted);">Ga-izan est une plateforme de mise en relation entre acheteurs et vendeurs. Les transactions et paiements sont effectués directement entre les parties. Ga-izan ne saurait être tenu responsable des litiges entre utilisateurs. En utilisant cette plateforme, vous acceptez ces conditions.<br><br>Tous droits réservés · SteFi Services</p></div>';
+      '<p style="line-height:1.7;color:var(--muted);">Ga-izan est une plateforme de mise en relation entre acheteurs et vendeurs. Les transactions et paiements sont effectués directement entre les parties, via MonCash ou NatCash. Ga-izan ne reçoit ni ne gère aucun paiement, et ne saurait être tenu responsable des litiges, fraudes ou défauts de paiement entre utilisateurs. En utilisant cette plateforme, vous acceptez ces conditions.</p>' +
+
+      '<h3 style="font-family:\'Playfair Display\',serif;margin:22px 0 10px;">Programme d\'affiliation</h3>' +
+      '<p style="line-height:1.7;color:var(--muted);">Le programme d\'affiliation permet à un utilisateur (l\'affilié) de promouvoir les produits d\'un vendeur ayant activé cette option, en échange d\'une commission de <strong>2% du prix de vente</strong> sur chaque vente qu\'il génère.</p>' +
+      '<p style="line-height:1.7;color:var(--muted);margin-top:10px;"><strong>1. Activation.</strong> Seuls les produits dont le vendeur a explicitement activé l\'affiliation sont éligibles. Le vendeur peut activer ou désactiver cette option à tout moment.</p>' +
+      '<p style="line-height:1.7;color:var(--muted);margin-top:10px;"><strong>2. Commission.</strong> La commission est fixée à 2% du prix affiché du produit vendu. Elle est due par le vendeur à l\'affilié uniquement lorsqu\'une vente est effectivement réalisée et confirmée grâce au lien de l\'affilié.</p>' +
+      '<p style="line-height:1.7;color:var(--muted);margin-top:10px;"><strong>3. Paiement.</strong> Le paiement de la commission se fait directement entre le vendeur et l\'affilié, via MonCash ou NatCash. Ga-izan ne perçoit, ne retient ni ne verse aucune commission. Ga-izan fournit uniquement un outil de suivi indicatif des ventes générées.</p>' +
+      '<p style="line-height:1.7;color:var(--muted);margin-top:10px;"><strong>4. Suivi.</strong> Le suivi des ventes affiliées est fourni à titre indicatif. Bien que Ga-izan s\'efforce d\'assurer son exactitude, il ne constitue pas une preuve juridique et peut comporter des erreurs.</p>' +
+      '<p style="line-height:1.7;color:var(--muted);margin-top:10px;"><strong>5. Bonne foi et litiges.</strong> Le programme repose sur la bonne foi des parties. En cas de litige, de fraude ou d\'abus (faux clics, ventes fictives, non-paiement répété), Ga-izan se réserve le droit de trancher, de suspendre ou d\'exclure définitivement tout compte concerné, sans préavis.</p>' +
+      '<p style="line-height:1.7;color:var(--muted);margin-top:10px;"><strong>6. Responsabilité.</strong> Ga-izan agit comme simple intermédiaire technique. Il ne garantit aucun revenu à l\'affilié, ni aucun volume de ventes au vendeur, et décline toute responsabilité en cas de désaccord sur le paiement des commissions.</p>' +
+      '<p style="line-height:1.7;color:var(--muted);margin-top:10px;">En activant l\'affiliation ou en devenant affilié, vous reconnaissez avoir lu et accepté l\'ensemble de ces conditions.</p>' +
+
+      '<p style="line-height:1.7;color:var(--muted);margin-top:22px;">Tous droits réservés · SteFi Services</p></div>';
   }
 }
 
@@ -408,3 +420,33 @@ window.addEventListener('appinstalled', function() {
   var b = document.getElementById('installBtnHeader');
   if (b) b.style.display = 'none';
 });
+
+// ════════════════════════════════
+// DEVENIR AFFILIÉ
+// ════════════════════════════════
+async function becomeAffiliate() {
+  if (!S.user) {
+    toast('Connecte-toi pour devenir affilié', 'error');
+    setTimeout(function() { openAuthModal(); }, 800);
+    return;
+  }
+
+  if (S.profile.is_affiliate) {
+    navigate('infos');
+    setTimeout(function() { showInfoSection('contact'); }, 100);
+    toast('Tu es déjà affilié.e !', 'success');
+    return;
+  }
+
+  var ok = confirm('Devenir affilié.e te permet de partager des produits et de gagner 2% sur chaque vente que tu génères.\n\nEn acceptant, tu reconnais avoir lu et accepté les Conditions du programme d\'affiliation (voir Mentions légales).\n\nConfirmer ?');
+  if (!ok) return;
+
+  var res = await sb.from('profiles')
+    .update({ is_affiliate: true })
+    .eq('id', S.user.id);
+
+  if (res.error) { toast('Erreur : ' + res.error.message, 'error'); return; }
+
+  S.profile.is_affiliate = true;
+  toast('🎉 Tu es maintenant affilié.e !', 'success');
+}

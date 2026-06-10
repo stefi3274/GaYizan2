@@ -165,12 +165,15 @@
         </select>
       </div>
     </div>
-    <div class="field"><label>Photo du produit *</label><input type="file" id="sellImage" accept="image/*" style="padding:8px 14px;"/></div>
+<div class="field"><label>Photo du produit *</label><input type="file" id="sellImage" accept="image/*" style="padding:8px 14px;"/></div>
     <div class="gap-md"></div>
     <div id="attrWrap"></div>
+    <label style="display:flex;align-items:flex-start;gap:10px;padding:14px;background:#F2EFF9;border-radius:12px;margin-bottom:16px;cursor:pointer;">
+      <input type="checkbox" id="sellAffiliation" style="width:18px;height:18px;margin-top:2px;flex-shrink:0;"/>
+      <span style="font-size:13px;color:var(--muted);line-height:1.5;">Activer le <strong>marketing d'affiliation (2%)</strong> sur ce produit. Des affiliés pourront le partager et toucheront 2% sur les ventes qu'ils génèrent.</span>
+    </label>
     <button class="btn btn-primary btn-full" id="publishBtn" onclick="publishProduct()">Publier le produit</button>
   </div>
-
   <!-- ══ PAGE MES PRODUITS ══ -->
   <div class="page" id="page-my-products">
     <div class="section-hd" style="margin-bottom:14px;">
@@ -291,6 +294,11 @@
         <div class="menu-text"><div class="menu-label">Infos & Contact</div><div class="menu-sub">À propos, contact, mentions légales</div></div>
         <span class="menu-arrow">›</span>
       </div>
+   <div class="menu-item" id="affiliateMenuItem" onclick="becomeAffiliate()">
+        <div class="menu-icon"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+        <div class="menu-text"><div class="menu-label">Devenir affilié.e</div><div class="menu-sub">Partage des produits et gagne 2% par vente</div></div>
+        <span class="menu-arrow">›</span>
+      </div>   
   <!-- ══ PAGE DETAIL ══ -->
   <div class="page" id="page-detail">
     <button class="back-btn" onclick="goBack()">
