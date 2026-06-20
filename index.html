@@ -22,19 +22,25 @@
 </head>
 <body>
 <div class="app">
- <div class="header-right">
-      <button class="icon-btn" id="installBtnHeader" onclick="installPWA()" style="display:none;">
-        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      </button>
-      <button class="icon-btn" onclick="navigate('panier')">
-        <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-        <div class="cart-badge" id="cartBadge">0</div>
-      </button>
-      <button class="avatar-btn" id="avatarBtn" onclick="handleAvatarClick()">?
-        <span class="sync-indicator loading" id="syncDot"></span>
-      </button>
-    </div>
-  <!-- ══ PAGE ACCUEIL ══ -->
+  <header>
+    <div class="logo">
+      <div class="logo-mark">🛒</div>
+      Ga-<em>izan</em>
+    </div>
+    <div class="header-right">
+      <button class="icon-btn" id="installBtnHeader" onclick="installPWA()" style="display:none;">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </button>
+      <button class="icon-btn" onclick="navigate('panier')">
+        <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <div class="cart-badge" id="cartBadge">0</div>
+      </button>
+      <button class="avatar-btn" id="avatarBtn" onclick="handleAvatarClick()">?
+        <span class="sync-indicator loading" id="syncDot"></span>
+      </button>
+    </div>
+  </header>
+  <!-- ══ PAGE ACCUEIL ══ -->
   <div class="page active" id="page-home">
     <!-- HERO -->
     <div class="hero-home">
