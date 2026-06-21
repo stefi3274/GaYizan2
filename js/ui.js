@@ -244,6 +244,7 @@ async function loadProfile() {
   if (res.error) { console.error('loadProfile:', res.error); return; }
   if (res.data) {
 S.profile = { name: res.data.name||'', whatsapp: res.data.whatsapp||'', moncash: res.data.moncash||'', natcash: res.data.natcash||'', sales_count: res.data.sales_count||0, avatar_url: res.data.avatar_url||'', verification_status: res.data.verification_status||'', is_affiliate: res.data.is_affiliate||false, points_total: res.data.points_total||0 };
+  renderProfileMenu();
   renderProfileMenu();
   } else {
     await sb.from('profiles').insert({ id: S.user.id, name:'', whatsapp:'', moncash:'', natcash:'', sales_count:0 });
