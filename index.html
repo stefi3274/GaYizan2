@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -21,382 +22,350 @@
 </head>
 <body>
 <div class="app">
- <div class="header-right">
-      <button class="icon-btn" id="installBtnHeader" onclick="installPWA()" style="display:none;">
-        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      </button>
-      <button class="icon-btn" onclick="navigate('panier')">
-        <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-        <div class="cart-badge" id="cartBadge">0</div>
-      </button>
-      <button class="avatar-btn" id="avatarBtn" onclick="handleAvatarClick()">?
-        <span class="sync-indicator loading" id="syncDot"></span>
-      </button>
+ <div class="header-right">
+      <button class="icon-btn" id="installBtnHeader" onclick="installPWA()" style="display:none;">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </button>
+      <button class="icon-btn" onclick="navigate('panier')">
+        <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <div class="cart-badge" id="cartBadge">0</div>
+      </button>
+      <button class="avatar-btn" id="avatarBtn" onclick="handleAvatarClick()">?
+        <span class="sync-indicator loading" id="syncDot"></span>
+      </button>
+    </div>
+  <!-- ══ PAGE ACCUEIL ══ -->
+  <div class="page active" id="page-home">
+    <div class="hero-home">
+      <h2>Achetez & vendez<br><em>en toute confiance</em></h2>
+      <p>La plateforme digitale pour les Haïtiens.<br>Produits locaux, paiement mobile.</p>
+      <button class="hero-cta" onclick="navigate('market')">Explorer le marché →</button>
+    </div>
+    <!-- FEATURED_START -->
+    <div id="featuredSection" style="display:none;">
+      <div class="section-hd">
+        <div class="section-title" style="color:var(--gold);">⭐ Produits mis en avant</div>
+      </div>
+      <div class="grid-2" id="featuredGrid"></div>
+      <div class="divider"></div>
+    </div>
+    <!-- FEATURED_END -->
+    <div class="cats-scroll" id="homeCats">
+      <div class="cat-pill active" onclick="filterHomeCat(this,'all')">Tout</div>
+      <div class="cat-pill" onclick="filterHomeCat(this,'vetement')">👕 Vêtements</div>
+      <div class="cat-pill" onclick="filterHomeCat(this,'electronique')">📱 Électronique</div>
+      <div class="cat-pill" onclick="filterHomeCat(this,'alimentation')">🛒 Alimentation</div>
+      <div class="cat-pill" onclick="filterHomeCat(this,'formation')">📚 Formation</div>
+      <div class="cat-pill" onclick="filterHomeCat(this,'beaute')">💄 Beauté</div>
+      <div class="cat-pill" onclick="filterHomeCat(this,'services')">🔧 Services</div>
+      <div class="cat-pill" onclick="filterHomeCat(this,'divers')">📦 Divers</div>
+    </div>
+    <div class="section-hd">
+      <div class="section-title">Produits récents</div>
+      <button class="see-all" onclick="navigate('market')">Voir tout →</button>
+    </div>
+    <div class="grid-2" id="homeGrid">
+      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton-body"><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div></div></div>
+      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton-body"><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div></div></div>
+      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton-body"><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div></div></div>
+      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton-body"><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div></div></div>
+    </div>
+  </div>
+  <!-- ══ PAGE MARCHÉ ══ -->
+  <div class="page" id="page-market">
+    <div class="search-wrap">
+      <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="search-input" placeholder="Rechercher un produit, vendeur…" id="searchInput" oninput="renderMarket()"/>
+    </div>
+    <div class="cats-scroll" id="marketCats">
+      <div class="cat-pill active" onclick="filterMktCat(this,'all')">Tout</div>
+      <div class="cat-pill" onclick="filterMktCat(this,'vetement')">👕 Vêtements</div>
+      <div class="cat-pill" onclick="filterMktCat(this,'electronique')">📱 Électronique</div>
+      <div class="cat-pill" onclick="filterMktCat(this,'alimentation')">🛒 Alimentation</div>
+      <div class="cat-pill" onclick="filterMktCat(this,'formation')">📚 Formation</div>
+      <div class="cat-pill" onclick="filterMktCat(this,'beaute')">💄 Beauté</div>
+      <div class="cat-pill" onclick="filterMktCat(this,'services')">🔧 Services</div>
+      <div class="cat-pill" onclick="filterMktCat(this,'divers')">📦 Divers</div>
+    </div>
+    <div class="sort-bar">
+      <div class="sort-count" id="marketCount"><strong>—</strong> résultats</div>
+    </div>
+    <div id="marketList"><div class="spinner-wrap"><div class="spinner"></div></div></div>
+  </div>
+  <!-- ══ PAGE VENDRE ══ -->
+  <div class="page" id="page-sell">
+    <div class="sell-hero">
+      <h2>Publier un produit</h2>
+      <p>Visible par toute la communauté Ga-izan</p>
+    </div>
+    <p class="required-note">* Champs obligatoires</p>
+    <div class="field"><label>Nom du produit *</label><input id="sellName" placeholder="Ex : Cours de Maths Terminale" maxlength="80"/></div>
+    <div class="field"><label>Description *</label><textarea id="sellDesc" rows="3" placeholder="Décris ton produit…" maxlength="500"></textarea></div>
+    <div class="field-row">
+      <div class="field" style="margin-bottom:0;">
+        <label>Prix (HTG) *</label>
+        <div class="input-with-prefix">
+          <span class="input-prefix-label">HTG</span>
+          <input id="sellPrice" type="number" min="1" placeholder="0"/>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label>Catégorie *</label>
+        <select id="sellCat" onchange="renderCategoryAttributes(this.value)">
+          <option value="">— Choisir une catégorie —</option>
+          <optgroup label="Mode & Beauté">
+            <option value="vetement">👕 Vêtements & Mode</option>
+            <option value="chaussures">👟 Chaussures & Accessoires</option>
+            <option value="beaute">💄 Beauté & Cosmétiques</option>
+            <option value="bijoux">💍 Bijoux & Accessoires</option>
+          </optgroup>
+          <optgroup label="Technologie">
+            <option value="electronique">📱 Électronique & Téléphones</option>
+            <option value="digital">💾 Produits digitaux</option>
+            <option value="electrique">💡 Matériel Électrique</option>
+          </optgroup>
+          <optgroup label="Maison & Construction">
+            <option value="maison">🏠 Maison & Décoration</option>
+            <option value="construction">🏗️ Construction & BTP</option>
+          </optgroup>
+          <optgroup label="Alimentation & Nature">
+            <option value="alimentation">🛒 Alimentation & Épicerie</option>
+            <option value="agriculture">🌿 Agriculture & Jardinage</option>
+            <option value="animaux">🐄 Animaux</option>
+          </optgroup>
+          <optgroup label="Sport & Loisirs">
+            <option value="sport">🏋️ Sport & Fitness</option>
+            <option value="jouets">🎮 Jeux & Jouets</option>
+            <option value="musique">🎵 Musique & Instruments</option>
+          </optgroup>
+          <optgroup label="Auto & Moto">
+            <option value="auto">🚗 Auto & Moto</option>
+          </optgroup>
+          <optgroup label="Art & Culture">
+            <option value="art">🖼️ Beaux-Arts</option>
+            <option value="artisanat">🎨 Art & Artisanat</option>
+            <option value="photo">📷 Photo & Vidéo</option>
+          </optgroup>
+          <optgroup label="Formation & Services">
+            <option value="formation">📚 Cours & Formation</option>
+            <option value="services">🔧 Services & Réparation</option>
+          </optgroup>
+          <optgroup label="Autres">
+            <option value="divers">📦 Divers</option>
+            <option value="others">🌐 Others</option>
+          </optgroup>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Photo du produit *</label><input type="file" id="sellImage" accept="image/*" style="padding:8px 14px;"/></div>
+    <div class="gap-md"></div>
+    <div id="attrWrap"></div>
+    <label style="display:flex;align-items:flex-start;gap:10px;padding:14px;background:#F2EFF9;border-radius:12px;margin-bottom:16px;cursor:pointer;">
+      <input type="checkbox" id="sellAffiliation" style="width:18px;height:18px;margin-top:2px;flex-shrink:0;"/>
+      <span style="font-size:13px;color:var(--muted);line-height:1.5;">Activer le <strong>marketing d'affiliation (2%)</strong> sur ce produit. Des affiliés pourront le partager et toucheront 2% sur les ventes qu'ils génèrent.</span>
+    </label>
+    <button class="btn btn-primary btn-full" id="publishBtn" onclick="publishProduct()">Publier le produit</button>
+  </div>
+  <!-- ══ PAGE MES PRODUITS ══ -->
+  <div class="page" id="page-my-products">
+    <div class="section-hd" style="margin-bottom:14px;">
+      <div class="section-title">Espace Vendeur</div>
+      <button class="btn btn-primary btn-sm" onclick="navigate('sell')">+ Nouveau</button>
+    </div>
+    <div class="vendor-tabs">
+      <button class="vtab active" id="vtab-products" onclick="switchVendorTab('products')">Mes produits</button>
+      <button class="vtab" id="vtab-orders" onclick="switchVendorTab('orders')">
+        Commandes reçues
+        <span id="pendingBadge" class="vtab-badge" style="display:none;">0</span>
+      </button>
+    </div>
+    <div id="vtab-products-content"><div id="myProdList"></div></div>
+    <div id="vtab-orders-content" style="display:none;"><div id="receivedOrdersList"></div></div>
+  </div>
+  <!-- ══ PAGE DEVENIR VENDEUR ══ -->
+  <div class="page" id="page-vendor-signup">
+    <div class="sell-hero">
+      <h2>Devenir Vendeur/Vendeuse</h2>
+      <p>Rejoins la communauté Ga-izan et commence à vendre</p>
+    </div>
+    <div id="vendorStatusBanner"></div>
+    <div id="vendorFormWrap">
+      <div class="section-lbl">Informations personnelles</div>
+      <div class="field"><label>Nom complet *</label><input id="vendorName" placeholder="Ton nom complet" maxlength="60"/></div>
+      <div class="field"><label>Nom de la boutique (optionnel)</label><input id="vendorShopName" placeholder="Ex : Boutique Marie, TechShop509…" maxlength="60"/></div>
+      <div class="field"><label>WhatsApp *</label><input id="vendorWa" placeholder="+509 XXXX XXXX" type="tel" maxlength="16"/></div>
+      <div class="field-row">
+        <div class="field" style="margin-bottom:0;"><label>MonCash</label><input id="vendorMc" placeholder="+509 XXXX XXXX" type="tel" maxlength="16"/></div>
+        <div class="field" style="margin-bottom:0;"><label>NatCash</label><input id="vendorNc" placeholder="+509 XXXX XXXX" type="tel" maxlength="16"/></div>
+      </div>
+      <div class="divider"></div>
+      <div class="section-lbl">Vérification d'identité</div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Pour protéger nos acheteurs, nous vérifions l'identité de chaque vendeur. Tes documents sont privés et sécurisés.</p>
+      <div class="field">
+        <label>Carte d'identité nationale *</label>
+        <input type="file" id="vendorIdCard" accept="image/*" style="padding:8px 14px;"/>
+        <p style="font-size:11px;color:var(--muted2);margin-top:5px;">Photo claire de ta CIN, passeport ou permis de conduire</p>
+      </div>
+      <div class="field">
+        <label>Selfie avec ta pièce d'identité *</label>
+        <input type="file" id="vendorSelfie" accept="image/*" style="padding:8px 14px;"/>
+        <p style="font-size:11px;color:var(--muted2);margin-top:5px;">Tiens ta pièce d'identité à côté de ton visage</p>
+      </div>
+      <div class="gap-md"></div>
+      <div class="pay-warning">⚠️ En soumettant ce formulaire, tu acceptes que Ga-izan vérifie ton identité. La vérification prend 24-48h.</div>
+      <button class="btn btn-primary btn-full" id="vendorSubmitBtn" onclick="submitVendorApplication()">Soumettre ma demande</button>
+    </div>
+  </div>
+  <!-- ══ PAGE ACHATS ══ -->
+  <div class="page" id="page-panier">
+    <div class="section-hd" style="margin-bottom:20px;">
+      <div class="section-title">Mes commandes</div>
+    </div>
+    <div id="panierList"></div>
+  </div>
+  <!-- ══ PAGE PROFIL ══ -->
+  <div class="page" id="page-profile">
+    <div class="profile-hero">
+      <div class="profile-av" id="profileAvatar">?</div>
+      <div class="profile-name" id="profileName">Mon Profil</div>
+      <div class="profile-sub" id="profileWa">—</div>
+      <div class="profile-stats">
+        <div class="pstat"><div class="pstat-val" id="statProd">0</div><div class="pstat-lbl">Produits</div></div>
+        <div class="pstat"><div class="pstat-val" id="statSales">0</div><div class="pstat-lbl">Ventes</div></div>
+        <div class="pstat"><div class="pstat-val" id="statViews">0</div><div class="pstat-lbl">Vues</div></div>
+      </div>
+    </div>
+    <div id="authBanner" style="display:none;">
+      <div class="auth-prompt">
+        <div class="auth-prompt-icon">🔐</div>
+        <div class="auth-prompt-title">Crée ton compte gratuitement</div>
+        <div class="auth-prompt-sub">Pour acheter et vendre sur Ga-izan</div>
+        <button class="btn btn-primary btn-full btn-sm" onclick="openAuthModal()">Créer un compte · Se connecter</button>
+      </div>
+    </div>
+    <div id="completeBannerWrap"></div>
+    <div class="section-lbl" style="margin-bottom:10px;">Mon compte</div>
+    <div class="menu-list" id="profileMenuList">
+      <!-- Menu généré par renderProfileMenu() -->
     </div>
-  <!-- ══ PAGE ACCUEIL ══ -->
-  <div class="page active" id="page-home">
-    <div class="hero-home">
-      <h2>Achetez & vendez<br><em>en toute confiance</em></h2>
-      <p>La plateforme digitale pour les Haïtiens.<br>Produits locaux, paiement mobile.</p>
-      <button class="hero-cta" onclick="navigate('market')">Explorer le marché →</button>
-    </div>
-    <!-- FEATURED_START -->
-    <div id="featuredSection" style="display:none;">
-      <div class="section-hd">
-        <div class="section-title" style="color:var(--gold);">⭐ Produits mis en avant</div>
-      </div>
-      <div class="grid-2" id="featuredGrid"></div>
-      <div class="divider"></div>
-    </div>
-    <!-- FEATURED_END -->
-    <div class="cats-scroll" id="homeCats">
-      <div class="cat-pill active" onclick="filterHomeCat(this,'all')">Tout</div>
-      <div class="cat-pill" onclick="filterHomeCat(this,'vetement')">👕 Vêtements</div>
-      <div class="cat-pill" onclick="filterHomeCat(this,'electronique')">📱 Électronique</div>
-      <div class="cat-pill" onclick="filterHomeCat(this,'alimentation')">🛒 Alimentation</div>
-      <div class="cat-pill" onclick="filterHomeCat(this,'formation')">📚 Formation</div>
-      <div class="cat-pill" onclick="filterHomeCat(this,'beaute')">💄 Beauté</div>
-      <div class="cat-pill" onclick="filterHomeCat(this,'services')">🔧 Services</div>
-      <div class="cat-pill" onclick="filterHomeCat(this,'divers')">📦 Divers</div>
-    </div>
-    <div class="section-hd">
-      <div class="section-title">Produits récents</div>
-      <button class="see-all" onclick="navigate('market')">Voir tout →</button>
-    </div>
-    <div class="grid-2" id="homeGrid">
-      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton-body"><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div></div></div>
-      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton-body"><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div></div></div>
-      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton-body"><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div></div></div>
-      <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton-body"><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div></div></div>
-    </div>
-  </div>
-  <!-- ══ PAGE MARCHÉ ══ -->
-  <div class="page" id="page-market">
-    <div class="search-wrap">
-      <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input class="search-input" placeholder="Rechercher un produit, vendeur…" id="searchInput" oninput="renderMarket()"/>
-    </div>
-    <div class="cats-scroll" id="marketCats">
-      <div class="cat-pill active" onclick="filterMktCat(this,'all')">Tout</div>
-      <div class="cat-pill" onclick="filterMktCat(this,'vetement')">👕 Vêtements</div>
-      <div class="cat-pill" onclick="filterMktCat(this,'electronique')">📱 Électronique</div>
-      <div class="cat-pill" onclick="filterMktCat(this,'alimentation')">🛒 Alimentation</div>
-      <div class="cat-pill" onclick="filterMktCat(this,'formation')">📚 Formation</div>
-      <div class="cat-pill" onclick="filterMktCat(this,'beaute')">💄 Beauté</div>
-      <div class="cat-pill" onclick="filterMktCat(this,'services')">🔧 Services</div>
-      <div class="cat-pill" onclick="filterMktCat(this,'divers')">📦 Divers</div>
-    </div>
-    <div class="sort-bar">
-      <div class="sort-count" id="marketCount"><strong>—</strong> résultats</div>
-    </div>
-    <div id="marketList"><div class="spinner-wrap"><div class="spinner"></div></div></div>
-  </div>
-  <!-- ══ PAGE VENDRE ══ -->
-  <div class="page" id="page-sell">
-    <div class="sell-hero">
-      <h2>Publier un produit</h2>
-      <p>Visible par toute la communauté Ga-izan</p>
-    </div>
-    <p class="required-note">* Champs obligatoires</p>
-    <div class="field"><label>Nom du produit *</label><input id="sellName" placeholder="Ex : Cours de Maths Terminale" maxlength="80"/></div>
-    <div class="field"><label>Description *</label><textarea id="sellDesc" rows="3" placeholder="Décris ton produit…" maxlength="500"></textarea></div>
-    <div class="field-row">
-      <div class="field" style="margin-bottom:0;">
-        <label>Prix (HTG) *</label>
-        <div class="input-with-prefix">
-          <span class="input-prefix-label">HTG</span>
-          <input id="sellPrice" type="number" min="1" placeholder="0"/>
-        </div>
-      </div>
-      <div class="field" style="margin-bottom:0;">
-        <label>Catégorie *</label>
-        <select id="sellCat" onchange="renderCategoryAttributes(this.value)">
-          <option value="">— Choisir une catégorie —</option>
-          <optgroup label="Mode & Beauté">
-            <option value="vetement">👕 Vêtements & Mode</option>
-            <option value="chaussures">👟 Chaussures & Accessoires</option>
-            <option value="beaute">💄 Beauté & Cosmétiques</option>
-            <option value="bijoux">💍 Bijoux & Accessoires</option>
-          </optgroup>
-          <optgroup label="Technologie">
-            <option value="electronique">📱 Électronique & Téléphones</option>
-            <option value="digital">💾 Produits digitaux</option>
-            <option value="electrique">💡 Matériel Électrique</option>
-          </optgroup>
-          <optgroup label="Maison & Construction">
-            <option value="maison">🏠 Maison & Décoration</option>
-            <option value="construction">🏗️ Construction & BTP</option>
-          </optgroup>
-          <optgroup label="Alimentation & Nature">
-            <option value="alimentation">🛒 Alimentation & Épicerie</option>
-            <option value="agriculture">🌿 Agriculture & Jardinage</option>
-            <option value="animaux">🐄 Animaux</option>
-          </optgroup>
-          <optgroup label="Sport & Loisirs">
-            <option value="sport">🏋️ Sport & Fitness</option>
-            <option value="jouets">🎮 Jeux & Jouets</option>
-            <option value="musique">🎵 Musique & Instruments</option>
-          </optgroup>
-          <optgroup label="Auto & Moto">
-            <option value="auto">🚗 Auto & Moto</option>
-          </optgroup>
-          <optgroup label="Art & Culture">
-            <option value="art">🖼️ Beaux-Arts</option>
-            <option value="artisanat">🎨 Art & Artisanat</option>
-            <option value="photo">📷 Photo & Vidéo</option>
-          </optgroup>
-          <optgroup label="Formation & Services">
-            <option value="formation">📚 Cours & Formation</option>
-            <option value="services">🔧 Services & Réparation</option>
-          </optgroup>
-          <optgroup label="Autres">
-            <option value="divers">📦 Divers</option>
-            <option value="others">🌐 Others</option>
-          </optgroup>
-        </select>
-      </div>
-    </div>
-    <div class="field"><label>Photo du produit *</label><input type="file" id="sellImage" accept="image/*" style="padding:8px 14px;"/></div>
-    <div class="gap-md"></div>
-    <div id="attrWrap"></div>
-    <label style="display:flex;align-items:flex-start;gap:10px;padding:14px;background:#F2EFF9;border-radius:12px;margin-bottom:16px;cursor:pointer;">
-      <input type="checkbox" id="sellAffiliation" style="width:18px;height:18px;margin-top:2px;flex-shrink:0;"/>
-      <span style="font-size:13px;color:var(--muted);line-height:1.5;">Activer le <strong>marketing d'affiliation (2%)</strong> sur ce produit. Des affiliés pourront le partager et toucheront 2% sur les ventes qu'ils génèrent.</span>
-    </label>
-    <button class="btn btn-primary btn-full" id="publishBtn" onclick="publishProduct()">Publier le produit</button>
-  </div>
-  <!-- ══ PAGE MES PRODUITS ══ -->
-  <div class="page" id="page-my-products">
-    <div class="section-hd" style="margin-bottom:14px;">
-      <div class="section-title">Espace Vendeur</div>
-      <button class="btn btn-primary btn-sm" onclick="navigate('sell')">+ Nouveau</button>
-    </div>
-    <div class="vendor-tabs">
-      <button class="vtab active" id="vtab-products" onclick="switchVendorTab('products')">Mes produits</button>
-      <button class="vtab" id="vtab-orders" onclick="switchVendorTab('orders')">
-        Commandes reçues
-        <span id="pendingBadge" class="vtab-badge" style="display:none;">0</span>
-      </button>
-    </div>
-    <div id="vtab-products-content"><div id="myProdList"></div></div>
-    <div id="vtab-orders-content" style="display:none;"><div id="receivedOrdersList"></div></div>
-  </div>
-  <!-- ══ PAGE DEVENIR VENDEUR ══ -->
-  <div class="page" id="page-vendor-signup">
-    <div class="sell-hero">
-      <h2>Devenir Vendeur/Vendeuse</h2>
-      <p>Rejoins la communauté Ga-izan et commence à vendre</p>
-    </div>
-    <div id="vendorStatusBanner"></div>
-    <div id="vendorFormWrap">
-      <div class="section-lbl">Informations personnelles</div>
-      <div class="field"><label>Nom complet *</label><input id="vendorName" placeholder="Ton nom complet" maxlength="60"/></div>
-      <div class="field"><label>WhatsApp *</label><input id="vendorWa" placeholder="+509 XXXX XXXX" type="tel" maxlength="16"/></div>
-      <div class="field-row">
-        <div class="field" style="margin-bottom:0;"><label>MonCash</label><input id="vendorMc" placeholder="+509 XXXX XXXX" type="tel" maxlength="16"/></div>
-        <div class="field" style="margin-bottom:0;"><label>NatCash</label><input id="vendorNc" placeholder="+509 XXXX XXXX" type="tel" maxlength="16"/></div>
-      </div>
-      <div class="divider"></div>
-      <div class="section-lbl">Vérification d'identité</div>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Pour protéger nos acheteurs, nous vérifions l'identité de chaque vendeur. Tes documents sont privés et sécurisés.</p>
-      <div class="field">
-        <label>Carte d'identité nationale *</label>
-        <input type="file" id="vendorIdCard" accept="image/*" style="padding:8px 14px;"/>
-        <p style="font-size:11px;color:var(--muted2);margin-top:5px;">Photo claire de ta CIN, passeport ou permis de conduire</p>
-      </div>
-      <div class="field">
-        <label>Selfie avec ta pièce d'identité *</label>
-        <input type="file" id="vendorSelfie" accept="image/*" style="padding:8px 14px;"/>
-        <p style="font-size:11px;color:var(--muted2);margin-top:5px;">Tiens ta pièce d'identité à côté de ton visage</p>
-      </div>
-      <div class="gap-md"></div>
-      <div class="pay-warning">⚠️ En soumettant ce formulaire, tu acceptes que Ga-izan vérifie ton identité. La vérification prend 24-48h.</div>
-      <button class="btn btn-primary btn-full" id="vendorSubmitBtn" onclick="submitVendorApplication()">Soumettre ma demande</button>
-    </div>
-  </div>
-  <!-- ══ PAGE ACHATS ══ -->
-  <div class="page" id="page-panier">
-    <div class="section-hd" style="margin-bottom:20px;">
-      <div class="section-title">Mes commandes</div>
-    </div>
-    <div id="panierList"></div>
-  </div>
-  <!-- ══ PAGE PROFIL ══ -->
-  <div class="page" id="page-profile">
-    <div class="profile-hero">
-      <div class="profile-av" id="profileAvatar">?</div>
-      <div class="profile-name" id="profileName">Mon Profil</div>
-      <div class="profile-sub" id="profileWa">—</div>
-      <div class="profile-stats">
-        <div class="pstat"><div class="pstat-val" id="statProd">0</div><div class="pstat-lbl">Produits</div></div>
-        <div class="pstat"><div class="pstat-val" id="statSales">0</div><div class="pstat-lbl">Ventes</div></div>
-        <div class="pstat"><div class="pstat-val" id="statViews">0</div><div class="pstat-lbl">Vues</div></div>
-      </div>
-    </div>
-    <div id="authBanner" style="display:none;">
-      <div class="auth-prompt">
-        <div class="auth-prompt-icon">🔐</div>
-        <div class="auth-prompt-title">Crée ton compte gratuitement</div>
-        <div class="auth-prompt-sub">Pour acheter et vendre sur Ga-izan</div>
-        <button class="btn btn-primary btn-full btn-sm" onclick="openAuthModal()">Créer un compte · Se connecter</button>
-      </div>
-    </div>
-    <div id="completeBannerWrap"></div>
-    <div class="section-lbl" style="margin-bottom:10px;">Mon compte</div>
-    <div class="menu-list">
-      <div class="menu-item menu-vendeur" onclick="navigate('vendor-signup')">
-        <div class="menu-icon green"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg></div>
-        <div class="menu-text"><div class="menu-label">Devenir Vendeur/Vendeuse</div><div class="menu-sub">Soumettre mon dossier de vérification</div></div>
-        <span class="menu-arrow">›</span>
-      </div>
-      <div class="menu-item menu-espace" onclick="navigate('my-products')">
-        <div class="menu-icon violet"><svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 3H8L6 7h12l-2-4z"/></svg></div>
-        <div class="menu-text"><div class="menu-label">Espace vendeur</div><div class="menu-sub">Mes produits & commandes reçues</div></div>
-        <span class="menu-arrow">›</span>
-      </div>
-      <div class="menu-item menu-achats" onclick="navigate('panier')">
-        <div class="menu-icon blue"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></div>
-        <div class="menu-text"><div class="menu-label">Mes achats</div><div class="menu-sub">Historique de mes commandes</div></div>
-        <span class="menu-arrow">›</span>
-      </div>
-      <div class="menu-item menu-edit" onclick="openEditModal()">
-        <div class="menu-icon purple-main"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-        <div class="menu-text"><div class="menu-label">Modifier le profil</div><div class="menu-sub">Nom, WhatsApp, MonCash, NatCash</div></div>
-        <span class="menu-arrow">›</span>
-      </div>
-      <div class="menu-item menu-infos" onclick="navigate('infos')">
-        <div class="menu-icon gold"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div>
-        <div class="menu-text"><div class="menu-label">Infos & Contact</div><div class="menu-sub">À propos, contact, mentions légales</div></div>
-        <span class="menu-arrow">›</span>
-      </div>
-      <div class="menu-item menu-affilie" id="affiliateMenuItem" onclick="becomeAffiliate()">
-        <div class="menu-icon yellow"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
-        <div class="menu-text"><div class="menu-label">Devenir Affilié/Affiliée</div><div class="menu-sub">Partage des produits et gagne 2% par vente</div></div>
-        <span class="menu-arrow">›</span>
-      </div>
-      <div class="menu-item menu-logout" id="logoutItem" style="display:none;" onclick="signOut()">
-        <div class="menu-icon red-icon"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
-        <div class="menu-text"><div class="menu-label" style="color:var(--red);">Se déconnecter</div><div class="menu-sub">Quitter mon compte</div></div>
-        <span class="menu-arrow">›</span>
-      </div>
-    </div>
-  </div>
-  <!-- ══ PAGE INFOS ══ -->
-  <div class="page" id="page-infos">
-    <div class="sell-hero">
-      <h2>Infos & Contact</h2>
-      <p>Tout savoir sur Ga-izan</p>
-    </div>
-    <div class="menu-list">
-      <div class="menu-item" onclick="showInfoSection('apropos')">
-        <div class="menu-text"><div class="menu-label">À propos</div><div class="menu-sub">Notre mission</div></div>
-        <span class="menu-arrow">›</span>
-      </div>
-      <div class="menu-item" onclick="showInfoSection('contact')">
-        <div class="menu-text"><div class="menu-label">Contact</div><div class="menu-sub">Nous écrire · Mettre un produit en avant</div></div>
-        <span class="menu-arrow">›</span>
-      </div>
-      <div class="menu-item" onclick="showInfoSection('legal')">
-        <div class="menu-text"><div class="menu-label">Mentions légales</div><div class="menu-sub">Conditions d'utilisation</div></div>
-        <span class="menu-arrow">›</span>
-      </div>
-    </div>
-    <div id="infoContent" style="margin-top:20px;"></div>
-    <div style="text-align:center;margin-top:40px;padding:20px;font-size:12px;color:var(--muted2);">
-      Créé par <strong>SteFi Services</strong>
-    </div>
-  </div>
-  <!-- ══ PAGE DETAIL ══ -->
-  <div class="page" id="page-detail">
-    <button class="back-btn" onclick="goBack()">
-      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-      Retour
-    </button>
-    <div id="detailContent"></div>
-  </div>
+  </div>
+  <!-- ══ PAGE INFOS ══ -->
+  <div class="page" id="page-infos">
+    <div class="sell-hero">
+      <h2>Infos & Contact</h2>
+      <p>Tout savoir sur Ga-izan</p>
+    </div>
+    <div class="menu-list">
+      <div class="menu-item" onclick="showInfoSection('apropos')">
+        <div class="menu-text"><div class="menu-label">À propos</div><div class="menu-sub">Notre mission</div></div>
+        <span class="menu-arrow">›</span>
+      </div>
+      <div class="menu-item" onclick="showInfoSection('contact')">
+        <div class="menu-text"><div class="menu-label">Contact</div><div class="menu-sub">Nous écrire · Mettre un produit en avant</div></div>
+        <span class="menu-arrow">›</span>
+      </div>
+      <div class="menu-item" onclick="showInfoSection('legal')">
+        <div class="menu-text"><div class="menu-label">Mentions légales</div><div class="menu-sub">Conditions d'utilisation</div></div>
+        <span class="menu-arrow">›</span>
+      </div>
+    </div>
+    <div id="infoContent" style="margin-top:20px;"></div>
+    <div style="text-align:center;margin-top:40px;padding:20px;font-size:12px;color:var(--muted2);">
+      Créé par <strong>SteFi Services</strong>
+    </div>
+  </div>
+  <!-- ══ PAGE DETAIL ══ -->
+  <div class="page" id="page-detail">
+    <button class="back-btn" onclick="goBack()">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Retour
+    </button>
+    <div id="detailContent"></div>
+  </div>
 </div><!-- .app -->
 <!-- ══ BOTTOM NAV ══ -->
 <nav class="bottom-nav">
-  <button class="nav-item active" id="nav-home" onclick="navigate('home')">
-    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-    Accueil
-  </button>
-  <button class="nav-item" id="nav-market" onclick="navigate('market')">
-    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    Marché
-  </button>
-  <button class="nav-item" id="nav-sales" onclick="navigate('my-products')">
-    <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 3H8L6 7h12l-2-4z"/></svg>
-    Ventes
-  </button>
-  <button class="nav-item" id="nav-panier" onclick="navigate('panier')">
-    <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-    Achats
-  </button>
-  <button class="nav-item" id="nav-profile" onclick="navigate('profile')">
-    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-    Profil
-  </button>
+  <button class="nav-item active" id="nav-home" onclick="navigate('home')">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Accueil
+  </button>
+  <button class="nav-item" id="nav-market" onclick="navigate('market')">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    Marché
+  </button>
+  <button class="nav-item" id="nav-sales" onclick="navigate('my-products')">
+    <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 3H8L6 7h12l-2-4z"/></svg>
+    Ventes
+  </button>
+  <button class="nav-item" id="nav-panier" onclick="navigate('panier')">
+    <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+    Achats
+  </button>
+  <button class="nav-item" id="nav-profile" onclick="navigate('profile')">
+    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    Profil
+  </button>
 </nav>
 <!-- ══ MODALS ══ -->
 <div class="modal-overlay" id="payModal">
-  <div class="modal"><div class="modal-handle"></div><div id="payModalContent"></div></div>
+  <div class="modal"><div class="modal-handle"></div><div id="payModalContent"></div></div>
 </div>
 <div class="modal-overlay" id="editModal">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Modifier le profil</div>
-    <div class="field"><label>Nom d'affichage *</label><input id="editName" placeholder="Ton nom ou pseudo" maxlength="40"/></div>
-    <div class="field"><label>WhatsApp *</label><input id="editWa" placeholder="+509 XXXX XXXX" type="tel" maxlength="16"/></div>
-    <div class="field-row">
-      <div class="field" style="margin-bottom:0;"><label>MonCash</label><input id="editMc" placeholder="+509 XXXX XXXX" type="tel" maxlength="16"/></div>
-      <div class="field" style="margin-bottom:0;"><label>NatCash</label><input id="editNc" placeholder="+509 XXXX XXXX" type="tel" maxlength="16"/></div>
-    </div>
-    <div class="field"><label>Photo de profil (optionnel)</label><input type="file" id="editAvatar" accept="image/*"/></div>
-    <div class="gap-md"></div>
-    <button class="btn btn-primary btn-full" onclick="saveProfile()">Enregistrer</button>
-    <button class="btn btn-ghost btn-full" onclick="closeModal('editModal')" style="margin-top:10px;">Annuler</button>
-  </div>
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Modifier le profil</div>
+    <div class="field"><label>Nom d'affichage *</label><input id="editName" placeholder="Ton nom ou pseudo" maxlength="40"/></div>
+    <div class="field"><label>Nom de la boutique (optionnel)</label><input id="editShopName" placeholder="Ex : Boutique Marie, TechShop509…" maxlength="60"/></div>
+    <div class="field"><label>WhatsApp *</label><input id="editWa" placeholder="+509 XXXX XXXX" type="tel" maxlength="16"/></div>
+    <div class="field-row">
+      <div class="field" style="margin-bottom:0;"><label>MonCash</label><input id="editMc" placeholder="+509 XXXX XXXX" type="tel" maxlength="16"/></div>
+      <div class="field" style="margin-bottom:0;"><label>NatCash</label><input id="editNc" placeholder="+509 XXXX XXXX" type="tel" maxlength="16"/></div>
+    </div>
+    <div class="field"><label>Photo de profil (optionnel)</label><input type="file" id="editAvatar" accept="image/*"/></div>
+    <div class="gap-md"></div>
+    <button class="btn btn-primary btn-full" onclick="saveProfile()">Enregistrer</button>
+    <button class="btn btn-ghost btn-full" onclick="closeModal('editModal')" style="margin-top:10px;">Annuler</button>
+  </div>
 </div>
 <div class="modal-overlay" id="authModal">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="auth-tabs">
-      <button class="auth-tab active" id="tabSignup" onclick="switchAuthTab('signup')">Créer un compte</button>
-      <button class="auth-tab" id="tabSignin" onclick="switchAuthTab('signin')">Se connecter</button>
-    </div>
-    <div id="authSignup">
-      <div class="field"><label>Email *</label><input id="signupEmail" type="email" placeholder="ton@email.com"/></div>
-      <div class="field">
-        <label>Mot de passe *</label>
-        <div class="input-with-prefix">
-          <input id="signupPass" type="password" placeholder="6 caractères minimum" style="border:none;border-radius:0;"/>
-          <button type="button" onclick="togglePwd('signupPass',this)" style="background:none;border:none;padding:0 12px;cursor:pointer;font-size:16px;color:var(--muted2);flex-shrink:0;">👁</button>
-        </div>
-      </div>
-      <button class="btn btn-primary btn-full" id="signupBtn" onclick="doSignUp()">Créer mon compte</button>
-      <p style="font-size:11px;color:var(--muted2);text-align:center;margin-top:12px;line-height:1.6;">Un email de confirmation te sera envoyé.</p>
-    </div>
-    <div id="authSignin" style="display:none;">
-      <div class="field"><label>Email *</label><input id="signinEmail" type="email" placeholder="ton@email.com"/></div>
-      <div class="field">
-        <label>Mot de passe *</label>
-        <div class="input-with-prefix">
-          <input id="signinPass" type="password" placeholder="Ton mot de passe" style="border:none;border-radius:0;"/>
-          <button type="button" onclick="togglePwd('signinPass',this)" style="background:none;border:none;padding:0 12px;cursor:pointer;font-size:16px;color:var(--muted2);flex-shrink:0;">👁</button>
-        </div>
-      </div>
-      <button class="btn btn-primary btn-full" id="signinBtn" onclick="doSignIn()">Se connecter</button>
-      <button onclick="doForgotPassword()" style="background:none;border:none;color:var(--purple);font-size:12px;cursor:pointer;width:100%;margin-top:12px;text-align:center;font-weight:600;">Mot de passe oublié ?</button>
-    </div>
-    <button class="btn btn-ghost btn-full" onclick="closeModal('authModal')" style="margin-top:10px;">Fermer</button>
-  </div>
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabSignup" onclick="switchAuthTab('signup')">Créer un compte</button>
+      <button class="auth-tab" id="tabSignin" onclick="switchAuthTab('signin')">Se connecter</button>
+    </div>
+    <div id="authSignup">
+      <div class="field"><label>Email *</label><input id="signupEmail" type="email" placeholder="ton@email.com"/></div>
+      <div class="field">
+        <label>Mot de passe *</label>
+        <div class="input-with-prefix">
+          <input id="signupPass" type="password" placeholder="6 caractères minimum" style="border:none;border-radius:0;"/>
+          <button type="button" onclick="togglePwd('signupPass',this)" style="background:none;border:none;padding:0 12px;cursor:pointer;font-size:16px;color:var(--muted2);flex-shrink:0;">👁</button>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-full" id="signupBtn" onclick="doSignUp()">Créer mon compte</button>
+      <p style="font-size:11px;color:var(--muted2);text-align:center;margin-top:12px;line-height:1.6;">Un email de confirmation te sera envoyé.</p>
+    </div>
+    <div id="authSignin" style="display:none;">
+      <div class="field"><label>Email *</label><input id="signinEmail" type="email" placeholder="ton@email.com"/></div>
+      <div class="field">
+        <label>Mot de passe *</label>
+        <div class="input-with-prefix">
+          <input id="signinPass" type="password" placeholder="Ton mot de passe" style="border:none;border-radius:0;"/>
+          <button type="button" onclick="togglePwd('signinPass',this)" style="background:none;border:none;padding:0 12px;cursor:pointer;font-size:16px;color:var(--muted2);flex-shrink:0;">👁</button>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-full" id="signinBtn" onclick="doSignIn()">Se connecter</button>
+      <button onclick="doForgotPassword()" style="background:none;border:none;color:var(--purple);font-size:12px;cursor:pointer;width:100%;margin-top:12px;text-align:center;font-weight:600;">Mot de passe oublié ?</button>
+    </div>
+    <button class="btn btn-ghost btn-full" onclick="closeModal('authModal')" style="margin-top:10px;">Fermer</button>
+  </div>
 </div>
 <div class="modal-overlay" id="onboardModal">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div id="onboardContent"></div>
-  </div>
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div id="onboardContent"></div>
+  </div>
 </div>
 <div class="toast" id="toast"></div>
 <!-- ══ SCRIPTS ══ -->
@@ -413,15 +382,16 @@
 <script>
 updateCartBadge();
 renderProfile();
-loadProducts();
+loadProducts().then(function() { checkAffiliateParams(); });
 setupRealtime();
 </script>
 <script>
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('sw.js');
-  });
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('sw.js');
+  });
 }
 </script>
 </body>
 </html>
+
