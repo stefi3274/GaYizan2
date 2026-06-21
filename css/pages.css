@@ -1,3 +1,4 @@
+
 /* ════════════════════════════════
    HERO HOME
 ════════════════════════════════ */
@@ -67,7 +68,6 @@
 .hero-stat{ flex:1; text-align:center; }
 .hero-stat-val{ font-family:'DM Mono',monospace; font-size:18px; font-weight:500; color:var(--gold-l); }
 .hero-stat-lbl{ font-size:10px; opacity:.6; margin-top:2px; text-transform:uppercase; letter-spacing:.4px; }
-
 /* ════════════════════════════════
    PRODUCT GRID (HOME)
 ════════════════════════════════ */
@@ -97,7 +97,6 @@
 .prod-card-footer{ display:flex; align-items:center; justify-content:space-between; }
 .prod-card-price{ font-family:'DM Mono',monospace; font-size:13px; font-weight:500; color:var(--purple); }
 .prod-card-views{ font-size:10px; color:var(--muted2); }
-
 /* ════════════════════════════════
    MARKET PAGE
 ════════════════════════════════ */
@@ -143,7 +142,6 @@
   font-size:9px; font-weight:700;
   display:flex; align-items:center; justify-content:center;
 }
-
 /* ════════════════════════════════
    SELL PAGE
 ════════════════════════════════ */
@@ -169,7 +167,6 @@
 }
 .emoji-opt:hover{ transform:scale(1.08); }
 .emoji-opt.selected{ border-color:var(--purple); background:var(--purple-pale); }
-
 /* ════════════════════════════════
    DETAIL PAGE
 ════════════════════════════════ */
@@ -209,7 +206,6 @@
 .seller-name{ font-weight:700; font-size:14px; margin-bottom:2px; }
 .seller-meta{ font-size:11px; color:var(--muted2); }
 .detail-actions{ display:flex; flex-direction:column; gap:10px; }
-
 /* ════════════════════════════════
    PROFILE PAGE
 ════════════════════════════════ */
@@ -256,10 +252,6 @@
 .auth-prompt-icon{ font-size:28px; margin-bottom:8px; }
 .auth-prompt-title{ font-weight:700; margin-bottom:4px; }
 .auth-prompt-sub{ font-size:12px; color:var(--muted); margin-bottom:14px; }
-
-/* ════════════════════════════════
-   MENU PROFIL — colore et dynamique
-════════════════════════════════ */
 .menu-list{ display:flex; flex-direction:column; gap:10px; }
 .menu-item{
   display:flex; align-items:center; gap:14px; padding:16px;
@@ -277,51 +269,39 @@
 }
 .menu-item:hover .menu-icon{ transform:scale(1.08); }
 .menu-icon svg{ width:20px; height:20px; stroke:var(--purple); fill:none; stroke-width:1.8; }
-
-/* Couleurs par bouton */
 .menu-icon.green{ background:#D1FAE5; }
 .menu-icon.green svg{ stroke:#059669; }
 .menu-item.menu-vendeur{ border-color:#A7F3D0; }
 .menu-item.menu-vendeur:hover{ border-color:#059669; box-shadow:0 4px 16px rgba(5,150,105,0.15); }
-
 .menu-icon.yellow{ background:#FEF3C7; }
 .menu-icon.yellow svg{ stroke:#D97706; }
 .menu-item.menu-affilie{ border-color:#FDE68A; }
 .menu-item.menu-affilie:hover{ border-color:#D97706; box-shadow:0 4px 16px rgba(217,119,6,0.15); }
-
 .menu-icon.violet{ background:var(--purple-pale); }
 .menu-icon.violet svg{ stroke:var(--purple); }
 .menu-item.menu-espace{ border-color:#DDD6FE; }
 .menu-item.menu-espace:hover{ border-color:var(--purple); box-shadow:0 4px 16px rgba(107,33,232,0.15); }
-
 .menu-icon.blue{ background:#DBEAFE; }
 .menu-icon.blue svg{ stroke:#2563EB; }
 .menu-item.menu-achats{ border-color:#BFDBFE; }
 .menu-item.menu-achats:hover{ border-color:#2563EB; box-shadow:0 4px 16px rgba(37,99,235,0.15); }
-
 .menu-icon.gold{ background:#FEF3C7; }
 .menu-icon.gold svg{ stroke:#B45309; }
 .menu-item.menu-infos{ border-color:#FDE68A; }
 .menu-item.menu-infos:hover{ border-color:#B45309; box-shadow:0 4px 16px rgba(180,83,9,0.15); }
-
 .menu-icon.purple-main{ background:linear-gradient(135deg,var(--purple),var(--purple-l)); }
 .menu-icon.purple-main svg{ stroke:#fff; }
 .menu-item.menu-edit{ border-color:#DDD6FE; }
 .menu-item.menu-edit:hover{ border-color:var(--purple); box-shadow:0 4px 16px rgba(107,33,232,0.15); }
-
 .menu-icon.red-icon{ background:#FEE2E2; }
 .menu-icon.red-icon svg{ stroke:#DC2626; }
 .menu-item.menu-logout{ border-color:#FECACA; }
 .menu-item.menu-logout:hover{ border-color:#DC2626; box-shadow:0 4px 16px rgba(220,38,38,0.15); }
-
 .menu-text{ flex:1; }
 .menu-label{ font-size:15px; font-weight:700; }
 .menu-sub{ font-size:11px; color:var(--muted2); margin-top:2px; }
 .menu-arrow{ color:var(--muted2); font-size:18px; font-weight:300; }
 
-/* ════════════════════════════════
-   VENDOR PAGE
-════════════════════════════════ */
 .vendor-tabs{
   display:flex; gap:4px; padding:4px;
   background:var(--bg); border-radius:var(--r); margin-bottom:16px;
@@ -353,7 +333,6 @@
 .my-prod-meta{ font-size:11px; color:var(--muted2); margin-top:2px; }
 .my-prod-price{ font-family:'DM Mono',monospace; font-size:13px; font-weight:500; color:var(--purple); margin-top:3px; }
 .my-prod-actions{ display:flex; gap:6px; flex-shrink:0; }
-
 /* ════════════════════════════════
    ONBOARDING
 ════════════════════════════════ */
