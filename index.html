@@ -7,7 +7,7 @@
 <title>Ga-izan — Marketplace Haïtien</title>
 <meta property="og:title" content="Ga-izan — Marketplace Haïtien"/>
 <meta property="og:description" content="Achetez et vendez des produits locaux en Haïti. Paiement mobile MonCash et NatCash."/>
-<meta property="og:image" content="https://gaizanmarket.com/icon-512.png"/>
+<meta property="og:image" content="https://gaizanmarket.com/logo.jpg"/>
 <meta property="og:url" content="https://gaizanmarket.com"/>
 <meta property="og:type" content="website"/>
 <meta name="twitter:card" content="summary_large_image"/>
@@ -22,7 +22,12 @@
 </head>
 <body>
 <div class="app">
- <div class="header-right">
+  <header>
+    <div class="logo">
+      <img src="logo.jpg" style="width:32px;height:32px;border-radius:9px;object-fit:cover;"/>
+      Ga-<em>izan</em>
+    </div>
+    <div class="header-right">
       <button class="icon-btn" id="installBtnHeader" onclick="installPWA()" style="display:none;">
         <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       </button>
@@ -34,6 +39,7 @@
         <span class="sync-indicator loading" id="syncDot"></span>
       </button>
     </div>
+  </header>
   <!-- ══ PAGE ACCUEIL ══ -->
   <div class="page active" id="page-home">
     <div class="hero-home">

@@ -260,7 +260,7 @@ if (S.profile.avatar_url) {
 } else {
   avEl.textContent = (name[0]||'?').toUpperCase();
 }
-  document.getElementById('profileWa').textContent = S.profile.whatsapp ? formatPhone(S.profile.whatsapp) : 'Complete ton profil';
+  document.getElementById('profileWa').textContent = S.profile.whatsapp ? formatPhone(S.profile.whatsapp) : 'Complète ton Profil';
   const mine = S.products.filter(function(p) { return S.user && p.uid === S.user.id; });
   document.getElementById('statProd').textContent  = mine.length;
   document.getElementById('statSales').textContent = S.profile.sales_count || 0;
