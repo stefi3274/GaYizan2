@@ -419,25 +419,25 @@ function renderProfileMenu() {
   var html = '';
   // 1. Espace Vendeur / Devenir Vendeur
   if (isVerified) {
-    html += '<div class="menu-item menu-espace" onclick="navigate(&quot;my-products&quot;)">' +
+    html += '<div class="menu-item menu-espace" onclick="navigate(\'my-products\')">' +
       '<div class="menu-icon violet" style="background:var(--purple);"><svg viewBox="0 0 24 24" fill="white"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 3H8L6 7h12l-2-4z"/></svg></div>' +
       '<div class="menu-text"><div class="menu-label">Espace Vendeur</div><div class="menu-sub" style="color:#7C3AED;">Gérer mes produits & commandes reçues 🛍️</div></div>' +
       '<span class="menu-arrow">›</span></div>';
   } else {
-    html += '<div class="menu-item menu-vendeur" onclick="navigate(&quot;vendor-signup&quot;)">' +
+    html += '<div class="menu-item menu-vendeur" onclick="navigate(\'vendor-signup\')">' +
       '<div class="menu-icon green" style="background:#059669;"><svg viewBox="0 0 24 24" fill="white"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/><line x1="12" y1="11" x2="12" y2="17" stroke="white" stroke-width="1.8"/><line x1="9" y1="14" x2="15" y2="14" stroke="white" stroke-width="1.8"/></svg></div>' +
       '<div class="menu-text"><div class="menu-label">Devenir Vendeur/Vendeuse</div><div class="menu-sub" style="color:#059669;">Rejoins la communauté et commence à vendre 🌟</div></div>' +
       '<span class="menu-arrow">›</span></div>';
   }
   // 2. Mes achats
-  html += '<div class="menu-item menu-achats" onclick="navigate(&quot;panier&quot;)">' +
+  html += '<div class="menu-item menu-achats" onclick="navigate(\'panier\')">' +
     '<div class="menu-icon blue" style="background:#2563EB;"><svg viewBox="0 0 24 24" fill="white"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6" stroke="white" stroke-width="1.8"/><path d="M16 10a4 4 0 01-8 0" fill="none" stroke="white" stroke-width="1.8"/></svg></div>' +
     '<div class="menu-text"><div class="menu-label">Mes achats</div><div class="menu-sub" style="color:#2563EB;">Retrouve toutes tes commandes ici 📦</div></div>' +
     '<span class="menu-arrow">›</span></div>';
 
   // 3. Marketing d affiliation / Espace Affilié
   if (isAffiliate) {
-    html += '<div class="menu-item menu-affilie" id="affiliateMenuItem" onclick="navigate(&quot;affiliations&quot;)">' +
+    html += '<div class="menu-item menu-affilie" id="affiliateMenuItem" onclick="navigate(\'affiliations\')">' +
       '<div class="menu-icon yellow" style="background:#D97706;"><svg viewBox="0 0 24 24" fill="white"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" stroke="white" stroke-width="1.8"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" stroke="white" stroke-width="1.8"/></svg></div>' +
       '<div class="menu-text"><div class="menu-label">Espace Affilié</div><div class="menu-sub" style="color:#D97706;">Mes points, mes liens & mes gains 💰</div></div>' +
       '<span class="menu-arrow">›</span></div>';
@@ -453,7 +453,7 @@ function renderProfileMenu() {
     '<div class="menu-text"><div class="menu-label">Modifier le profil</div><div class="menu-sub" style="color:var(--purple);">Nom, boutique, WhatsApp, MonCash, NatCash 🖊️</div></div>' +
     '<span class="menu-arrow">›</span></div>';
   // 5. Infos & Contact
-  html += '<div class="menu-item menu-infos" onclick="navigate(&quot;infos&quot;)">' +
+  html += '<div class="menu-item menu-infos" onclick="navigate(\'infos\')">' +
     '<div class="menu-icon gold" style="background:#B45309;"><svg viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12" stroke="white" stroke-width="1.8"/><line x1="12" y1="8" x2="12.01" y2="8" stroke="white" stroke-width="1.8"/></svg></div>' +
     '<div class="menu-text"><div class="menu-label">Infos & Contact</div><div class="menu-sub" style="color:#B45309;">À propos, nous contacter, mentions légales 📋</div></div>' +
     '<span class="menu-arrow">›</span></div>';
