@@ -1,4 +1,5 @@
 
+
 // ════════════════════════════════
 // UTILS
 // ════════════════════════════════
@@ -231,8 +232,8 @@ async function openDetail(id) {
     (!isOwn && (hasMc||hasNc) ? '<button class="btn btn-gold btn-full" onclick="openPayFlow(' + p.id + ')">Proceder au paiement</button>' : '') +
     (!isOwn ? '<button class="btn btn-primary btn-full" onclick="openWA(\'' + p.phone + '\',\'' + encodeURIComponent(p.name) + '\',\'' + formatPrice(p.price) + '\')">Contacter sur WhatsApp</button>' : '') +
     '<button class="btn btn-ghost btn-full" onclick="goBack()">Retour</button>' +
-    (p.affiliation_active && S.user && !isOwn && S.profile.is_affiliate ? '<button class="btn btn-outline btn-full" style="margin-top:8px;" onclick="getAffiliateLink(' + p.id + ')">🔗 Obtenir mon lien d\'affiliation</button>' : '') +
-    (p.affiliation_active && S.user && !isOwn && !S.profile.is_affiliate ? '<div style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px;">💡 <a href="#" onclick="becomeAffiliate();return false;" style="color:var(--purple);font-weight:600;">Deviens affilié.e</a> pour partager ce produit et gagner 2%</div>' : '') +
+    (p.affiliation_active && S.user && !isOwn && S.profile.is_affiliate ? '<button class="btn btn-outline btn-full" style="margin-top:8px;" onclick="getAffiliateLink(' + p.id + ')">🔗 Obtenir mon lien d\'affiliation</button>' : '') +
+    (p.affiliation_active && S.user && !isOwn && !S.profile.is_affiliate ? '<div style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px;">💡 <a href="#" onclick="becomeAffiliate();return false;" style="color:var(--purple);font-weight:600;">Deviens affilié.e</a> pour partager ce produit et gagner 2%</div>' : '') +
     '</div>';
 }// ════════════════════════════════
 // PROFIL
@@ -243,7 +244,7 @@ async function loadProfile() {
   if (res.error) { console.error('loadProfile:', res.error); return; }
   if (res.data) {
 S.profile = { name: res.data.name||'', whatsapp: res.data.whatsapp||'', moncash: res.data.moncash||'', natcash: res.data.natcash||'', sales_count: res.data.sales_count||0, avatar_url: res.data.avatar_url||'', verification_status: res.data.verification_status||'', is_affiliate: res.data.is_affiliate||false, points_total: res.data.points_total||0 };
-  renderProfileMenu();
+  renderProfileMenu();
   } else {
     await sb.from('profiles').insert({ id: S.user.id, name:'', whatsapp:'', moncash:'', natcash:'', sales_count:0 });
   }
@@ -304,7 +305,7 @@ async function saveProfile() {
 }
 function openEditModal() {
   document.getElementById('editName').value = S.profile.name     || '';
-  if (document.getElementById('editShopName')) document.getElementById('editShopName').value = S.profile.shop_name || '';
+  if (document.getElementById('editShopName')) document.getElementById('editShopName').value = S.profile.shop_name || '';
   document.getElementById('editWa').value   = S.profile.whatsapp || '';
   document.getElementById('editMc').value   = S.profile.moncash  || '';
   document.getElementById('editNc').value   = S.profile.natcash  || '';
@@ -406,143 +407,126 @@ window.addEventListener('appinstalled', function() {
   var b = document.getElementById('installBtnHeader');
   if (b) b.style.display = 'none';
 });
-
-
 // ════════════════════════════════
 // MENU PROFIL DYNAMIQUE
 // ════════════════════════════════
 function renderProfileMenu() {
-  var el = document.getElementById('profileMenuList');
-  if (!el) return;
-  var isVerified = S.profile.verification_status === 'verified';
-  var isAffiliate = S.profile.is_affiliate === true;
-  var isLoggedIn = !!S.user;
+  var el = document.getElementById('profileMenuList');
+  if (!el) return;
+  var isVerified = S.profile.verification_status === 'verified';
+  var isAffiliate = S.profile.is_affiliate === true;
+  var isLoggedIn = !!S.user;
+  var html = '';
+  // 1. Espace Vendeur / Devenir Vendeur
+  if (isVerified) {
+    html += '<div class="menu-item menu-espace" onclick="navigate(&quot;my-products&quot;)">' +
+      '<div class="menu-icon violet" style="background:var(--purple);"><svg viewBox="0 0 24 24" fill="white"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 3H8L6 7h12l-2-4z"/></svg></div>' +
+      '<div class="menu-text"><div class="menu-label">Espace Vendeur</div><div class="menu-sub" style="color:#7C3AED;">Gérer mes produits & commandes reçues 🛍️</div></div>' +
+      '<span class="menu-arrow">›</span></div>';
+  } else {
+    html += '<div class="menu-item menu-vendeur" onclick="navigate(&quot;vendor-signup&quot;)">' +
+      '<div class="menu-icon green" style="background:#059669;"><svg viewBox="0 0 24 24" fill="white"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/><line x1="12" y1="11" x2="12" y2="17" stroke="white" stroke-width="1.8"/><line x1="9" y1="14" x2="15" y2="14" stroke="white" stroke-width="1.8"/></svg></div>' +
+      '<div class="menu-text"><div class="menu-label">Devenir Vendeur/Vendeuse</div><div class="menu-sub" style="color:#059669;">Rejoins la communauté et commence à vendre 🌟</div></div>' +
+      '<span class="menu-arrow">›</span></div>';
+  }
+  // 2. Mes achats
+  html += '<div class="menu-item menu-achats" onclick="navigate(&quot;panier&quot;)">' +
+    '<div class="menu-icon blue" style="background:#2563EB;"><svg viewBox="0 0 24 24" fill="white"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6" stroke="white" stroke-width="1.8"/><path d="M16 10a4 4 0 01-8 0" fill="none" stroke="white" stroke-width="1.8"/></svg></div>' +
+    '<div class="menu-text"><div class="menu-label">Mes achats</div><div class="menu-sub" style="color:#2563EB;">Retrouve toutes tes commandes ici 📦</div></div>' +
+    '<span class="menu-arrow">›</span></div>';
 
-  var html = '';
-
-  // 1. Espace Vendeur / Devenir Vendeur
-  if (isVerified) {
-    html += '<div class="menu-item menu-espace" onclick="navigate('my-products')">' +
-      '<div class="menu-icon violet" style="background:var(--purple);"><svg viewBox="0 0 24 24" fill="white"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 3H8L6 7h12l-2-4z"/></svg></div>' +
-      '<div class="menu-text"><div class="menu-label">Espace Vendeur</div><div class="menu-sub" style="color:#7C3AED;">Gérer mes produits & commandes reçues 🛍️</div></div>' +
-      '<span class="menu-arrow">›</span></div>';
-  } else {
-    html += '<div class="menu-item menu-vendeur" onclick="navigate('vendor-signup')">' +
-      '<div class="menu-icon green" style="background:#059669;"><svg viewBox="0 0 24 24" fill="white"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/><line x1="12" y1="11" x2="12" y2="17" stroke="white" stroke-width="1.8"/><line x1="9" y1="14" x2="15" y2="14" stroke="white" stroke-width="1.8"/></svg></div>' +
-      '<div class="menu-text"><div class="menu-label">Devenir Vendeur/Vendeuse</div><div class="menu-sub" style="color:#059669;">Rejoins la communauté et commence à vendre 🌟</div></div>' +
-      '<span class="menu-arrow">›</span></div>';
-  }
-
-  // 2. Mes achats
-  html += '<div class="menu-item menu-achats" onclick="navigate('panier')">' +
-    '<div class="menu-icon blue" style="background:#2563EB;"><svg viewBox="0 0 24 24" fill="white"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6" stroke="white" stroke-width="1.8"/><path d="M16 10a4 4 0 01-8 0" fill="none" stroke="white" stroke-width="1.8"/></svg></div>' +
-    '<div class="menu-text"><div class="menu-label">Mes achats</div><div class="menu-sub" style="color:#2563EB;">Retrouve toutes tes commandes ici 📦</div></div>' +
-    '<span class="menu-arrow">›</span></div>';
-
-  // 3. Marketing d affiliation / Espace Affilié
-  if (isAffiliate) {
-    html += '<div class="menu-item menu-affilie" id="affiliateMenuItem" onclick="navigate('affiliations')">' +
-      '<div class="menu-icon yellow" style="background:#D97706;"><svg viewBox="0 0 24 24" fill="white"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" stroke="white" stroke-width="1.8"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" stroke="white" stroke-width="1.8"/></svg></div>' +
-      '<div class="menu-text"><div class="menu-label">Espace Affilié</div><div class="menu-sub" style="color:#D97706;">Mes points, mes liens & mes gains 💰</div></div>' +
-      '<span class="menu-arrow">›</span></div>';
-  } else {
-    html += '<div class="menu-item menu-affilie" id="affiliateMenuItem" onclick="becomeAffiliate()">' +
-      '<div class="menu-icon yellow" style="background:#D97706;"><svg viewBox="0 0 24 24" fill="white"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" stroke="white" stroke-width="1.8"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" stroke="white" stroke-width="1.8"/></svg></div>' +
-      '<div class="menu-text"><div class="menu-label">Marketing d'affiliation</div><div class="menu-sub" style="color:#D97706;">Partage & gagne 2% sur chaque vente générée ✨</div></div>' +
-      '<span class="menu-arrow">›</span></div>';
-  }
-
-  // 4. Modifier le profil
-  html += '<div class="menu-item menu-edit" onclick="openEditModal()">' +
-    '<div class="menu-icon purple-main" style="background:linear-gradient(135deg,var(--purple),var(--purple-l));"><svg viewBox="0 0 24 24" fill="white"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>' +
-    '<div class="menu-text"><div class="menu-label">Modifier le profil</div><div class="menu-sub" style="color:var(--purple);">Nom, boutique, WhatsApp, MonCash, NatCash 🖊️</div></div>' +
-    '<span class="menu-arrow">›</span></div>';
-
-  // 5. Infos & Contact
-  html += '<div class="menu-item menu-infos" onclick="navigate('infos')">' +
-    '<div class="menu-icon gold" style="background:#B45309;"><svg viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12" stroke="white" stroke-width="1.8"/><line x1="12" y1="8" x2="12.01" y2="8" stroke="white" stroke-width="1.8"/></svg></div>' +
-    '<div class="menu-text"><div class="menu-label">Infos & Contact</div><div class="menu-sub" style="color:#B45309;">À propos, nous contacter, mentions légales 📋</div></div>' +
-    '<span class="menu-arrow">›</span></div>';
-
-  // 6. Se déconnecter (si connecté)
-  if (isLoggedIn) {
-    html += '<div class="menu-item menu-logout" id="logoutItem" onclick="signOut()">' +
-      '<div class="menu-icon red-icon" style="background:#DC2626;"><svg viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" stroke="white" stroke-width="1.8"/><polyline points="16 17 21 12 16 7" stroke="white" stroke-width="1.8" fill="none"/><line x1="21" y1="12" x2="9" y2="12" stroke="white" stroke-width="1.8"/></svg></div>' +
-      '<div class="menu-text"><div class="menu-label" style="color:var(--red);">Se déconnecter</div><div class="menu-sub" style="color:var(--red);">À bientôt sur Ga-izan 👋</div></div>' +
-      '<span class="menu-arrow">›</span></div>';
-  }
-
-  el.innerHTML = html;
+  // 3. Marketing d affiliation / Espace Affilié
+  if (isAffiliate) {
+    html += '<div class="menu-item menu-affilie" id="affiliateMenuItem" onclick="navigate(&quot;affiliations&quot;)">' +
+      '<div class="menu-icon yellow" style="background:#D97706;"><svg viewBox="0 0 24 24" fill="white"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" stroke="white" stroke-width="1.8"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" stroke="white" stroke-width="1.8"/></svg></div>' +
+      '<div class="menu-text"><div class="menu-label">Espace Affilié</div><div class="menu-sub" style="color:#D97706;">Mes points, mes liens & mes gains 💰</div></div>' +
+      '<span class="menu-arrow">›</span></div>';
+  } else {
+    html += '<div class="menu-item menu-affilie" id="affiliateMenuItem" onclick="becomeAffiliate()">' +
+      '<div class="menu-icon yellow" style="background:#D97706;"><svg viewBox="0 0 24 24" fill="white"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" stroke="white" stroke-width="1.8"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" stroke="white" stroke-width="1.8"/></svg></div>' +
+      '<div class="menu-text"><div class="menu-label">Marketing d\'affiliation</div><div class="menu-sub" style="color:#D97706;">Partage & gagne 2% sur chaque vente générée ✨</div></div>' +
+      '<span class="menu-arrow">›</span></div>';
+  }
+  // 4. Modifier le profil
+  html += '<div class="menu-item menu-edit" onclick="openEditModal()">' +
+    '<div class="menu-icon purple-main" style="background:linear-gradient(135deg,var(--purple),var(--purple-l));"><svg viewBox="0 0 24 24" fill="white"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>' +
+    '<div class="menu-text"><div class="menu-label">Modifier le profil</div><div class="menu-sub" style="color:var(--purple);">Nom, boutique, WhatsApp, MonCash, NatCash 🖊️</div></div>' +
+    '<span class="menu-arrow">›</span></div>';
+  // 5. Infos & Contact
+  html += '<div class="menu-item menu-infos" onclick="navigate(&quot;infos&quot;)">' +
+    '<div class="menu-icon gold" style="background:#B45309;"><svg viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12" stroke="white" stroke-width="1.8"/><line x1="12" y1="8" x2="12.01" y2="8" stroke="white" stroke-width="1.8"/></svg></div>' +
+    '<div class="menu-text"><div class="menu-label">Infos & Contact</div><div class="menu-sub" style="color:#B45309;">À propos, nous contacter, mentions légales 📋</div></div>' +
+    '<span class="menu-arrow">›</span></div>';
+  // 6. Se déconnecter (si connecté)
+  if (isLoggedIn) {
+    html += '<div class="menu-item menu-logout" id="logoutItem" onclick="signOut()">' +
+      '<div class="menu-icon red-icon" style="background:#DC2626;"><svg viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" stroke="white" stroke-width="1.8"/><polyline points="16 17 21 12 16 7" stroke="white" stroke-width="1.8" fill="none"/><line x1="21" y1="12" x2="9" y2="12" stroke="white" stroke-width="1.8"/></svg></div>' +
+      '<div class="menu-text"><div class="menu-label" style="color:var(--red);">Se déconnecter</div><div class="menu-sub" style="color:var(--red);">À bientôt sur Ga-izan 👋</div></div>' +
+      '<span class="menu-arrow">›</span></div>';
+  }
+  el.innerHTML = html;
 }
-
 // ════════════════════════════════
 // AFFILIATION — LIEN & CLICS
 // ════════════════════════════════
 async function getAffiliateLink(productId) {
-  if (!S.user || !S.profile.is_affiliate) {
-    toast('Tu dois être affilié.e pour obtenir un lien', 'error');
-    return;
-  }
-  var link = 'https://gaizanmarket.com?ref=' + S.user.id + '&produit=' + productId;
-
-  // Copier dans le presse-papier
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(link).then(function() {
-      toast('🔗 Lien copié ! Partage-le pour gagner des points', 'success');
-    });
-  } else {
-    window.prompt('Copie ce lien :', link);
-  }
+  if (!S.user || !S.profile.is_affiliate) {
+    toast('Tu dois être affilié.e pour obtenir un lien', 'error');
+    return;
+  }
+  var link = 'https://gaizanmarket.com?ref=' + S.user.id + '&produit=' + productId;
+  // Copier dans le presse-papier
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(link).then(function() {
+      toast('🔗 Lien copié ! Partage-le pour gagner des points', 'success');
+    });
+  } else {
+    window.prompt('Copie ce lien :', link);
+  }
 }
-
 async function trackAffiliateClick(affiliateId, productId) {
-  // Fingerprint visiteur (éviter doublons)
-  var fp = localStorage.getItem('ga_visitor');
-  if (!fp) {
-    fp = 'v_' + Date.now() + '_' + Math.random().toString(36).substr(2,9);
-    localStorage.setItem('ga_visitor', fp);
-  }
-
-  // Stocker l'affilié dans localStorage pour suivi futur (inscription vendeur, etc.)
-  localStorage.setItem('ga_ref', affiliateId);
-  localStorage.setItem('ga_ref_time', Date.now());
-
-  // Enregistrer le clic
-  var res = await sb.from('affiliate_clicks').insert([{
-    affiliate_id: affiliateId,
-    product_id: productId ? parseInt(productId) : null,
-    visitor_fingerprint: fp
-  }]);
-
-  if (!res.error) {
-    // Créditer 0.5 point à l'affilié
-    await sb.from('affiliate_points').insert([{
-      affiliate_id: affiliateId,
-      points: 0.5,
-      reason: 'Clic sur lien affilié'
-    }]);
-    await sb.from('profiles')
-      .update({ points_total: sb.raw('points_total + 0.5') })
-      .eq('id', affiliateId);
-  }
+  // Fingerprint visiteur (éviter doublons)
+  var fp = localStorage.getItem('ga_visitor');
+  if (!fp) {
+    fp = 'v_' + Date.now() + '_' + Math.random().toString(36).substr(2,9);
+    localStorage.setItem('ga_visitor', fp);
+  }
+  // Stocker l'affilié dans localStorage pour suivi futur (inscription vendeur, etc.)
+  localStorage.setItem('ga_ref', affiliateId);
+  localStorage.setItem('ga_ref_time', Date.now());
+  // Enregistrer le clic
+  var res = await sb.from('affiliate_clicks').insert([{
+    affiliate_id: affiliateId,
+    product_id: productId ? parseInt(productId) : null,
+    visitor_fingerprint: fp
+  }]);
+  if (!res.error) {
+    // Créditer 0.5 point à l'affilié
+    await sb.from('affiliate_points').insert([{
+      affiliate_id: affiliateId,
+      points: 0.5,
+      reason: 'Clic sur lien affilié'
+    }]);
+    await sb.from('profiles')
+      .update({ points_total: sb.raw('points_total + 0.5') })
+      .eq('id', affiliateId);
+  }
 }
-
 function checkAffiliateParams() {
-  var params = new URLSearchParams(window.location.search);
-  var ref = params.get('ref');
-  var produit = params.get('produit');
-  if (ref) {
-    trackAffiliateClick(ref, produit);
-    // Si un produit est spécifié, l'ouvrir directement
-    if (produit && S.products.length) {
-      var p = S.products.find(function(x) { return String(x.id) === String(produit); });
-      if (p) { showDetail(p.id); }
-    }
-    // Nettoyer l'URL
-    window.history.replaceState({}, '', window.location.pathname);
-  }
+  var params = new URLSearchParams(window.location.search);
+  var ref = params.get('ref');
+  var produit = params.get('produit');
+  if (ref) {
+    trackAffiliateClick(ref, produit);
+    // Si un produit est spécifié, l'ouvrir directement
+    if (produit && S.products.length) {
+      var p = S.products.find(function(x) { return String(x.id) === String(produit); });
+      if (p) { showDetail(p.id); }
+    }
+    // Nettoyer l'URL
+    window.history.replaceState({}, '', window.location.pathname);
+  }
 }
-
 // ════════════════════════════════
 // DEVENIR AFFILIÉ
 // ════════════════════════════════
@@ -567,5 +551,7 @@ async function becomeAffiliate() {
   S.profile.is_affiliate = true;
   toast('🎉 Tu es maintenant affilié.e !', 'success');
 }
+
+
 
 
