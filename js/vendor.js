@@ -71,6 +71,9 @@ async function submitVendorApplication() {
   btn.disabled = false; btn.textContent = 'Soumettre ma demande';
   if (res.error) { toast('Erreur lors de l\'envoi', 'error'); return; }
   S.profile = Object.assign({}, S.profile, update);
+  sb.functions.invoke('notify-kyc', {
+    body: { vendorName: name, vendorEmail: S.user.email }
+  });
   toast('Demande envoyée ! Vérification sous 24-48h.', 'success');
   loadVendorStatus();
 }
