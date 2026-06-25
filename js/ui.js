@@ -244,7 +244,24 @@ async function openDetail(id) {
     '<button class="btn btn-ghost btn-full" onclick="goBack()">Retour</button>' +
     (p.affiliation_active && S.user && !isOwn && S.profile.is_affiliate ? '<button class="btn btn-outline btn-full" style="margin-top:8px;" onclick="getAffiliateLink(' + p.id + ')">🔗 Obtenir mon lien d\'affiliation</button>' : '') +
     (p.affiliation_active && S.user && !isOwn && !S.profile.is_affiliate ? '<div style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px;">💡 <a href="#" onclick="becomeAffiliate();return false;" style="color:var(--purple);font-weight:600;">Deviens affilié.e</a> pour partager ce produit et gagner 2%</div>' : '') +
-    '</div>';
+    '</div>' +
+    '<div style="margin-top:24px;">' +
+    '<div style="font-size:15px;font-weight:700;margin-bottom:12px;">⭐ Avis clients</div>' +
+    '<div id="reviewsList_' + p.id + '"></div>' +
+    (!isOwn && S.user ? '<div style="margin-top:14px;padding:14px;background:var(--bg);border-radius:12px;border:1px solid var(--border);">' +
+    '<div style="font-size:13px;font-weight:600;margin-bottom:10px;">Laisser un avis</div>' +
+    '<select id="reviewRating_' + p.id + '" style="width:100%;margin-bottom:8px;padding:10px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;background:var(--surface);">' +
+    '<option value="">— Ta note —</option>' +
+    '<option value="5">⭐⭐⭐⭐⭐ Excellent</option>' +
+    '<option value="4">⭐⭐⭐⭐ Bien</option>' +
+    '<option value="3">⭐⭐⭐ Moyen</option>' +
+    '<option value="2">⭐⭐ Mauvais</option>' +
+    '<option value="1">⭐ Très mauvais</option>' +
+    '</select>' +
+    '<textarea id="reviewComment_' + p.id + '" placeholder="Ton commentaire (optionnel)\u2026" rows="3" style="width:100%;margin-bottom:10px;padding:10px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;background:var(--surface);"></textarea>' +
+    '<button class="btn btn-primary btn-full btn-sm" onclick="submitReview(' + p.id + ')">Envoyer mon avis 🙏</button>' +
+    '</div>' : '') +
+    '</div>';
   loadLikes(p.id);
   loadReviews(p.id);
 }// ════════════════════════════════
@@ -429,30 +446,22 @@ async function toggleLike(productId) {
   if (!S.user) { toast('Connecte-toi pour liker', 'error'); return; }
   var btn = document.getElementById('likeBtn_' + productId);
   var countEl = document.getElementById('likeCount_' + productId);
+  var alreadyLiked = btn && btn.getAttribute('data-liked') === '1';
 
-  // Vérifier si déjà liké
-  var check = await sb.from('product_likes')
-    .select('id')
-    .eq('product_id', productId)
-    .eq('user_id', S.user.id)
-    .single();
-
-  if (check.data) {
-    // Déjà liké — retirer le like
-    await sb.from('product_likes')
+  if (alreadyLiked) {
+    var del = await sb.from('product_likes')
       .delete()
       .eq('product_id', productId)
       .eq('user_id', S.user.id);
-    if (btn) btn.style.color = 'var(--muted)';
-    if (countEl) countEl.textContent = parseInt(countEl.textContent) - 1;
-    toast('Like retiré', 'success');
+    if (del.error) { toast('Erreur', 'error'); return; }
+    if (btn) { btn.setAttribute('data-liked','0'); btn.style.color = 'var(--muted)'; }
+    if (countEl) countEl.textContent = Math.max(0, parseInt(countEl.textContent) - 1);
   } else {
-    // Ajouter le like
-    await sb.from('product_likes')
-      .insert([{ product_id: productId, user_id: S.user.id }]);
-    if (btn) btn.style.color = '#DC2626';
+    var ins = await sb.from('product_likes')
+      .insert([{ product_id: parseInt(productId), user_id: S.user.id }]);
+    if (ins.error) { toast('Erreur', 'error'); return; }
+    if (btn) { btn.setAttribute('data-liked','1'); btn.style.color = '#DC2626'; }
     if (countEl) countEl.textContent = parseInt(countEl.textContent) + 1;
-    toast('❤️ Produit liké !', 'success');
   }
 }
 
@@ -468,9 +477,17 @@ async function loadLikes(productId) {
       .select('id')
       .eq('product_id', productId)
       .eq('user_id', S.user.id)
-      .single();
+      .maybeSingle();
     var btn = document.getElementById('likeBtn_' + productId);
-    if (btn && mine.data) btn.style.color = '#DC2626';
+    if (btn) {
+      if (mine.data) {
+        btn.setAttribute('data-liked','1');
+        btn.style.color = '#DC2626';
+      } else {
+        btn.setAttribute('data-liked','0');
+        btn.style.color = 'var(--muted)';
+      }
+    }
   }
 }
 

@@ -131,10 +131,9 @@ async function supprimerMonProduit(id) {
   if (!confirm('Supprimer ce produit ? Cette action est irreversible.')) return;
   var res = await sb.from('products')
     .update({ is_active: false })
-    .eq('id', id)
-    .eq('user_id', S.user.id);
+    .eq('id', id);
   if (res.error) { toast('Erreur : ' + res.error.message, 'error'); return; }
-  toast('Produit supprime', 'success');
+  toast('Produit supprime !', 'success');
   await loadProducts();
   renderMyProds();
 }
