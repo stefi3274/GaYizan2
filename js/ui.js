@@ -237,10 +237,16 @@ async function openDetail(id) {
     (isOwn ? '<div class="pay-warning">C\'est ton propre produit.</div>' : '') +
     (!isOwn && (hasMc||hasNc) ? '<button class="btn btn-gold btn-full" onclick="openPayFlow(' + p.id + ')">Proceder au paiement</button>' : '') +
     (!isOwn ? '<button class="btn btn-primary btn-full" onclick="openWA(\'' + p.phone + '\',\'' + encodeURIComponent(p.name) + '\',\'' + formatPrice(p.price) + '\')">Contacter sur WhatsApp</button>' : '') +
-    '<button class="btn btn-ghost btn-full" onclick="goBack()">Retour</button>' +
+    '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">' +
+    '<button id="likeBtn_' + p.id + '" class="btn btn-ghost" style="flex:1;" onclick="toggleLike(' + p.id + ')">❤️ <span id="likeCount_' + p.id + '">0</span> J\'aime</button>' +
+    (!isOwn ? '<button class="btn btn-ghost" style="font-size:12px;color:var(--muted);" onclick="signalerProduit(' + p.id + ',\'' + p.uid + '\')">⚠️ Signaler</button>' : '') +
+    '</div>' +
+    '<button class="btn btn-ghost btn-full" onclick="goBack()">Retour</button>' +
     (p.affiliation_active && S.user && !isOwn && S.profile.is_affiliate ? '<button class="btn btn-outline btn-full" style="margin-top:8px;" onclick="getAffiliateLink(' + p.id + ')">🔗 Obtenir mon lien d\'affiliation</button>' : '') +
     (p.affiliation_active && S.user && !isOwn && !S.profile.is_affiliate ? '<div style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px;">💡 <a href="#" onclick="becomeAffiliate();return false;" style="color:var(--purple);font-weight:600;">Deviens affilié.e</a> pour partager ce produit et gagner 2%</div>' : '') +
     '</div>';
+  loadLikes(p.id);
+  loadReviews(p.id);
 }// ════════════════════════════════
 // PROFIL
 // ════════════════════════════════
@@ -415,6 +421,135 @@ window.addEventListener('appinstalled', function() {
   var b = document.getElementById('installBtnHeader');
   if (b) b.style.display = 'none';
 });
+
+// ════════════════════════════════
+// LIKES
+// ════════════════════════════════
+async function toggleLike(productId) {
+  if (!S.user) { toast('Connecte-toi pour liker', 'error'); return; }
+  var btn = document.getElementById('likeBtn_' + productId);
+  var countEl = document.getElementById('likeCount_' + productId);
+
+  // Vérifier si déjà liké
+  var check = await sb.from('product_likes')
+    .select('id')
+    .eq('product_id', productId)
+    .eq('user_id', S.user.id)
+    .single();
+
+  if (check.data) {
+    // Déjà liké — retirer le like
+    await sb.from('product_likes')
+      .delete()
+      .eq('product_id', productId)
+      .eq('user_id', S.user.id);
+    if (btn) btn.style.color = 'var(--muted)';
+    if (countEl) countEl.textContent = parseInt(countEl.textContent) - 1;
+    toast('Like retiré', 'success');
+  } else {
+    // Ajouter le like
+    await sb.from('product_likes')
+      .insert([{ product_id: productId, user_id: S.user.id }]);
+    if (btn) btn.style.color = '#DC2626';
+    if (countEl) countEl.textContent = parseInt(countEl.textContent) + 1;
+    toast('❤️ Produit liké !', 'success');
+  }
+}
+
+async function loadLikes(productId) {
+  var res = await sb.from('product_likes')
+    .select('id', { count: 'exact', head: true })
+    .eq('product_id', productId);
+  var countEl = document.getElementById('likeCount_' + productId);
+  if (countEl) countEl.textContent = res.count || 0;
+
+  if (S.user) {
+    var mine = await sb.from('product_likes')
+      .select('id')
+      .eq('product_id', productId)
+      .eq('user_id', S.user.id)
+      .single();
+    var btn = document.getElementById('likeBtn_' + productId);
+    if (btn && mine.data) btn.style.color = '#DC2626';
+  }
+}
+
+// ════════════════════════════════
+// AVIS
+// ════════════════════════════════
+async function loadReviews(productId) {
+  var el = document.getElementById('reviewsList_' + productId);
+  if (!el) return;
+  var res = await sb.from('reviews')
+    .select('*')
+    .eq('product_id', productId)
+    .order('created_at', { ascending: false });
+  if (!res.data || !res.data.length) {
+    el.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:12px;">Aucun avis pour l\'instant.</div>';
+    return;
+  }
+  el.innerHTML = res.data.map(function(r) {
+    var stars = '';
+    for (var i = 1; i <= 5; i++) {
+      stars += i <= r.rating ? '⭐' : '☆';
+    }
+    return '<div style="padding:12px;border:1px solid var(--border);border-radius:12px;margin-bottom:8px;">' +
+      '<div style="font-size:14px;">' + stars + '</div>' +
+      (r.comment ? '<div style="font-size:13px;color:var(--ink2);margin-top:4px;">' + esc(r.comment) + '</div>' : '') +
+      '<div style="font-size:11px;color:var(--muted2);margin-top:4px;">' + fmtDate(r.created_at) + '</div>' +
+      '</div>';
+  }).join('');
+}
+
+async function submitReview(productId) {
+  if (!S.user) { toast('Connecte-toi pour laisser un avis', 'error'); return; }
+  var rating = parseInt(document.getElementById('reviewRating_' + productId).value);
+  var comment = document.getElementById('reviewComment_' + productId).value.trim();
+  if (!rating) { toast('Choisis une note', 'error'); return; }
+  var res = await sb.from('reviews').insert([{
+    product_id: productId,
+    buyer_id: S.user.id,
+    rating: rating,
+    comment: comment || null
+  }]);
+  if (res.error) {
+    if (res.error.code === '23505') {
+      toast('Tu as déjà laissé un avis sur ce produit', 'error');
+    } else {
+      toast('Erreur : ' + res.error.message, 'error');
+    }
+    return;
+  }
+  toast('Avis envoyé ! Merci 🙏', 'success');
+  document.getElementById('reviewComment_' + productId).value = '';
+  document.getElementById('reviewRating_' + productId).value = '';
+  loadReviews(productId);
+}
+
+// ════════════════════════════════
+// SIGNALEMENT
+// ════════════════════════════════
+async function signalerProduit(productId, vendorId) {
+  if (!S.user) { toast('Connecte-toi pour signaler', 'error'); return; }
+  var motifs = ['Produit inexistant ou introuvable','Arnaque ou fraude','Fausse photo ou description trompeuse','Contenu inapproprié ou offensant','Prix abusif','Autre'];
+  var liste = 'Motif du signalement :';
+  for (var mi = 0; mi < motifs.length; mi++) { liste += ' ' + (mi+1) + '. ' + motifs[mi]; }
+  liste += ' Tape le numéro :';
+  var motif = prompt(liste);
+  if (!motif) return;
+  var idx = parseInt(motif) - 1;
+  if (isNaN(idx) || idx < 0 || idx >= motifs.length) { toast('Numéro invalide', 'error'); return; }
+  var details = prompt('Détails supplémentaires (optionnel) :');
+  var res = await sb.from('reports').insert([{
+    reporter_id: S.user.id,
+    product_id: productId,
+    vendor_id: vendorId || null,
+    motif: motifs[idx],
+    details: details || null
+  }]);
+  if (res.error) { toast('Erreur : ' + res.error.message, 'error'); return; }
+  toast('Signalement envoyé. Merci !', 'success');
+}
 // ════════════════════════════════
 // MENU PROFIL DYNAMIQUE
 // ════════════════════════════════
