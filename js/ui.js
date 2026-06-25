@@ -79,7 +79,7 @@ function navigate(p) {
   });
   if (p==='home')        renderHome();
   if (p==='market')      renderMarket();
-  if (p==='my-products') { renderMyProds(); renderReceivedOrders(); }
+  if (p==='my-products') { renderMyProds(); if (typeof renderReceivedOrders === "function") renderReceivedOrders(); }
   if (p==='vendor-signup') loadVendorStatus();
   if (p==='profile')     renderProfile();
   if (p==='panier')      renderPanier();
@@ -260,7 +260,7 @@ if (S.profile.avatar_url) {
 } else {
   avEl.textContent = (name[0]||'?').toUpperCase();
 }
-  document.getElementById('profileWa').textContent = S.profile.whatsapp ? formatPhone(S.profile.whatsapp) : 'Complète ton Profil';
+  document.getElementById('profileWa').textContent = S.profile.whatsapp ? formatPhone(S.profile.whatsapp) : 'Complete ton profil';
   const mine = S.products.filter(function(p) { return S.user && p.uid === S.user.id; });
   document.getElementById('statProd').textContent  = mine.length;
   document.getElementById('statSales').textContent = S.profile.sales_count || 0;
@@ -303,6 +303,7 @@ async function saveProfile() {
   closeModal('editModal');
   renderProfile();
   toast('Profil mis a jour', 'success');
+  renderProfileMenu();
 }
 function openEditModal() {
   document.getElementById('editName').value = S.profile.name     || '';
