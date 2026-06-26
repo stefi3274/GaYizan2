@@ -75,11 +75,19 @@ async function publishProduct() {
   if (!name||!desc||!cat||!price) { toast('Remplis tous les champs obligatoires', 'error'); return; }
   if (parseInt(price) <= 0) { toast('Le prix doit etre superieur a 0', 'error'); return; }
   if (!file) { toast('La photo du produit est obligatoire', 'error'); return; }
-  const btn = document.getElementById('publishBtn');
+  var btn = document.getElementById('publishBtn');
   btn.disabled = true; btn.textContent = 'Publication…';
-  var image_url = await uploadImage(file);
-  var image_url_2 = file2 ? await uploadImage(file2) : null;
-  var image_url_3 = file3 ? await uploadImage(file3) : null;
+
+  var steps = [{ key: 'photo1', label: 'Photo principale' }];
+  if (file2) steps.push({ key: 'photo2', label: 'Photo 2' });
+  if (file3) steps.push({ key: 'photo3', label: 'Photo 3' });
+  steps.push({ key: 'pub', label: 'Publication du produit' });
+  initUploadModal(steps);
+  showUploadModal();
+
+  var image_url = await uploadImage(file, 'photo1');
+  var image_url_2 = file2 ? await uploadImage(file2, 'photo2') : null;
+  var image_url_3 = file3 ? await uploadImage(file3, 'photo3') : null;
   const attributes = getCategoryAttributeValues();
   const { error } = await sb.from('Produits').insert([{
     name: name, description: desc, category: cat,
@@ -95,8 +103,10 @@ async function publishProduct() {
     affiliation_active: affiliationActive,
     attributes: Object.keys(attributes).length ? attributes : null,
   }]);
+  updateUploadModal('pub', error ? 'error' : 'done');
   btn.disabled = false; btn.textContent = 'Publier le produit';
-  if (error) { toast('Erreur lors de la publication', 'error'); return; }
+  if (error) { hideUploadModal(); toast('Erreur lors de la publication', 'error'); return; }
+  setTimeout(function() { hideUploadModal(); }, 800);
   ['sellName','sellDesc','sellPrice'].forEach(function(id) {
     var elx = document.getElementById(id);
     if (elx) elx.value = '';
@@ -125,16 +135,53 @@ function openWA(phone, name, price) {
 // ════════════════════════════════
 // UPLOAD IMAGE
 // ════════════════════════════════
-async function uploadImage(file) {
+async function uploadImage(file, label) {
   if (!file) return null;
-  const ext = file.name.split('.').pop();
-  const path = S.user.id + '/' + Date.now() + '.' + ext;
-  const { error } = await sb.storage
+  updateUploadModal(label, 'upload');
+  var ext = file.name.split('.').pop();
+  var path = S.user.id + '/' + Date.now() + '.' + ext;
+  var res = await sb.storage
     .from('Produits')
     .upload(path, file, { contentType: file.type });
-  if (error) { toast('Erreur upload image', 'error'); return null; }
-  const { data } = sb.storage.from('Produits').getPublicUrl(path);
-  return data.publicUrl;
+  if (res.error) {
+    updateUploadModal(label, 'error');
+    toast('Erreur upload image', 'error');
+    return null;
+  }
+  updateUploadModal(label, 'done');
+  var urlRes = sb.storage.from('Produits').getPublicUrl(path);
+  return urlRes.data.publicUrl;
+}
+
+function showUploadModal() {
+  var modal = document.getElementById('uploadModal');
+  if (modal) modal.classList.add('open');
+}
+
+function hideUploadModal() {
+  var modal = document.getElementById('uploadModal');
+  if (modal) modal.classList.remove('open');
+}
+
+function updateUploadModal(label, status) {
+  var el = document.getElementById('uploadStep_' + label);
+  if (!el) return;
+  var icons = { upload: '⏳', done: '✅', error: '❌' };
+  el.innerHTML = icons[status] + ' ' + el.getAttribute('data-label');
+}
+
+function initUploadModal(steps) {
+  var content = document.getElementById('uploadModalContent');
+  if (!content) return;
+  var html = '<div style="font-family:'Space Grotesk',sans-serif;">' +
+    '<div style="font-size:18px;font-weight:700;margin-bottom:20px;text-align:center;">Publication en cours...</div>';
+  for (var i = 0; i < steps.length; i++) {
+    html += '<div id="uploadStep_' + steps[i].key + '" data-label="' + steps[i].label + '" ' +
+      'style="display:flex;align-items:center;gap:12px;padding:12px;margin-bottom:8px;' +
+      'background:var(--bg);border-radius:12px;font-size:14px;">⏳ ' + steps[i].label + '</div>';
+  }
+  html += '</div>';
+  content.innerHTML = html;
 }
 
 
