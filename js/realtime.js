@@ -2,21 +2,34 @@
 // REALTIME
 // ════════════════════════════════
 function setupRealtime() {
+  var dot = document.getElementById('syncDot');
+
   sb.channel('orders-rt')
     .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' },
-      async (payload) => {
+      function(payload) {
         if (!S.user) return;
-        const row = payload.new || payload.old || {};
+        var row = payload.new || payload.old || {};
         if (row.buyer_id === S.user.id || row.seller_id === S.user.id) {
-          await loadMyOrders();
-          await loadReceivedOrders();
-          if (S.page === 'panier')      renderPanier();
-          if (S.page === 'my-products') renderReceivedOrders();
+          loadMyOrders();
+          loadReceivedOrders();
+          if (S.page === 'panier') renderPanier();
+          if (S.page === 'my-products') { if (typeof renderReceivedOrders === 'function') renderReceivedOrders(); }
           if (row.buyer_id === S.user.id && payload.eventType === 'UPDATE') {
-            if (payload.new?.status === 'confirmed') toast('✅ Commande confirmée !', 'success');
-            if (payload.new?.status === 'cancelled') toast('❌ Commande annulée', 'error');
+            if (payload.new && payload.new.status === 'confirmed') toast('✅ Commande confirmée !', 'success');
+            if (payload.new && payload.new.status === 'cancelled') toast('❌ Commande annulée', 'error');
           }
         }
       }
-    ).subscribe();
+    )
+    .subscribe(function(status) {
+      if (!dot) return;
+      if (status === 'SUBSCRIBED') {
+        dot.className = 'sync-indicator';
+        dot.style.background = '#10B981';
+      } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+        dot.className = 'sync-indicator error';
+      } else {
+        dot.className = 'sync-indicator loading';
+      }
+    });
 }
