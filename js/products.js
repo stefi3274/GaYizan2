@@ -24,10 +24,11 @@ async function loadProducts() {
       views: p.views || 0,
       uid: p.user_id,
       created_at: p.created_at,
-      is_featured: p.is_featured || false,
-      affiliation_active: p.affiliation_active || false,
+      image_url: p.image_url || null,
       image_url_2: p.image_url_2 || null,
       image_url_3: p.image_url_3 || null,
+      is_featured: p.is_featured || false,
+      affiliation_active: p.affiliation_active || false,
     };
   });
   setSyncStatus('ok');
