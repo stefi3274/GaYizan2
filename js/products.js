@@ -5,7 +5,7 @@
 async function loadProducts() {
   setSyncStatus('loading');
   const { data, error } = await sb
-    .from('Produits').select('*')
+    .from('products').select('*')
     .eq('is_active', true)
     .order('created_at', { ascending: false });
   if (error) { setSyncStatus('error'); toast('⚠️ Erreur de chargement', 'error'); return; }
@@ -89,7 +89,7 @@ async function publishProduct() {
   var image_url_2 = file2 ? await uploadImage(file2, 'photo2') : null;
   var image_url_3 = file3 ? await uploadImage(file3, 'photo3') : null;
   const attributes = getCategoryAttributeValues();
-  const { error } = await sb.from('Produits').insert([{
+  const { error } = await sb.from('products').insert([{
     name: name, description: desc, category: cat,
     seller_name: S.profile.name,
     whatsapp: S.profile.whatsapp,
@@ -122,7 +122,7 @@ async function publishProduct() {
 }
 async function delProd(id) {
   if (!confirm('Supprimer ce produit ?')) return;
-  const { error } = await sb.from('Produits').update({ is_active: false }).eq('id', id);
+  const { error } = await sb.from('products').update({ is_active: false }).eq('id', id);
   if (error) { toast('❌ Erreur lors de la suppression', 'error'); return; }
   toast('Produit supprimé');
   await loadProducts();
