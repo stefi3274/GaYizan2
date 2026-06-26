@@ -163,9 +163,30 @@
         </select>
       </div>
     </div>
-    <div class="field"><label>Photo du produit * (principale)</label><input type="file" id="sellImage" accept="image/*" style="padding:8px 14px;"/></div>
-    <div class="field"><label>Photo 2 (optionnel)</label><input type="file" id="sellImage2" accept="image/*" style="padding:8px 14px;"/></div>
-    <div class="field"><label>Photo 3 (optionnel)</label><input type="file" id="sellImage3" accept="image/*" style="padding:8px 14px;"/></div>
+    <div class="field">
+      <label>Photo du produit * (principale)</label>
+      <input type="file" id="sellImage" accept="image/*" style="padding:8px 14px;" onchange="previewPhoto(this,'preview1')"/>
+      <div id="preview1" style="display:none;position:relative;margin-top:8px;width:100px;">
+        <img style="width:100px;height:100px;object-fit:cover;border-radius:10px;border:2px solid var(--purple);"/>
+        <button type="button" onclick="clearPhoto('sellImage','preview1')" style="position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;background:#DC2626;color:#fff;border:none;cursor:pointer;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;">✕</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>Photo 2 (optionnel)</label>
+      <input type="file" id="sellImage2" accept="image/*" style="padding:8px 14px;" onchange="previewPhoto(this,'preview2')"/>
+      <div id="preview2" style="display:none;position:relative;margin-top:8px;width:100px;">
+        <img style="width:100px;height:100px;object-fit:cover;border-radius:10px;border:2px solid var(--border);"/>
+        <button type="button" onclick="clearPhoto('sellImage2','preview2')" style="position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;background:#DC2626;color:#fff;border:none;cursor:pointer;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;">✕</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>Photo 3 (optionnel)</label>
+      <input type="file" id="sellImage3" accept="image/*" style="padding:8px 14px;" onchange="previewPhoto(this,'preview3')"/>
+      <div id="preview3" style="display:none;position:relative;margin-top:8px;width:100px;">
+        <img style="width:100px;height:100px;object-fit:cover;border-radius:10px;border:2px solid var(--border);"/>
+        <button type="button" onclick="clearPhoto('sellImage3','preview3')" style="position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;background:#DC2626;color:#fff;border:none;cursor:pointer;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;">✕</button>
+      </div>
+    </div>
     <div class="gap-md"></div>
     <div id="attrWrap"></div>
     <label style="display:flex;align-items:flex-start;gap:10px;padding:14px;background:#F2EFF9;border-radius:12px;margin-bottom:16px;cursor:pointer;">
@@ -397,6 +418,24 @@
 <script src="js/attributes.js"></script>
 <script src="js/draft.js"></script>
 <script>
+function previewPhoto(input, previewId) {
+  var preview = document.getElementById(previewId);
+  if (!preview) return;
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      preview.querySelector('img').src = e.target.result;
+      preview.style.display = 'block';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+function clearPhoto(inputId, previewId) {
+  var input = document.getElementById(inputId);
+  var preview = document.getElementById(previewId);
+  if (input) input.value = '';
+  if (preview) { preview.style.display = 'none'; preview.querySelector('img').src = ''; }
+}
 updateCartBadge();
 renderProfile();
 loadProducts().then(function() { checkAffiliateParams(); });

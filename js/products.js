@@ -173,7 +173,7 @@ function updateUploadModal(label, status) {
 function initUploadModal(steps) {
   var content = document.getElementById('uploadModalContent');
   if (!content) return;
-  var html = '<div style="font-family:'Space Grotesk',sans-serif;">' +
+  var html = '<div style="font-family:sans-serif;">' +
     '<div style="font-size:18px;font-weight:700;margin-bottom:20px;text-align:center;">Publication en cours...</div>';
   for (var i = 0; i < steps.length; i++) {
     html += '<div id="uploadStep_' + steps[i].key + '" data-label="' + steps[i].label + '" ' +
