@@ -5,7 +5,7 @@
 async function loadProducts() {
   setSyncStatus('loading');
   const { data, error } = await sb
-    .from('products').select('*')
+    .from('Produits').select('*')
     .eq('is_active', true)
     .order('created_at', { ascending: false });
   if (error) { setSyncStatus('error'); toast('⚠️ Erreur de chargement', 'error'); return; }
@@ -81,7 +81,7 @@ async function publishProduct() {
   var image_url_2 = file2 ? await uploadImage(file2) : null;
   var image_url_3 = file3 ? await uploadImage(file3) : null;
   const attributes = getCategoryAttributeValues();
-  const { error } = await sb.from('products').insert([{
+  const { error } = await sb.from('Produits').insert([{
     name: name, description: desc, category: cat,
     seller_name: S.profile.name,
     whatsapp: S.profile.whatsapp,
@@ -112,7 +112,7 @@ async function publishProduct() {
 }
 async function delProd(id) {
   if (!confirm('Supprimer ce produit ?')) return;
-  const { error } = await sb.from('products').update({ is_active: false }).eq('id', id);
+  const { error } = await sb.from('Produits').update({ is_active: false }).eq('id', id);
   if (error) { toast('❌ Erreur lors de la suppression', 'error'); return; }
   toast('Produit supprimé');
   await loadProducts();
@@ -130,10 +130,10 @@ async function uploadImage(file) {
   const ext = file.name.split('.').pop();
   const path = S.user.id + '/' + Date.now() + '.' + ext;
   const { error } = await sb.storage
-    .from('products')
+    .from('Produits')
     .upload(path, file, { contentType: file.type });
   if (error) { toast('Erreur upload image', 'error'); return null; }
-  const { data } = sb.storage.from('products').getPublicUrl(path);
+  const { data } = sb.storage.from('Produits').getPublicUrl(path);
   return data.publicUrl;
 }
 
