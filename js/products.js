@@ -135,14 +135,41 @@ function openWA(phone, name, price) {
 // ════════════════════════════════
 // UPLOAD IMAGE
 // ════════════════════════════════
+async function compressImage(file) {
+  return new Promise(function(resolve) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var img = new Image();
+      img.onload = function() {
+        var canvas = document.createElement('canvas');
+        var maxW = 1200;
+        var ratio = Math.min(maxW / img.width, maxW / img.height, 1);
+        canvas.width = Math.round(img.width * ratio);
+        canvas.height = Math.round(img.height * ratio);
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(function(blob) {
+          resolve(blob);
+        }, 'image/jpeg', 0.82);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 async function uploadImage(file, label) {
   if (!file) return null;
   updateUploadModal(label, 'upload');
-  var ext = file.name.split('.').pop();
-  var path = S.user.id + '/' + Date.now() + '.' + ext;
+
+  // Compression
+  var blob = await compressImage(file);
+  var path = S.user.id + '/' + Date.now() + '.jpg';
+
   var res = await sb.storage
     .from('Produits')
-    .upload(path, file, { contentType: file.type });
+    .upload(path, blob, { contentType: 'image/jpeg' });
+
   if (res.error) {
     updateUploadModal(label, 'error');
     toast('Erreur upload image', 'error');
@@ -166,8 +193,17 @@ function hideUploadModal() {
 function updateUploadModal(label, status) {
   var el = document.getElementById('uploadStep_' + label);
   if (!el) return;
-  var icons = { upload: '⏳', done: '✅', error: '❌' };
-  el.innerHTML = icons[status] + ' ' + el.getAttribute('data-label');
+  var lbl = el.getAttribute('data-label');
+  if (status === 'upload') {
+    el.innerHTML = '<span style="font-size:18px;">⏳</span> <span>' + lbl + '</span>';
+    el.style.background = 'var(--bg)';
+  } else if (status === 'done') {
+    el.innerHTML = '<span style="font-size:18px;color:#059669;">✅</span> <span style="color:#059669;font-weight:600;">' + lbl + '</span>';
+    el.style.background = '#D1FAE5';
+  } else if (status === 'error') {
+    el.innerHTML = '<span style="font-size:18px;color:#DC2626;">❌</span> <span style="color:#DC2626;">' + lbl + '</span>';
+    el.style.background = '#FEE2E2';
+  }
 }
 
 function initUploadModal(steps) {
