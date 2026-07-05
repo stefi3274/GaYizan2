@@ -587,55 +587,71 @@ function renderProfileMenu() {
       '</div>';
   }
 
-  // 1. Publier un produit (toujours en vert)
+  // 1. Publier un produit — icône + gras
   html += '<div class="menu-item menu-vendeur" onclick="navigate(\'sell\')">' +
-    '<div class="menu-icon green" style="background:#059669;"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 5v14"/><path d="M5 12h14"/></svg></div>' +
+    '<div class="menu-icon green" style="background:#059669;">' +
+    '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><line x1="12" y1="4" x2="12" y2="20"/><line x1="4" y1="12" x2="20" y2="12"/></svg>' +
+    '</div>' +
     '<div class="menu-text"><div class="menu-label">Publier un produit</div><div class="menu-sub" style="color:#059669;">Mets ton produit en vente dès maintenant 🚀</div></div>' +
     '<span class="menu-arrow">›</span></div>';
 
-  // 2. Espace Vendeur (si vérifié)
+  // 2. Espace Vendeur — icône boutique
   if (isVerified) {
     html += '<div class="menu-item menu-espace" onclick="navigate(\'my-products\')">' +
-      '<div class="menu-icon violet" style="background:var(--purple);"><svg viewBox="0 0 24 24" fill="white"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 3H8L6 7h12l-2-4z"/></svg></div>' +
+      '<div class="menu-icon violet" style="background:var(--purple);">' +
+      '<svg viewBox="0 0 24 24" fill="white"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22" fill="none" stroke="white" stroke-width="1.5"/></svg>' +
+      '</div>' +
       '<div class="menu-text"><div class="menu-label">Espace Vendeur</div><div class="menu-sub" style="color:#7C3AED;">Gérer mes produits & commandes reçues 🛍️</div></div>' +
       '<span class="menu-arrow">›</span></div>';
   }
 
-  // 3. Mes achats
+  // 3. Mes achats — sac de shopping
   html += '<div class="menu-item menu-achats" onclick="navigate(\'panier\')">' +
-    '<div class="menu-icon blue" style="background:#2563EB;"><svg viewBox="0 0 24 24" fill="white"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6" stroke="white" stroke-width="1.8"/><path d="M16 10a4 4 0 01-8 0" fill="none" stroke="white" stroke-width="1.8"/></svg></div>' +
+    '<div class="menu-icon blue" style="background:#2563EB;">' +
+    '<svg viewBox="0 0 24 24" fill="white"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6" stroke="white" stroke-width="1.5" fill="none"/><path d="M16 10a4 4 0 01-8 0" fill="none" stroke="white" stroke-width="1.5"/></svg>' +
+    '</div>' +
     '<div class="menu-text"><div class="menu-label">Mes achats</div><div class="menu-sub" style="color:#2563EB;">Retrouve toutes tes commandes ici 📦</div></div>' +
     '<span class="menu-arrow">›</span></div>';
 
-  // 4. Affiliation
+  // 4. Affiliation — chaîne de partage
   if (isAffiliate) {
     html += '<div class="menu-item menu-affilie" id="affiliateMenuItem" onclick="navigate(\'affiliations\')">' +
-      '<div class="menu-icon yellow" style="background:#D97706;"><svg viewBox="0 0 24 24" fill="white"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" stroke="white" stroke-width="1.8"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" stroke="white" stroke-width="1.8"/></svg></div>' +
+      '<div class="menu-icon yellow" style="background:#D97706;">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3" fill="white"/><circle cx="6" cy="12" r="3" fill="white"/><circle cx="18" cy="19" r="3" fill="white"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>' +
+      '</div>' +
       '<div class="menu-text"><div class="menu-label">Espace Affilié</div><div class="menu-sub" style="color:#D97706;">Mes points, mes liens & mes gains 💰</div></div>' +
       '<span class="menu-arrow">›</span></div>';
   } else {
     html += '<div class="menu-item menu-affilie" id="affiliateMenuItem" onclick="becomeAffiliate()">' +
-      '<div class="menu-icon yellow" style="background:#D97706;"><svg viewBox="0 0 24 24" fill="white"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" stroke="white" stroke-width="1.8"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" stroke="white" stroke-width="1.8"/></svg></div>' +
+      '<div class="menu-icon yellow" style="background:#D97706;">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3" fill="white"/><circle cx="6" cy="12" r="3" fill="white"/><circle cx="18" cy="19" r="3" fill="white"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>' +
+      '</div>' +
       '<div class="menu-text"><div class="menu-label">Marketing d\'affiliation</div><div class="menu-sub" style="color:#D97706;">Partage & gagne 2% sur chaque vente générée ✨</div></div>' +
       '<span class="menu-arrow">›</span></div>';
   }
 
-  // 5. Modifier le profil
+  // 5. Modifier le profil — crayon
   html += '<div class="menu-item menu-edit" onclick="openEditModal()">' +
-    '<div class="menu-icon purple-main" style="background:linear-gradient(135deg,var(--purple),var(--purple-l));"><svg viewBox="0 0 24 24" fill="white"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>' +
+    '<div class="menu-icon purple-main" style="background:linear-gradient(135deg,var(--purple),var(--purple-l));">' +
+    '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>' +
+    '</div>' +
     '<div class="menu-text"><div class="menu-label">Modifier le profil</div><div class="menu-sub" style="color:var(--purple);">Nom, boutique, WhatsApp, MonCash, NatCash 🖊️</div></div>' +
     '<span class="menu-arrow">›</span></div>';
 
-  // 6. Infos & Contact
+  // 6. Infos & Contact — i dans cercle
   html += '<div class="menu-item menu-infos" onclick="navigate(\'infos\')">' +
-    '<div class="menu-icon gold" style="background:#B45309;"><svg viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12" stroke="white" stroke-width="1.8"/><line x1="12" y1="8" x2="12.01" y2="8" stroke="white" stroke-width="1.8"/></svg></div>' +
+    '<div class="menu-icon gold" style="background:#B45309;">' +
+    '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10" fill="none" stroke="white" stroke-width="2"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8" stroke-width="3"/></svg>' +
+    '</div>' +
     '<div class="menu-text"><div class="menu-label">Infos & Contact</div><div class="menu-sub" style="color:#B45309;">À propos, nous contacter, mentions légales 📋</div></div>' +
     '<span class="menu-arrow">›</span></div>';
 
-  // 7. Se déconnecter
+  // 7. Se déconnecter — porte avec flèche
   if (isLoggedIn) {
     html += '<div class="menu-item menu-logout" id="logoutItem" onclick="signOut()">' +
-      '<div class="menu-icon red-icon" style="background:#DC2626;"><svg viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" stroke="white" stroke-width="1.8"/><polyline points="16 17 21 12 16 7" stroke="white" stroke-width="1.8" fill="none"/><line x1="21" y1="12" x2="9" y2="12" stroke="white" stroke-width="1.8"/></svg></div>' +
+      '<div class="menu-icon red-icon" style="background:#DC2626;">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>' +
+      '</div>' +
       '<div class="menu-text"><div class="menu-label" style="color:var(--red);">Se déconnecter</div><div class="menu-sub" style="color:var(--red);">À bientôt sur Ga-izan 👋</div></div>' +
       '<span class="menu-arrow">›</span></div>';
   }
