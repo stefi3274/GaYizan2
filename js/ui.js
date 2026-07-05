@@ -125,7 +125,7 @@ function renderHome() {
           '<span class="prod-card-badge" style="background:var(--gold);color:#fff;">⭐</span></div>' +
           '<div class="prod-card-body">' +
           '<div class="prod-card-name">' + esc(p.name) + '</div>' +
-          '<div class="prod-card-seller">par ' + esc(p.seller||'—') + '</div>' +
+          '<div class="prod-card-seller">par ' + esc(p.seller||'—') + (p.verified ? ' <span style="display:inline-flex;align-items:center;justify-content:center;width:13px;height:13px;background:var(--purple);border-radius:50%;color:#fff;font-size:8px;font-weight:700;margin-left:3px;">✓</span>' : '') + '</div>' +
           '<div class="prod-card-footer">' +
           '<div class="prod-card-price">' + formatPrice(p.price) + '</div>' +
           '<div class="prod-card-views">👁 ' + p.views + '</div>' +
@@ -149,7 +149,7 @@ const list = all.filter(function(p) { return p.image_url; });
       '<span class="prod-card-badge">' + timeAgo(p.created_at) + '</span></div>' +
       '<div class="prod-card-body">' +
       '<div class="prod-card-name">' + esc(p.name) + '</div>' +
-      '<div class="prod-card-seller">par ' + esc(p.seller||'—') + '</div>' +
+      '<div class="prod-card-seller">par ' + esc(p.seller||'—') + (p.verified ? ' <span style="display:inline-flex;align-items:center;justify-content:center;width:13px;height:13px;background:var(--purple);border-radius:50%;color:#fff;font-size:8px;font-weight:700;margin-left:3px;">✓</span>' : '') + '</div>' +
       '<div class="prod-card-footer">' +
       '<div class="prod-card-price">' + formatPrice(p.price) + '</div>' +
       '<div class="prod-card-views">👁 ' + p.views + '</div>' +
@@ -231,7 +231,7 @@ async function openDetail(id) {
     '<div class="detail-desc">' + esc(p.desc||'') + '</div>' +
     '<div class="seller-card">' +
     '<div class="seller-av">' + (p.seller||'?')[0].toUpperCase() + '</div>' +
-    '<div><div class="seller-name">' + esc(p.seller||'—') + '</div>' +
+    '<div><div class="seller-name">' + esc(p.seller||'—') + (p.verified ? ' <span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;background:var(--purple);border-radius:50%;color:#fff;font-size:10px;font-weight:700;margin-left:4px;">✓</span>' : '') + '</div>' +
     '<div class="seller-meta">Publie ' + fmtDate(p.created_at) + '</div></div></div>' +
     '<div class="detail-actions">' +
     (isOwn ? '<div class="pay-warning">C\'est ton propre produit.</div>' : '') +
@@ -576,8 +576,16 @@ function renderProfileMenu() {
   var isVerified = S.profile.verification_status === 'verified';
   var isAffiliate = S.profile.is_affiliate === true;
   var isLoggedIn = !!S.user;
-  var html = '';
-  // 1. Espace Vendeur / Devenir Vendeur
+    var html = '';
+
+  // Bandeau encouragement vérification
+  if (isLoggedIn && S.profile.verification_status !== 'verified') {
+    html += '<div style="background:linear-gradient(135deg,#7C3AED,#A855F7);border-radius:16px;padding:16px;margin-bottom:12px;color:#fff;">' +
+      '<div style="font-size:14px;font-weight:700;margin-bottom:4px;">🏆 Deviens un vendeur certifié !</div>' +
+      '<div style="font-size:12px;opacity:.85;margin-bottom:10px;line-height:1.5;">Les acheteurs font 3x plus confiance aux vendeurs vérifiés. Obtiens ton badge ✓ violet dès aujourd\'hui.</div>' +
+      '<button class="btn" style="background:#fff;color:var(--purple);font-size:12px;padding:8px 14px;border-radius:10px;font-weight:700;" onclick="navigate(\'vendor-signup\')">Soumettre ma vérification →</button>' +
+      '</div>';
+  } // 1. Espace Vendeur / Devenir Vendeur
   if (isVerified) {
     html += '<div class="menu-item menu-espace" onclick="navigate(\'my-products\')">' +
       '<div class="menu-icon violet" style="background:var(--purple);"><svg viewBox="0 0 24 24" fill="white"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 3H8L6 7h12l-2-4z"/></svg></div>' +

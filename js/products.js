@@ -5,7 +5,8 @@
 async function loadProducts() {
   setSyncStatus('loading');
   const { data, error } = await sb
-    .from('products').select('*')
+    .from('products')
+    .select('*, profiles!products_user_id_fkey(verification_status)')
     .eq('is_active', true)
     .order('created_at', { ascending: false });
   if (error) { setSyncStatus('error'); toast('⚠️ Erreur de chargement', 'error'); return; }
@@ -25,6 +26,7 @@ async function loadProducts() {
       uid: p.user_id,
       created_at: p.created_at,
       image_url: p.image_url || null,
+      verified: p.profiles && p.profiles.verification_status === 'verified',
       image_url_2: p.image_url_2 || null,
       image_url_3: p.image_url_3 || null,
       is_featured: p.is_featured || false,
@@ -53,14 +55,9 @@ function updateHeroStats() {
 async function publishProduct() {
   if (!S.user) { saveDraft(); toast('Connecte-toi pour finaliser ta publication', 'error'); setTimeout(function() { openAuthModal(); }, 800); return; }
   if (!isProfileComplete()) { toast('Configure d\'abord ton profil', 'error'); setTimeout(function() { openEditModal(); }, 600); return; }
+  // Encourager la vérification sans bloquer
   if (S.profile.verification_status !== 'verified') {
-    if (S.profile.verification_status === 'pending') {
-      toast('⏳ Ta demande est en cours de vérification (24-48h)', 'error');
-    } else {
-      toast('⚠️ Tu dois être vendeur vérifié pour publier', 'error');
-      setTimeout(function() { navigate('vendor-signup'); }, 800);
-    }
-    return;
+    toast('💡 Astuce : fais vérifier ton compte pour gagner la confiance des acheteurs !', 'success');
   }
   const name = document.getElementById('sellName').value.trim();
   const desc = document.getElementById('sellDesc').value.trim();
