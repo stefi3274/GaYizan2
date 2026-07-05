@@ -325,7 +325,7 @@ async function saveProfile() {
     }
   }
   if (S.user) {
-    var res = await sb.from('profiles').upsert(Object.assign({ id: S.user.id }, update));
+    var res = await sb.from('profiles').update(update).eq('id', S.user.id);
     if (res.error) { toast('Erreur lors de la sauvegarde', 'error'); return; }
   }
   S.profile = Object.assign({}, S.profile, update);
