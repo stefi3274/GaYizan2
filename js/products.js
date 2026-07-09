@@ -6,7 +6,7 @@ async function loadProducts() {
   setSyncStatus('loading');
   const { data, error } = await sb
     .from('products')
-    .select('*, profiles!products_user_id_fkey(verification_status)')
+    .select('*')
     .eq('is_active', true)
     .order('created_at', { ascending: false });
   if (error) { setSyncStatus('error'); toast('⚠️ Erreur de chargement', 'error'); return; }
@@ -26,7 +26,6 @@ async function loadProducts() {
       uid: p.user_id,
       created_at: p.created_at,
       image_url: p.image_url || null,
-      verified: p.profiles && p.profiles.verification_status === 'verified',
       image_url_2: p.image_url_2 || null,
       image_url_3: p.image_url_3 || null,
       is_featured: p.is_featured || false,
