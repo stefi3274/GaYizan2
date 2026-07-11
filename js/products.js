@@ -53,7 +53,6 @@ function updateHeroStats() {
 }
 async function publishProduct() {
   if (!S.user) { saveDraft(); toast('Connecte-toi pour finaliser ta publication', 'error'); setTimeout(function() { openAuthModal(); }, 800); return; }
-  if (!isProfileComplete()) { toast('Configure d\'abord ton profil', 'error'); setTimeout(function() { openEditModal(); }, 600); return; }
   // Encourager la vérification sans bloquer
   if (S.profile.verification_status !== 'verified') {
     toast('💡 Astuce : fais vérifier ton compte pour gagner la confiance des acheteurs !', 'success');
