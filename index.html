@@ -193,6 +193,36 @@
       <input type="checkbox" id="sellAffiliation" style="width:18px;height:18px;margin-top:2px;flex-shrink:0;"/>
       <span style="font-size:13px;color:var(--muted);line-height:1.5;">Activer le <strong>marketing d'affiliation (2%)</strong> sur ce produit. Des affiliés pourront le partager et toucheront 2% sur les ventes qu'ils génèrent.</span>
     </label>
+    <!-- PROMO -->
+    <label style="display:flex;align-items:flex-start;gap:10px;padding:14px;background:#FFF7ED;border-radius:12px;margin-bottom:12px;cursor:pointer;border:1.5px solid #FED7AA;">
+      <input type="checkbox" id="sellPromoActive" style="width:18px;height:18px;margin-top:2px;flex-shrink:0;" onchange="togglePromoFields()"/>
+      <span style="font-size:13px;color:#C2410C;line-height:1.5;font-weight:600;">🏷️ Activer une promotion sur ce produit</span>
+    </label>
+    <div id="promoFields" style="display:none;background:#FFF7ED;border-radius:12px;padding:14px;margin-bottom:16px;border:1.5px solid #FED7AA;">
+      <div class="field" style="margin-bottom:10px;">
+        <label style="color:#C2410C;">Prix promotionnel (HTG) *</label>
+        <div class="input-with-prefix">
+          <span class="input-prefix-label" style="color:#C2410C;">HTG</span>
+          <input id="sellPromoPrice" type="number" min="1" placeholder="0" style="border:none;border-radius:0;"/>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:10px;">
+        <label style="color:#C2410C;">Type de promotion</label>
+        <select id="sellPromoLabel" style="border-color:#FED7AA;">
+          <option value="Promo">🏷️ Promotion</option>
+          <option value="Weekend">🎉 Promo Weekend</option>
+          <option value="Fin de mois">📅 Fin de mois</option>
+          <option value="Black Friday">🖤 Black Friday</option>
+          <option value="Flash">⚡ Vente Flash</option>
+          <option value="Soldes">🛍️ Soldes</option>
+          <option value="Liquidation">🔥 Liquidation</option>
+        </select>
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label style="color:#C2410C;">Date de fin (optionnel)</label>
+        <input id="sellPromoEnd" type="datetime-local" style="border-color:#FED7AA;"/>
+      </div>
+    </div>
     <button class="btn btn-primary btn-full" id="publishBtn" onclick="publishProduct()">Publier le produit</button>
   </div>
   <!-- ══ PAGE MES PRODUITS ══ -->
@@ -418,6 +448,11 @@
 <script src="js/attributes.js"></script>
 <script src="js/draft.js"></script>
 <script>
+function togglePromoFields() {
+  var cb = document.getElementById('sellPromoActive');
+  var fields = document.getElementById('promoFields');
+  if (fields) fields.style.display = cb && cb.checked ? 'block' : 'none';
+}
 function previewPhoto(input, previewId) {
   var preview = document.getElementById(previewId);
   if (!preview) return;

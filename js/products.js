@@ -26,6 +26,9 @@ async function loadProducts() {
       uid: p.user_id,
       created_at: p.created_at,
       image_url: p.image_url || null,
+      promo_price: p.promo_price || null,
+      promo_label: p.promo_label || null,
+      promo_end: p.promo_end || null,
       image_url_2: p.image_url_2 || null,
       image_url_3: p.image_url_3 || null,
       is_featured: p.is_featured || false,
@@ -68,6 +71,10 @@ async function publishProduct() {
   var fileInput3 = document.getElementById('sellImage3');
   var file3 = fileInput3 && fileInput3.files[0] ? fileInput3.files[0] : null;
   var affiliationActive = document.getElementById('sellAffiliation') ? document.getElementById('sellAffiliation').checked : false;
+  var promoActive = document.getElementById('sellPromoActive') ? document.getElementById('sellPromoActive').checked : false;
+  var promoPrice = promoActive && document.getElementById('sellPromoPrice') ? parseInt(document.getElementById('sellPromoPrice').value) || null : null;
+  var promoLabel = promoActive && document.getElementById('sellPromoLabel') ? document.getElementById('sellPromoLabel').value : null;
+  var promoEnd = promoActive && document.getElementById('sellPromoEnd') && document.getElementById('sellPromoEnd').value ? document.getElementById('sellPromoEnd').value : null;
   if (!name||!desc||!cat||!price) { toast('Remplis tous les champs obligatoires', 'error'); return; }
   if (parseInt(price) <= 0) { toast('Le prix doit etre superieur a 0', 'error'); return; }
   if (!file) { toast('La photo du produit est obligatoire', 'error'); return; }
@@ -97,6 +104,9 @@ async function publishProduct() {
     image_url_2: image_url_2,
     image_url_3: image_url_3,
     affiliation_active: affiliationActive,
+    promo_price: promoPrice,
+    promo_label: promoLabel,
+    promo_end: promoEnd,
     attributes: Object.keys(attributes).length ? attributes : null,
   }]);
   updateUploadModal('pub', error ? 'error' : 'done');
@@ -112,6 +122,9 @@ async function publishProduct() {
   if (fileInput2) fileInput2.value = '';
   if (fileInput3) fileInput3.value = '';
   if (document.getElementById('sellAffiliation')) document.getElementById('sellAffiliation').checked = false;
+  if (document.getElementById('sellPromoActive')) { document.getElementById('sellPromoActive').checked = false; togglePromoFields(); }
+  if (document.getElementById('sellPromoPrice')) document.getElementById('sellPromoPrice').value = '';
+  if (document.getElementById('sellPromoEnd')) document.getElementById('sellPromoEnd').value = '';
   toast('Produit publie !', 'success');
   await loadProducts();
   setTimeout(function() { navigate('my-products'); }, 800);

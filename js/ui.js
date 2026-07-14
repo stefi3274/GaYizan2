@@ -175,7 +175,7 @@ function renderHome() {
           '<div class="prod-card-name">' + esc(p.name) + '</div>' +
           '<div class="prod-card-seller">par ' + esc(p.seller||'—') + (p.verified ? ' <span style="display:inline-flex;align-items:center;justify-content:center;width:13px;height:13px;background:var(--purple);border-radius:50%;color:#fff;font-size:8px;font-weight:700;margin-left:3px;">✓</span>' : '') + '</div>' +
           '<div class="prod-card-footer">' +
-          '<div class="prod-card-price">' + formatPrice(p.price) + '</div>' +
+          '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">' + promoPriceHtml(p,'13px') + (hasPromo(p) ? promoBadgeHtml(p) : '') + '</div>' +
           '<div class="prod-card-views">👁 ' + p.views + '</div>' +
           '</div></div></div>';
       }).join('');
@@ -199,7 +199,7 @@ const list = all.filter(function(p) { return p.image_url; });
       '<div class="prod-card-name">' + esc(p.name) + '</div>' +
       '<div class="prod-card-seller">par ' + esc(p.seller||'—') + (p.verified ? ' <span style="display:inline-flex;align-items:center;justify-content:center;width:13px;height:13px;background:var(--purple);border-radius:50%;color:#fff;font-size:8px;font-weight:700;margin-left:3px;">✓</span>' : '') + '</div>' +
       '<div class="prod-card-footer">' +
-      '<div class="prod-card-price">' + formatPrice(p.price) + '</div>' +
+      '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;">' + promoPriceHtml(p,'13px') + (hasPromo(p) ? promoBadgeHtml(p) : '') + '</div>' +
       '<div class="prod-card-views">👁 ' + p.views + '</div>' +
       '</div></div></div>';
   }).join('');
@@ -234,7 +234,7 @@ function renderMarket() {
       '<div class="prod-row-name">' + esc(p.name) + '</div>' +
       '<div class="prod-row-desc">' + esc((p.desc||'').substring(0,100)) + '</div>' +
       '<div class="prod-row-footer">' +
-      '<div class="prod-row-price">' + formatPrice(p.price) + '</div>' +
+      '<div>' + promoPriceHtml(p,'14px') + (hasPromo(p) ? promoBadgeHtml(p) : '') + '</div>' +
       '<div class="prod-row-meta">' +
       '<div class="prod-row-seller-av">' + (p.seller||'?')[0].toUpperCase() + '</div>' +
       '<span style="font-size:11px;color:var(--muted2);">' + esc(p.seller||'—') + '</span>' +
@@ -443,6 +443,51 @@ async function signalerProduit(productId, vendorId) {
   if (res.error) { toast('Erreur : ' + res.error.message, 'error'); return; }
   toast('Signalement envoyé. Merci !', 'success');
 }
+
+// ════════════════════════════════
+// HELPERS PROMO
+// ════════════════════════════════
+function promoExpired(p) {
+  if (!p.promo_end) return false;
+  return new Date(p.promo_end) < new Date();
+}
+
+function hasPromo(p) {
+  return p.promo_price && p.promo_price > 0 && p.promo_price < p.price && !promoExpired(p);
+}
+
+function promoPct(p) {
+  return Math.round((1 - p.promo_price / p.price) * 100);
+}
+
+function promoColors() {
+  return { bg: 'var(--purple)', text: '#fff' };
+}
+
+function promoBadgeHtml(p) {
+  if (!hasPromo(p)) return '';
+  var labels = {
+    'Weekend': '🎉', 'Fin de mois': '📅', 'Black Friday': '🖤',
+    'Flash': '⚡', 'Soldes': '🛍️', 'Liquidation': '🔥', 'Promo': '🏷️'
+  };
+  var emoji = labels[p.promo_label] || '🏷️';
+  return '<span style="display:inline-flex;align-items:center;gap:4px;background:var(--purple);color:#fff;' +
+    'font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;margin-left:6px;">' +
+    emoji + ' ' + (p.promo_label || 'Promo') + ' -' + promoPct(p) + '%</span>';
+}
+
+function promoPriceHtml(p, size) {
+  size = size || '14px';
+  if (!hasPromo(p)) {
+    return '<span style="font-family:DM Mono,monospace;font-size:' + size + ';font-weight:500;color:var(--purple);">' +
+      formatPrice(p.price) + '</span>';
+  }
+  return '<span style="font-family:DM Mono,monospace;font-size:' + size + ';font-weight:700;color:var(--purple);">' +
+    formatPrice(p.promo_price) + '</span>' +
+    '<span style="font-family:DM Mono,monospace;font-size:11px;color:var(--muted2);text-decoration:line-through;margin-left:6px;">' +
+    formatPrice(p.price) + '</span>';
+}
+
 // ════════════════════════════════
 // MENU PROFIL DYNAMIQUE
 // ════════════════════════════════
