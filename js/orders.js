@@ -1,4 +1,5 @@
 
+
 // ════════════════════════════════
 // COMMANDES
 // ════════════════════════════════
@@ -118,7 +119,8 @@ function renderMyProds() {
       '<div class="prod-row-info">' +
       '<div class="prod-row-name">' + esc(p.name) + '</div>' +
       '<div class="prod-row-desc">' + formatPrice(p.price) + '</div>' +
-      '<div style="margin-top:8px;">' +
+      '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">' +
+      (p.promo_price ? '<button class="btn btn-xs" style="background:#7C3AED;color:#fff;" onclick="gererPromo(' + p.id + ')">🏷️ Modifier promo</button>' : '<button class="btn btn-xs" style="background:#F97316;color:#fff;" onclick="gererPromo(' + p.id + ')">🏷️ Ajouter promo</button>') +
       '<button class="btn btn-danger btn-xs" onclick="supprimerMonProduit(' + p.id + ')">🗑 Supprimer</button>' +
       '</div>' +
       '</div></div>';
@@ -126,12 +128,62 @@ function renderMyProds() {
 }
 
 
-
 async function supprimerMonProduit(id) {
   if (!confirm('Supprimer ce produit ? Cette action est irreversible.')) return;
   var res = await sb.rpc('supprimer_produit', { product_id: id });
   if (res.error) { toast('Erreur : ' + res.error.message, 'error'); return; }
   toast('Produit supprime !', 'success');
+  await loadProducts();
+  renderMyProds();
+}
+
+
+
+async function gererPromo(productId) {
+  var p = S.products.find(function(x) { return x.id === productId; });
+  if (!p) return;
+
+  var hasP = p.promo_price && p.promo_price > 0;
+  var action = hasP ? prompt(
+    'Promo actuelle : ' + formatPrice(p.promo_price) + ' HTG (' + (p.promo_label||'Promo') + ')\n\n1. Modifier la promo\n2. Supprimer la promo\n\nTape 1 ou 2 :'
+  ) : '1';
+
+  if (!action) return;
+
+  if (action === '2') {
+    var res = await sb.from('products').update({ promo_price: null, promo_label: null, promo_end: null }).eq('id', productId);
+    if (res.error) { toast('Erreur : ' + res.error.message, 'error'); return; }
+    toast('Promo supprimée ✓', 'success');
+    await loadProducts();
+    renderMyProds();
+    return;
+  }
+
+  var newPrice = prompt('Prix promotionnel (HTG) — Prix actuel : ' + formatPrice(p.price) + ' HTG :');
+  if (!newPrice || isNaN(parseInt(newPrice))) { toast('Prix invalide', 'error'); return; }
+  newPrice = parseInt(newPrice);
+  if (newPrice >= p.price) { toast('Le prix promo doit être inférieur au prix normal', 'error'); return; }
+
+  var types = ['Promo', 'Weekend', 'Fin de mois', 'Black Friday', 'Flash', 'Soldes', 'Liquidation'];
+  var typeList = types.map(function(t, i) { return (i+1) + '. ' + t; }).join('\n');
+  var typeChoice = prompt('Type de promo :\n' + typeList + '\n\nTape le numéro :');
+  var typeIdx = parseInt(typeChoice) - 1;
+  var label = (typeIdx >= 0 && typeIdx < types.length) ? types[typeIdx] : 'Promo';
+
+  var endDate = prompt('Date de fin (optionnel, format: 2025-12-31) — Laisse vide pour sans limite :');
+  var promoEnd = null;
+  if (endDate && endDate.trim()) {
+    promoEnd = new Date(endDate.trim()).toISOString();
+  }
+
+  var res = await sb.from('products').update({
+    promo_price: newPrice,
+    promo_label: label,
+    promo_end: promoEnd
+  }).eq('id', productId);
+
+  if (res.error) { toast('Erreur : ' + res.error.message, 'error'); return; }
+  toast('Promo activée ! 🏷️', 'success');
   await loadProducts();
   renderMyProds();
 }
