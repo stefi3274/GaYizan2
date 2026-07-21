@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -19,6 +20,20 @@
 <link rel="stylesheet" href="css/base.css"/>
 <link rel="stylesheet" href="css/components.css"/>
 <link rel="stylesheet" href="css/pages.css"/>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Ga-Izan",
+  "description": "La marketplace haïtienne pour acheter et vendre des produits locaux. Paiement mobile MonCash et NatCash.",
+  "url": "https://gaizanmarket.com",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://gaizanmarket.com?search={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
 </head>
 <body>
 <div class="app">
@@ -427,7 +442,6 @@
   </div>
 </div>
 <div class="toast" id="toast"></div>
-
 <!-- ══ MODAL UPLOAD ══ -->
 <div class="modal-overlay" id="uploadModal">
   <div class="modal" style="text-align:center;">
@@ -435,7 +449,6 @@
     <div id="uploadModalContent"></div>
   </div>
 </div>
-
 <!-- ══ SCRIPTS ══ -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="js/config.js"></script>
@@ -485,4 +498,5 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
+
 
