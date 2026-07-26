@@ -26,6 +26,7 @@ async function loadProducts() {
       uid: p.user_id,
       created_at: p.created_at,
       image_url: p.image_url || null,
+      location: p.location || null,
       promo_price: p.promo_price || null,
       promo_label: p.promo_label || null,
       promo_end: p.promo_end || null,
@@ -64,6 +65,7 @@ async function publishProduct() {
   const desc = document.getElementById('sellDesc').value.trim();
   const cat = document.getElementById('sellCat').value;
   const price = document.getElementById('sellPrice').value;
+  var location = document.getElementById('sellLocation') ? document.getElementById('sellLocation').value.trim() : '';
   var fileInput = document.getElementById('sellImage');
   var file = fileInput && fileInput.files[0] ? fileInput.files[0] : null;
   var fileInput2 = document.getElementById('sellImage2');
@@ -103,6 +105,7 @@ async function publishProduct() {
     image_url: image_url,
     image_url_2: image_url_2,
     image_url_3: image_url_3,
+    location: location || null,
     affiliation_active: affiliationActive,
     promo_price: promoPrice,
     promo_label: promoLabel,
@@ -119,6 +122,7 @@ async function publishProduct() {
   });
   document.getElementById('sellCat').value = '';
   if (fileInput) fileInput.value = '';
+  if (document.getElementById('sellLocation')) document.getElementById('sellLocation').value = '';
   if (fileInput2) fileInput2.value = '';
   if (fileInput3) fileInput3.value = '';
   if (document.getElementById('sellAffiliation')) document.getElementById('sellAffiliation').checked = false;

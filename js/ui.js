@@ -238,6 +238,7 @@ function renderMarket() {
       '<div class="prod-row-meta">' +
       '<div class="prod-row-seller-av">' + (p.seller||'?')[0].toUpperCase() + '</div>' +
       '<span style="font-size:11px;color:var(--muted2);">' + esc(p.seller||'—') + '</span>' +
+      (p.location ? '<span style="font-size:10px;color:var(--muted2);margin-left:6px;">📍 ' + esc(p.location) + '</span>' : '') +
       '</div></div></div></div>';
   }).join('');
 }// ════════════════════════════════
@@ -280,7 +281,7 @@ async function openDetail(id) {
     '<div class="seller-card">' +
     '<div class="seller-av">' + (p.seller||'?')[0].toUpperCase() + '</div>' +
     '<div><div class="seller-name">' + esc(p.seller||'—') + (p.verified ? ' <span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;background:var(--purple);border-radius:50%;color:#fff;font-size:10px;font-weight:700;margin-left:4px;">✓</span>' : '') + '</div>' +
-    '<div class="seller-meta">Publie ' + fmtDate(p.created_at) + '</div></div></div>' +
+    '<div class="seller-meta">Publie ' + fmtDate(p.created_at) + '</div>' + (p.location ? '<div style="font-size:12px;color:var(--muted2);margin-top:2px;">📍 ' + esc(p.location) + '</div>' : '') + '</div></div>' +
     '<div class="detail-actions">' +
     (isOwn ? '<div class="pay-warning">C\'est ton propre produit.</div>' : '') +
     (!isOwn && (hasMc||hasNc) ? '<button class="btn btn-gold btn-full" onclick="openPayFlow(' + p.id + ')">Proceder au paiement</button>' : '') +
