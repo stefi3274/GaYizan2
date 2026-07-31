@@ -346,6 +346,29 @@ if (S.profile.avatar_url) {
   var wrap = document.getElementById('completeBannerWrap');
   if (wrap) wrap.innerHTML = '';
 }
+async function toggleLike(productId) {
+  if (!S.user) { toast('Connecte-toi pour liker', 'error'); return; }
+  var btn = document.getElementById('likeBtn_' + productId);
+  var countEl = document.getElementById('likeCount_' + productId);
+  var alreadyLiked = btn && btn.getAttribute('data-liked') === '1';
+
+  if (alreadyLiked) {
+    var del = await sb.from('product_likes')
+      .delete()
+      .eq('product_id', productId)
+      .eq('user_id', S.user.id);
+    if (del.error) { toast('Erreur', 'error'); return; }
+    if (btn) { btn.setAttribute('data-liked','0'); btn.style.color = 'var(--muted)'; }
+    if (countEl) countEl.textContent = Math.max(0, parseInt(countEl.textContent) - 1);
+  } else {
+    var ins = await sb.from('product_likes')
+      .insert([{ product_id: parseInt(productId), user_id: S.user.id }]);
+    if (ins.error) { toast('Erreur', 'error'); return; }
+    if (btn) { btn.setAttribute('data-liked','1'); btn.style.color = '#DC2626'; }
+    if (countEl) countEl.textContent = parseInt(countEl.textContent) + 1;
+  }
+}
+
 async function loadLikes(productId) {
   var res = await sb.from('product_likes')
     .select('id', { count: 'exact', head: true })

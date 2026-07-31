@@ -1,5 +1,4 @@
 
-
 // ════════════════════════════════
 // COMMANDES
 // ════════════════════════════════
@@ -119,9 +118,7 @@ function renderMyProds() {
       '<div class="prod-row-info">' +
       '<div class="prod-row-name">' + esc(p.name) + '</div>' +
       '<div class="prod-row-desc">' + formatPrice(p.price) + '</div>' +
-      '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">' +
-      (p.promo_price ? '<button class="btn btn-xs" style="background:#7C3AED;color:#fff;" onclick="gererPromo(' + p.id + ')">🏷️ Modifier promo</button>' : '<button class="btn btn-xs" style="background:#F97316;color:#fff;" onclick="gererPromo(' + p.id + ')">🏷️ Ajouter promo</button>') +
-      '<button class="btn btn-xs" style="background:linear-gradient(135deg,#f43f5e,#f97316,#eab308,#22c55e,#3b82f6,#a855f7);color:#fff;font-weight:700;" onclick="partagerReseaux(' + p.id + ')">✦ Réseaux</button>' +
+      '<div style="margin-top:8px;">' +
       '<button class="btn btn-danger btn-xs" onclick="supprimerMonProduit(' + p.id + ')">🗑 Supprimer</button>' +
       '</div>' +
       '</div></div>';
@@ -129,244 +126,14 @@ function renderMyProds() {
 }
 
 
+
 async function supprimerMonProduit(id) {
   if (!confirm('Supprimer ce produit ? Cette action est irreversible.')) return;
-  var res = await sb.rpc('supprimer_produit', { product_id: id });
+  var res = await sb.from('products')
+    .update({ is_active: false })
+    .eq('id', id);
   if (res.error) { toast('Erreur : ' + res.error.message, 'error'); return; }
   toast('Produit supprime !', 'success');
   await loadProducts();
   renderMyProds();
-}
-
-
-
-async function gererPromo(productId) {
-  var p = S.products.find(function(x) { return x.id === productId; });
-  if (!p) return;
-
-  var hasP = p.promo_price && p.promo_price > 0;
-  var action = hasP ? prompt(
-    'Promo actuelle : ' + formatPrice(p.promo_price) + ' HTG (' + (p.promo_label||'Promo') + ')\n\n1. Modifier la promo\n2. Supprimer la promo\n\nTape 1 ou 2 :'
-  ) : '1';
-
-  if (!action) return;
-
-  if (action === '2') {
-    var res = await sb.from('products').update({ promo_price: null, promo_label: null, promo_end: null }).eq('id', productId);
-    if (res.error) { toast('Erreur : ' + res.error.message, 'error'); return; }
-    toast('Promo supprimée ✓', 'success');
-    await loadProducts();
-    renderMyProds();
-    return;
-  }
-
-  var newPrice = prompt('Prix promotionnel (HTG) — Prix actuel : ' + formatPrice(p.price) + ' HTG :');
-  if (!newPrice || isNaN(parseInt(newPrice))) { toast('Prix invalide', 'error'); return; }
-  newPrice = parseInt(newPrice);
-  if (newPrice >= p.price) { toast('Le prix promo doit être inférieur au prix normal', 'error'); return; }
-
-  var types = ['Promo', 'Weekend', 'Fin de mois', 'Black Friday', 'Flash', 'Soldes', 'Liquidation'];
-  var typeList = types.map(function(t, i) { return (i+1) + '. ' + t; }).join('\n');
-  var typeChoice = prompt('Type de promo :\n' + typeList + '\n\nTape le numéro :');
-  var typeIdx = parseInt(typeChoice) - 1;
-  var label = (typeIdx >= 0 && typeIdx < types.length) ? types[typeIdx] : 'Promo';
-
-  var endDate = prompt('Date de fin (optionnel, format: 2025-12-31) — Laisse vide pour sans limite :');
-  var promoEnd = null;
-  if (endDate && endDate.trim()) {
-    promoEnd = new Date(endDate.trim()).toISOString();
-  }
-
-  var res = await sb.from('products').update({
-    promo_price: newPrice,
-    promo_label: label,
-    promo_end: promoEnd
-  }).eq('id', productId);
-
-  if (res.error) { toast('Erreur : ' + res.error.message, 'error'); return; }
-  toast('Promo activée ! 🏷️', 'success');
-  await loadProducts();
-  renderMyProds();
-}
-
-
-// ════════════════════════════════
-// FICHE PRODUIT RÉSEAUX SOCIAUX
-// ════════════════════════════════
-function getAttrText(p) {
-  if (!p.attributes || typeof p.attributes !== 'object') return '';
-  var attrs = p.attributes;
-  var lines = [];
-  var labels = {
-    attr_marque: 'Marque', attr_modele: 'Modèle', attr_annee: 'Année',
-    attr_etat: 'État', attr_taille: 'Taille', attr_couleur: 'Couleur',
-    attr_kilometrage: 'Km', attr_carburant: 'Carburant',
-    attr_niveau: 'Niveau', attr_format: 'Format', attr_duree: 'Durée',
-    attr_pointure: 'Pointure', attr_stockage: 'Stockage',
-    attr_quantite: 'Qté', attr_unite: 'Unité', attr_zone: 'Zone',
-    attr_disponibilite: 'Dispo', attr_langue: 'Langue',
-    attr_origine: 'Origine', attr_expiration: 'Exp.',
-    attr_dimensions: 'Dim.', attr_matiere: 'Matière',
-    attr_sport: 'Sport', attr_type: 'Type'
-  };
-  var keys = Object.keys(attrs).slice(0, 4); // max 4 attributs
-  keys.forEach(function(k) {
-    if (attrs[k] && labels[k]) {
-      lines.push(labels[k] + ' : ' + attrs[k]);
-    }
-  });
-  return lines.join('  ·  ');
-}
-
-async function partagerReseaux(productId) {
-  var p = S.products.find(function(x) { return x.id === productId; });
-  if (!p) { toast('Produit introuvable', 'error'); return; }
-  toast('Génération de la fiche...', 'success');
-
-  var canvas = document.createElement('canvas');
-  canvas.width = 1080;
-  canvas.height = 1080;
-  var ctx = canvas.getContext('2d');
-
-  function drawFiche(photos) {
-    // Fond dégradé violet
-    var grad = ctx.createLinearGradient(0, 0, 1080, 1080);
-    grad.addColorStop(0, '#4C1D95');
-    grad.addColorStop(1, '#7C3AED');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, 1080, 1080);
-
-    // Cercles décoratifs
-    ctx.beginPath(); ctx.arc(950, 100, 220, 0, Math.PI*2);
-    ctx.fillStyle = 'rgba(255,255,255,0.04)'; ctx.fill();
-    ctx.beginPath(); ctx.arc(100, 950, 160, 0, Math.PI*2);
-    ctx.fillStyle = 'rgba(253,230,138,0.06)'; ctx.fill();
-
-    // ── PHOTO(S) ──
-    var photoCount = photos.filter(Boolean).length;
-    if (photoCount === 1) {
-      // Une grande photo centrée avec cover
-      drawImageCover(ctx, photos[0], 60, 140, 960, 520, 20);
-    } else if (photoCount === 2) {
-      drawImageCover(ctx, photos[0], 60, 140, 470, 520, 16);
-      drawImageCover(ctx, photos[1], 550, 140, 470, 520, 16);
-    } else if (photoCount >= 3) {
-      drawImageCover(ctx, photos[0], 60, 140, 620, 520, 16);
-      drawImageCover(ctx, photos[1], 700, 140, 320, 250, 16);
-      drawImageCover(ctx, photos[2], 700, 410, 320, 250, 16);
-    } else {
-      // Pas de photo — fond coloré avec emoji
-      ctx.fillStyle = 'rgba(255,255,255,0.08)';
-      ctx.beginPath(); ctx.roundRect(60, 140, 960, 520, 20); ctx.fill();
-      ctx.font = '180px sans-serif'; ctx.textAlign = 'center';
-      ctx.fillText(p.emoji || '📦', 540, 460);
-      ctx.textAlign = 'left';
-    }
-
-    // ── LOGO GA-IZAN ──
-    ctx.fillStyle = '#FDE68A';
-    ctx.font = 'bold 52px serif';
-    ctx.fillText('Ga-Izan', 60, 75);
-    ctx.fillStyle = 'rgba(255,255,255,0.55)';
-    ctx.font = '26px sans-serif';
-    ctx.fillText('gaizanmarket.com', 60, 112);
-
-    // ── NOM DU PRODUIT ──
-    ctx.fillStyle = '#fff';
-    ctx.font = 'bold 58px sans-serif';
-    var name = p.name || 'Produit';
-    if (name.length > 22) name = name.substring(0, 22) + '…';
-    ctx.fillText(name, 60, 740);
-
-    // ── LIEU ──
-    if (p.location) {
-      ctx.fillStyle = 'rgba(255,255,255,0.65)';
-      ctx.font = '32px sans-serif';
-      ctx.fillText('📍 ' + p.location, 60, 785);
-    }
-    var attrText = getAttrText(p);
-    if (attrText) {
-      ctx.fillStyle = 'rgba(253,230,138,0.85)';
-      ctx.font = '28px sans-serif';
-      var attrY = p.location ? 825 : 785;
-      ctx.fillText(attrText, 60, attrY);
-    }
-
-    // ── PRIX ──
-    var hasPromo = p.promo_price && p.promo_price < p.price;
-    if (hasPromo) {
-      ctx.fillStyle = '#FDE68A';
-      ctx.font = 'bold 76px monospace';
-      ctx.fillText(parseInt(p.promo_price).toLocaleString('fr-FR') + ' HTG', 60, 870);
-      ctx.fillStyle = 'rgba(255,255,255,0.45)';
-      ctx.font = '38px monospace';
-      var oldPriceText = parseInt(p.price).toLocaleString('fr-FR') + ' HTG';
-      ctx.fillText(oldPriceText, 60, 915);
-      var w = ctx.measureText(oldPriceText).width;
-      ctx.strokeStyle = 'rgba(255,255,255,0.45)'; ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.moveTo(60, 902); ctx.lineTo(60+w, 902); ctx.stroke();
-      // Badge promo
-      var pct = Math.round((1 - p.promo_price/p.price)*100);
-      var badgeText = (p.promo_label || 'Promo') + '  -' + pct + '%';
-      var bw = ctx.measureText(badgeText).width + 40;
-      ctx.fillStyle = '#FDE68A';
-      ctx.beginPath(); ctx.roundRect(60, 930, bw, 56, 28); ctx.fill();
-      ctx.fillStyle = '#4C1D95'; ctx.font = 'bold 28px sans-serif';
-      ctx.fillText(badgeText, 80, 967);
-    } else {
-      ctx.fillStyle = '#FDE68A';
-      ctx.font = 'bold 76px monospace';
-      ctx.fillText(parseInt(p.price).toLocaleString('fr-FR') + ' HTG', 60, 870);
-    }
-
-    // ── VENDEUR + PAYEZ À LA LIVRAISON ──
-    ctx.fillStyle = 'rgba(255,255,255,0.6)';
-    ctx.font = '30px sans-serif';
-    ctx.fillText('Par ' + (p.seller || 'Vendeur'), 60, 1040);
-    ctx.textAlign = 'right';
-    ctx.fillStyle = '#fff';
-    ctx.font = 'bold 28px sans-serif';
-    ctx.fillText('✅ Payez à la livraison', 1020, 1040);
-    ctx.textAlign = 'left';
-
-    // Télécharger
-    var link = document.createElement('a');
-    link.download = 'ga-izan-' + (p.name||'produit').replace(/\s+/g,'-') + '.png';
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-    toast('Fiche téléchargée ! 🎉', 'success');
-  }
-
-  function drawImageCover(ctx, img, x, y, w, h, r) {
-    // Cover : centrer et rogner sans étirer
-    var scale = Math.max(w/img.width, h/img.height);
-    var sw = w/scale, sh = h/scale;
-    var sx = (img.width - sw)/2, sy = (img.height - sh)/2;
-    ctx.save();
-    ctx.beginPath(); ctx.roundRect(x, y, w, h, r); ctx.clip();
-    ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
-    ctx.restore();
-  }
-
-  // Charger les photos
-  var urls = [p.image_url, p.image_url_2, p.image_url_3].filter(Boolean);
-  if (urls.length === 0) { drawFiche([]); return; }
-
-  var loaded = [];
-  var count = 0;
-  urls.forEach(function(url, i) {
-    var img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = function() {
-      loaded[i] = img;
-      count++;
-      if (count === urls.length) drawFiche(loaded);
-    };
-    img.onerror = function() {
-      loaded[i] = null;
-      count++;
-      if (count === urls.length) drawFiche(loaded);
-    };
-    img.src = url;
-  });
 }
