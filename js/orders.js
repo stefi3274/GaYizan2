@@ -121,6 +121,7 @@ function renderMyProds() {
       '<div class="prod-row-desc">' + formatPrice(p.price) + '</div>' +
       '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">' +
       (p.promo_price ? '<button class="btn btn-xs" style="background:#7C3AED;color:#fff;" onclick="gererPromo(' + p.id + ')">🏷️ Modifier promo</button>' : '<button class="btn btn-xs" style="background:#F97316;color:#fff;" onclick="gererPromo(' + p.id + ')">🏷️ Ajouter promo</button>') +
+      '<button class="btn btn-xs" style="background:linear-gradient(135deg,#f43f5e,#f97316,#eab308,#22c55e,#3b82f6,#a855f7);color:#fff;font-weight:700;" onclick="partagerReseaux(' + p.id + ')">✦ Réseaux</button>' +
       '<button class="btn btn-danger btn-xs" onclick="supprimerMonProduit(' + p.id + ')">🗑 Supprimer</button>' +
       '</div>' +
       '</div></div>';
@@ -186,4 +187,134 @@ async function gererPromo(productId) {
   toast('Promo activée ! 🏷️', 'success');
   await loadProducts();
   renderMyProds();
+}
+
+// ════════════════════════════════
+// FICHE PRODUIT RÉSEAUX SOCIAUX
+// ════════════════════════════════
+async function partagerReseaux(productId) {
+  var p = S.products.find(function(x) { return x.id === productId; });
+  if (!p) { toast('Produit introuvable', 'error'); return; }
+
+  toast('Génération de la fiche...', 'success');
+
+  var canvas = document.createElement('canvas');
+  canvas.width = 1080;
+  canvas.height = 1080;
+  var ctx = canvas.getContext('2d');
+
+  // Fond dégradé violet
+  var grad = ctx.createLinearGradient(0, 0, 1080, 1080);
+  grad.addColorStop(0, '#5B21B6');
+  grad.addColorStop(1, '#7C3AED');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, 1080, 1080);
+
+  // Cercles décoratifs
+  ctx.beginPath();
+  ctx.arc(900, 150, 200, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(255,255,255,0.05)';
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(150, 900, 150, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(253,230,138,0.08)';
+  ctx.fill();
+
+  // Logo Ga-Izan en haut
+  ctx.fillStyle = '#FDE68A';
+  ctx.font = 'bold 48px serif';
+  ctx.fillText('Ga-Izan', 60, 80);
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.font = '28px sans-serif';
+  ctx.fillText('gaizanmarket.com', 60, 120);
+
+  // Photo du produit (si disponible)
+  var drawContent = function() {
+    // Zone blanche pour la photo
+    ctx.fillStyle = 'rgba(255,255,255,0.1)';
+    ctx.beginPath();
+    ctx.roundRect(60, 150, 960, 480, 24);
+    ctx.fill();
+
+    // Nom du produit
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 64px sans-serif';
+    var name = p.name || 'Produit';
+    if (name.length > 20) name = name.substring(0, 20) + '...';
+    ctx.fillText(name, 60, 720);
+
+    // Prix
+    if (p.promo_price && p.promo_price < p.price) {
+      ctx.fillStyle = '#FDE68A';
+      ctx.font = 'bold 80px monospace';
+      ctx.fillText(parseInt(p.promo_price).toLocaleString('fr-FR') + ' HTG', 60, 820);
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.font = '40px monospace';
+      ctx.fillText(parseInt(p.price).toLocaleString('fr-FR') + ' HTG', 60, 870);
+      // Barrer
+      var w = ctx.measureText(parseInt(p.price).toLocaleString('fr-FR') + ' HTG').width;
+      ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(60, 855);
+      ctx.lineTo(60 + w, 855);
+      ctx.stroke();
+      // Badge promo
+      ctx.fillStyle = '#FDE68A';
+      ctx.beginPath();
+      ctx.roundRect(60, 890, 300, 60, 30);
+      ctx.fill();
+      ctx.fillStyle = '#5B21B6';
+      ctx.font = 'bold 28px sans-serif';
+      var pct = Math.round((1 - p.promo_price/p.price)*100);
+      ctx.fillText((p.promo_label || 'Promo') + ' -' + pct + '%', 80, 930);
+    } else {
+      ctx.fillStyle = '#FDE68A';
+      ctx.font = 'bold 80px monospace';
+      ctx.fillText(parseInt(p.price).toLocaleString('fr-FR') + ' HTG', 60, 820);
+    }
+
+    // Vendeur
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    ctx.font = '36px sans-serif';
+    ctx.fillText('Par ' + (p.seller || 'Vendeur Ga-Izan'), 60, 980);
+
+    // "Payez à la livraison"
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 32px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText('✅ Payez à la livraison', 1020, 980);
+    ctx.textAlign = 'left';
+
+    // Télécharger
+    var link = document.createElement('a');
+    link.download = 'ga-izan-' + (p.name || 'produit').replace(/\s+/g,'-') + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    toast('Fiche téléchargée ! 🎉', 'success');
+  };
+
+  // Charger la photo si disponible
+  if (p.image_url) {
+    var img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = function() {
+      ctx.save();
+      ctx.beginPath();
+      ctx.roundRect(80, 170, 920, 440, 20);
+      ctx.clip();
+      ctx.drawImage(img, 80, 170, 920, 440);
+      ctx.restore();
+      drawContent();
+    };
+    img.onerror = function() { drawContent(); };
+    img.src = p.image_url;
+  } else {
+    // Emoji à la place
+    ctx.font = '200px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(p.emoji || '📦', 540, 500);
+    ctx.textAlign = 'left';
+    drawContent();
+  }
 }
