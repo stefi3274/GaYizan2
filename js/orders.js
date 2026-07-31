@@ -189,13 +189,38 @@ async function gererPromo(productId) {
   renderMyProds();
 }
 
+
 // ════════════════════════════════
 // FICHE PRODUIT RÉSEAUX SOCIAUX
 // ════════════════════════════════
+function getAttrText(p) {
+  if (!p.attributes || typeof p.attributes !== 'object') return '';
+  var attrs = p.attributes;
+  var lines = [];
+  var labels = {
+    attr_marque: 'Marque', attr_modele: 'Modèle', attr_annee: 'Année',
+    attr_etat: 'État', attr_taille: 'Taille', attr_couleur: 'Couleur',
+    attr_kilometrage: 'Km', attr_carburant: 'Carburant',
+    attr_niveau: 'Niveau', attr_format: 'Format', attr_duree: 'Durée',
+    attr_pointure: 'Pointure', attr_stockage: 'Stockage',
+    attr_quantite: 'Qté', attr_unite: 'Unité', attr_zone: 'Zone',
+    attr_disponibilite: 'Dispo', attr_langue: 'Langue',
+    attr_origine: 'Origine', attr_expiration: 'Exp.',
+    attr_dimensions: 'Dim.', attr_matiere: 'Matière',
+    attr_sport: 'Sport', attr_type: 'Type'
+  };
+  var keys = Object.keys(attrs).slice(0, 4); // max 4 attributs
+  keys.forEach(function(k) {
+    if (attrs[k] && labels[k]) {
+      lines.push(labels[k] + ' : ' + attrs[k]);
+    }
+  });
+  return lines.join('  ·  ');
+}
+
 async function partagerReseaux(productId) {
   var p = S.products.find(function(x) { return x.id === productId; });
   if (!p) { toast('Produit introuvable', 'error'); return; }
-
   toast('Génération de la fiche...', 'success');
 
   var canvas = document.createElement('canvas');
@@ -203,118 +228,145 @@ async function partagerReseaux(productId) {
   canvas.height = 1080;
   var ctx = canvas.getContext('2d');
 
-  // Fond dégradé violet
-  var grad = ctx.createLinearGradient(0, 0, 1080, 1080);
-  grad.addColorStop(0, '#5B21B6');
-  grad.addColorStop(1, '#7C3AED');
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, 1080, 1080);
+  function drawFiche(photos) {
+    // Fond dégradé violet
+    var grad = ctx.createLinearGradient(0, 0, 1080, 1080);
+    grad.addColorStop(0, '#4C1D95');
+    grad.addColorStop(1, '#7C3AED');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 1080, 1080);
 
-  // Cercles décoratifs
-  ctx.beginPath();
-  ctx.arc(900, 150, 200, 0, Math.PI * 2);
-  ctx.fillStyle = 'rgba(255,255,255,0.05)';
-  ctx.fill();
-  ctx.beginPath();
-  ctx.arc(150, 900, 150, 0, Math.PI * 2);
-  ctx.fillStyle = 'rgba(253,230,138,0.08)';
-  ctx.fill();
+    // Cercles décoratifs
+    ctx.beginPath(); ctx.arc(950, 100, 220, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(255,255,255,0.04)'; ctx.fill();
+    ctx.beginPath(); ctx.arc(100, 950, 160, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(253,230,138,0.06)'; ctx.fill();
 
-  // Logo Ga-Izan en haut
-  ctx.fillStyle = '#FDE68A';
-  ctx.font = 'bold 48px serif';
-  ctx.fillText('Ga-Izan', 60, 80);
-  ctx.fillStyle = 'rgba(255,255,255,0.5)';
-  ctx.font = '28px sans-serif';
-  ctx.fillText('gaizanmarket.com', 60, 120);
-
-  // Photo du produit (si disponible)
-  var drawContent = function() {
-    // Zone blanche pour la photo
-    ctx.fillStyle = 'rgba(255,255,255,0.1)';
-    ctx.beginPath();
-    ctx.roundRect(60, 150, 960, 480, 24);
-    ctx.fill();
-
-    // Nom du produit
-    ctx.fillStyle = '#fff';
-    ctx.font = 'bold 64px sans-serif';
-    var name = p.name || 'Produit';
-    if (name.length > 20) name = name.substring(0, 20) + '...';
-    ctx.fillText(name, 60, 720);
-
-    // Prix
-    if (p.promo_price && p.promo_price < p.price) {
-      ctx.fillStyle = '#FDE68A';
-      ctx.font = 'bold 80px monospace';
-      ctx.fillText(parseInt(p.promo_price).toLocaleString('fr-FR') + ' HTG', 60, 820);
-      ctx.fillStyle = 'rgba(255,255,255,0.5)';
-      ctx.font = '40px monospace';
-      ctx.fillText(parseInt(p.price).toLocaleString('fr-FR') + ' HTG', 60, 870);
-      // Barrer
-      var w = ctx.measureText(parseInt(p.price).toLocaleString('fr-FR') + ' HTG').width;
-      ctx.strokeStyle = 'rgba(255,255,255,0.5)';
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(60, 855);
-      ctx.lineTo(60 + w, 855);
-      ctx.stroke();
-      // Badge promo
-      ctx.fillStyle = '#FDE68A';
-      ctx.beginPath();
-      ctx.roundRect(60, 890, 300, 60, 30);
-      ctx.fill();
-      ctx.fillStyle = '#5B21B6';
-      ctx.font = 'bold 28px sans-serif';
-      var pct = Math.round((1 - p.promo_price/p.price)*100);
-      ctx.fillText((p.promo_label || 'Promo') + ' -' + pct + '%', 80, 930);
+    // ── PHOTO(S) ──
+    var photoCount = photos.filter(Boolean).length;
+    if (photoCount === 1) {
+      // Une grande photo centrée avec cover
+      drawImageCover(ctx, photos[0], 60, 140, 960, 520, 20);
+    } else if (photoCount === 2) {
+      drawImageCover(ctx, photos[0], 60, 140, 470, 520, 16);
+      drawImageCover(ctx, photos[1], 550, 140, 470, 520, 16);
+    } else if (photoCount >= 3) {
+      drawImageCover(ctx, photos[0], 60, 140, 620, 520, 16);
+      drawImageCover(ctx, photos[1], 700, 140, 320, 250, 16);
+      drawImageCover(ctx, photos[2], 700, 410, 320, 250, 16);
     } else {
-      ctx.fillStyle = '#FDE68A';
-      ctx.font = 'bold 80px monospace';
-      ctx.fillText(parseInt(p.price).toLocaleString('fr-FR') + ' HTG', 60, 820);
+      // Pas de photo — fond coloré avec emoji
+      ctx.fillStyle = 'rgba(255,255,255,0.08)';
+      ctx.beginPath(); ctx.roundRect(60, 140, 960, 520, 20); ctx.fill();
+      ctx.font = '180px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText(p.emoji || '📦', 540, 460);
+      ctx.textAlign = 'left';
     }
 
-    // Vendeur
-    ctx.fillStyle = 'rgba(255,255,255,0.7)';
-    ctx.font = '36px sans-serif';
-    ctx.fillText('Par ' + (p.seller || 'Vendeur Ga-Izan'), 60, 980);
+    // ── LOGO GA-IZAN ──
+    ctx.fillStyle = '#FDE68A';
+    ctx.font = 'bold 52px serif';
+    ctx.fillText('Ga-Izan', 60, 75);
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.font = '26px sans-serif';
+    ctx.fillText('gaizanmarket.com', 60, 112);
 
-    // "Payez à la livraison"
+    // ── NOM DU PRODUIT ──
     ctx.fillStyle = '#fff';
-    ctx.font = 'bold 32px sans-serif';
+    ctx.font = 'bold 58px sans-serif';
+    var name = p.name || 'Produit';
+    if (name.length > 22) name = name.substring(0, 22) + '…';
+    ctx.fillText(name, 60, 740);
+
+    // ── LIEU ──
+    if (p.location) {
+      ctx.fillStyle = 'rgba(255,255,255,0.65)';
+      ctx.font = '32px sans-serif';
+      ctx.fillText('📍 ' + p.location, 60, 785);
+    }
+    var attrText = getAttrText(p);
+    if (attrText) {
+      ctx.fillStyle = 'rgba(253,230,138,0.85)';
+      ctx.font = '28px sans-serif';
+      var attrY = p.location ? 825 : 785;
+      ctx.fillText(attrText, 60, attrY);
+    }
+
+    // ── PRIX ──
+    var hasPromo = p.promo_price && p.promo_price < p.price;
+    if (hasPromo) {
+      ctx.fillStyle = '#FDE68A';
+      ctx.font = 'bold 76px monospace';
+      ctx.fillText(parseInt(p.promo_price).toLocaleString('fr-FR') + ' HTG', 60, 870);
+      ctx.fillStyle = 'rgba(255,255,255,0.45)';
+      ctx.font = '38px monospace';
+      var oldPriceText = parseInt(p.price).toLocaleString('fr-FR') + ' HTG';
+      ctx.fillText(oldPriceText, 60, 915);
+      var w = ctx.measureText(oldPriceText).width;
+      ctx.strokeStyle = 'rgba(255,255,255,0.45)'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(60, 902); ctx.lineTo(60+w, 902); ctx.stroke();
+      // Badge promo
+      var pct = Math.round((1 - p.promo_price/p.price)*100);
+      var badgeText = (p.promo_label || 'Promo') + '  -' + pct + '%';
+      var bw = ctx.measureText(badgeText).width + 40;
+      ctx.fillStyle = '#FDE68A';
+      ctx.beginPath(); ctx.roundRect(60, 930, bw, 56, 28); ctx.fill();
+      ctx.fillStyle = '#4C1D95'; ctx.font = 'bold 28px sans-serif';
+      ctx.fillText(badgeText, 80, 967);
+    } else {
+      ctx.fillStyle = '#FDE68A';
+      ctx.font = 'bold 76px monospace';
+      ctx.fillText(parseInt(p.price).toLocaleString('fr-FR') + ' HTG', 60, 870);
+    }
+
+    // ── VENDEUR + PAYEZ À LA LIVRAISON ──
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.font = '30px sans-serif';
+    ctx.fillText('Par ' + (p.seller || 'Vendeur'), 60, 1040);
     ctx.textAlign = 'right';
-    ctx.fillText('✅ Payez à la livraison', 1020, 980);
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 28px sans-serif';
+    ctx.fillText('✅ Payez à la livraison', 1020, 1040);
     ctx.textAlign = 'left';
 
     // Télécharger
     var link = document.createElement('a');
-    link.download = 'ga-izan-' + (p.name || 'produit').replace(/\s+/g,'-') + '.png';
+    link.download = 'ga-izan-' + (p.name||'produit').replace(/\s+/g,'-') + '.png';
     link.href = canvas.toDataURL('image/png');
     link.click();
     toast('Fiche téléchargée ! 🎉', 'success');
-  };
+  }
 
-  // Charger la photo si disponible
-  if (p.image_url) {
+  function drawImageCover(ctx, img, x, y, w, h, r) {
+    // Cover : centrer et rogner sans étirer
+    var scale = Math.max(w/img.width, h/img.height);
+    var sw = w/scale, sh = h/scale;
+    var sx = (img.width - sw)/2, sy = (img.height - sh)/2;
+    ctx.save();
+    ctx.beginPath(); ctx.roundRect(x, y, w, h, r); ctx.clip();
+    ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
+    ctx.restore();
+  }
+
+  // Charger les photos
+  var urls = [p.image_url, p.image_url_2, p.image_url_3].filter(Boolean);
+  if (urls.length === 0) { drawFiche([]); return; }
+
+  var loaded = [];
+  var count = 0;
+  urls.forEach(function(url, i) {
     var img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload = function() {
-      ctx.save();
-      ctx.beginPath();
-      ctx.roundRect(80, 170, 920, 440, 20);
-      ctx.clip();
-      ctx.drawImage(img, 80, 170, 920, 440);
-      ctx.restore();
-      drawContent();
+      loaded[i] = img;
+      count++;
+      if (count === urls.length) drawFiche(loaded);
     };
-    img.onerror = function() { drawContent(); };
-    img.src = p.image_url;
-  } else {
-    // Emoji à la place
-    ctx.font = '200px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(p.emoji || '📦', 540, 500);
-    ctx.textAlign = 'left';
-    drawContent();
-  }
+    img.onerror = function() {
+      loaded[i] = null;
+      count++;
+      if (count === urls.length) drawFiche(loaded);
+    };
+    img.src = url;
+  });
 }
