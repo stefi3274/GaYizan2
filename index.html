@@ -119,132 +119,180 @@
   </div>
   <!-- ══ PAGE VENDRE ══ -->
   <div class="page" id="page-sell">
-    <div class="sell-hero">
-      <h2>Publier un produit</h2>
-      <p>Visible par toute la communauté Ga-Izan</p>
+
+    <!-- Indicateur d'étapes -->
+    <div style="display:flex;align-items:center;gap:0;margin-bottom:20px;">
+      <div id="step-ind-1" style="flex:1;text-align:center;padding:10px 0;font-size:11px;font-weight:700;color:#fff;background:var(--purple);border-radius:12px 0 0 12px;">1. Produit</div>
+      <div id="step-ind-2" style="flex:1;text-align:center;padding:10px 0;font-size:11px;font-weight:700;color:var(--muted);background:var(--bg);border:1px solid var(--border);">2. Vendeur</div>
+      <div id="step-ind-3" style="flex:1;text-align:center;padding:10px 0;font-size:11px;font-weight:700;color:var(--muted);background:var(--bg);border-radius:0 12px 12px 0;border:1px solid var(--border);">3. Publier</div>
     </div>
-    <p class="required-note">* Champs obligatoires</p>
-    <div class="field"><label>Nom du produit *</label><input id="sellName" placeholder="Ex : Cours de Maths Terminale" maxlength="80"/></div>
-    <div class="field"><label>Description *</label><textarea id="sellDesc" rows="3" placeholder="Décris ton produit…" maxlength="500"></textarea></div>
-    <div class="field"><label>Localisation du vendeur</label><input id="sellLocation" placeholder="Ex : Delmas 31, Port-au-Prince" maxlength="100"/></div>
-    <div class="field-row">
-      <div class="field" style="margin-bottom:0;">
-        <label>Prix (HTG) *</label>
-        <div class="input-with-prefix">
-          <span class="input-prefix-label">HTG</span>
-          <input id="sellPrice" type="number" min="1" placeholder="0"/>
+
+    <!-- ── ÉTAPE 1 : PRODUIT ── -->
+    <div id="sell-step-1">
+      <div class="sell-hero">
+        <h2>Ton produit</h2>
+        <p>Décris ce que tu vends</p>
+      </div>
+      <p class="required-note">* Champs obligatoires</p>
+      <div class="field"><label>Nom du produit *</label><input id="sellName" placeholder="Ex : Manette PS4, Cours de Maths…" maxlength="80"/></div>
+      <div class="field"><label>Description *</label><textarea id="sellDesc" rows="3" placeholder="Décris ton produit…" maxlength="500"></textarea></div>
+      <div class="field"><label>Localisation du vendeur</label><input id="sellLocation" placeholder="Ex : Delmas 31, Port-au-Prince" maxlength="100"/></div>
+      <div class="field-row">
+        <div class="field" style="margin-bottom:0;">
+          <label>Prix (HTG) *</label>
+          <div class="input-with-prefix">
+            <span class="input-prefix-label">HTG</span>
+            <input id="sellPrice" type="number" min="1" placeholder="0"/>
+          </div>
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <label>Catégorie *</label>
+          <select id="sellCat" onchange="renderCategoryAttributes(this.value)">
+            <option value="">— Choisir —</option>
+            <optgroup label="Mode & Beauté">
+              <option value="vetement">👕 Vêtements & Mode</option>
+              <option value="chaussures">👟 Chaussures & Accessoires</option>
+              <option value="beaute">💄 Beauté & Cosmétiques</option>
+              <option value="bijoux">💍 Bijoux & Accessoires</option>
+            </optgroup>
+            <optgroup label="Technologie">
+              <option value="electronique">📱 Électronique & Téléphones</option>
+              <option value="digital">💾 Produits digitaux</option>
+              <option value="electrique">💡 Matériel Électrique</option>
+            </optgroup>
+            <optgroup label="Maison & Construction">
+              <option value="maison">🏠 Maison & Décoration</option>
+              <option value="construction">🏗️ Construction & BTP</option>
+            </optgroup>
+            <optgroup label="Alimentation & Nature">
+              <option value="alimentation">🛒 Alimentation & Épicerie</option>
+              <option value="agriculture">🌿 Agriculture & Jardinage</option>
+              <option value="animaux">🐄 Animaux</option>
+            </optgroup>
+            <optgroup label="Sport & Loisirs">
+              <option value="sport">🏋️ Sport & Fitness</option>
+              <option value="jouets">🎮 Jeux & Jouets</option>
+              <option value="musique">🎵 Musique & Instruments</option>
+            </optgroup>
+            <optgroup label="Auto & Moto">
+              <option value="auto">🚗 Auto & Moto</option>
+            </optgroup>
+            <optgroup label="Art & Culture">
+              <option value="art">🖼️ Beaux-Arts</option>
+              <option value="artisanat">🎨 Art & Artisanat</option>
+              <option value="photo">📷 Photo & Vidéo</option>
+            </optgroup>
+            <optgroup label="Formation & Services">
+              <option value="formation">📚 Cours & Formation</option>
+              <option value="services">🔧 Services & Réparation</option>
+            </optgroup>
+            <optgroup label="Autres">
+              <option value="divers">📦 Divers</option>
+              <option value="others">🌐 Others</option>
+            </optgroup>
+          </select>
         </div>
       </div>
-      <div class="field" style="margin-bottom:0;">
-        <label>Catégorie *</label>
-        <select id="sellCat" onchange="renderCategoryAttributes(this.value)">
-          <option value="">— Choisir une catégorie —</option>
-          <optgroup label="Mode & Beauté">
-            <option value="vetement">👕 Vêtements & Mode</option>
-            <option value="chaussures">👟 Chaussures & Accessoires</option>
-            <option value="beaute">💄 Beauté & Cosmétiques</option>
-            <option value="bijoux">💍 Bijoux & Accessoires</option>
-          </optgroup>
-          <optgroup label="Technologie">
-            <option value="electronique">📱 Électronique & Téléphones</option>
-            <option value="digital">💾 Produits digitaux</option>
-            <option value="electrique">💡 Matériel Électrique</option>
-          </optgroup>
-          <optgroup label="Maison & Construction">
-            <option value="maison">🏠 Maison & Décoration</option>
-            <option value="construction">🏗️ Construction & BTP</option>
-          </optgroup>
-          <optgroup label="Alimentation & Nature">
-            <option value="alimentation">🛒 Alimentation & Épicerie</option>
-            <option value="agriculture">🌿 Agriculture & Jardinage</option>
-            <option value="animaux">🐄 Animaux</option>
-          </optgroup>
-          <optgroup label="Sport & Loisirs">
-            <option value="sport">🏋️ Sport & Fitness</option>
-            <option value="jouets">🎮 Jeux & Jouets</option>
-            <option value="musique">🎵 Musique & Instruments</option>
-          </optgroup>
-          <optgroup label="Auto & Moto">
-            <option value="auto">🚗 Auto & Moto</option>
-          </optgroup>
-          <optgroup label="Art & Culture">
-            <option value="art">🖼️ Beaux-Arts</option>
-            <option value="artisanat">🎨 Art & Artisanat</option>
-            <option value="photo">📷 Photo & Vidéo</option>
-          </optgroup>
-          <optgroup label="Formation & Services">
-            <option value="formation">📚 Cours & Formation</option>
-            <option value="services">🔧 Services & Réparation</option>
-          </optgroup>
-          <optgroup label="Autres">
-            <option value="divers">📦 Divers</option>
-            <option value="others">🌐 Others</option>
-          </optgroup>
-        </select>
-      </div>
-    </div>
-    <div class="field">
-      <label>Photo du produit * (principale)</label>
-      <input type="file" id="sellImage" accept="image/*" style="padding:8px 14px;" onchange="previewPhoto(this,'preview1')"/>
-      <div id="preview1" style="display:none;position:relative;margin-top:8px;width:100px;">
-        <img style="width:100px;height:100px;object-fit:cover;border-radius:10px;border:2px solid var(--purple);"/>
-        <button type="button" onclick="clearPhoto('sellImage','preview1')" style="position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;background:#DC2626;color:#fff;border:none;cursor:pointer;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;">✕</button>
-      </div>
-    </div>
-    <div class="field">
-      <label>Photo 2 (optionnel)</label>
-      <input type="file" id="sellImage2" accept="image/*" style="padding:8px 14px;" onchange="previewPhoto(this,'preview2')"/>
-      <div id="preview2" style="display:none;position:relative;margin-top:8px;width:100px;">
-        <img style="width:100px;height:100px;object-fit:cover;border-radius:10px;border:2px solid var(--border);"/>
-        <button type="button" onclick="clearPhoto('sellImage2','preview2')" style="position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;background:#DC2626;color:#fff;border:none;cursor:pointer;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;">✕</button>
-      </div>
-    </div>
-    <div class="field">
-      <label>Photo 3 (optionnel)</label>
-      <input type="file" id="sellImage3" accept="image/*" style="padding:8px 14px;" onchange="previewPhoto(this,'preview3')"/>
-      <div id="preview3" style="display:none;position:relative;margin-top:8px;width:100px;">
-        <img style="width:100px;height:100px;object-fit:cover;border-radius:10px;border:2px solid var(--border);"/>
-        <button type="button" onclick="clearPhoto('sellImage3','preview3')" style="position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;background:#DC2626;color:#fff;border:none;cursor:pointer;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;">✕</button>
-      </div>
-    </div>
-    <div class="gap-md"></div>
-    <div id="attrWrap"></div>
-    <label style="display:flex;align-items:flex-start;gap:10px;padding:14px;background:#F2EFF9;border-radius:12px;margin-bottom:16px;cursor:pointer;">
-      <input type="checkbox" id="sellAffiliation" style="width:18px;height:18px;margin-top:2px;flex-shrink:0;"/>
-      <span style="font-size:13px;color:var(--muted);line-height:1.5;">Activer le <strong>marketing d'affiliation (2%)</strong> sur ce produit. Des affiliés pourront le partager et toucheront 2% sur les ventes qu'ils génèrent.</span>
-    </label>
-    <!-- PROMO -->
-    <label style="display:flex;align-items:flex-start;gap:10px;padding:14px;background:#FFF7ED;border-radius:12px;margin-bottom:12px;cursor:pointer;border:1.5px solid #FED7AA;">
-      <input type="checkbox" id="sellPromoActive" style="width:18px;height:18px;margin-top:2px;flex-shrink:0;" onchange="togglePromoFields()"/>
-      <span style="font-size:13px;color:#C2410C;line-height:1.5;font-weight:600;">🏷️ Activer une promotion sur ce produit</span>
-    </label>
-    <div id="promoFields" style="display:none;background:#FFF7ED;border-radius:12px;padding:14px;margin-bottom:16px;border:1.5px solid #FED7AA;">
-      <div class="field" style="margin-bottom:10px;">
-        <label style="color:#C2410C;">Prix promotionnel (HTG) *</label>
-        <div class="input-with-prefix">
-          <span class="input-prefix-label" style="color:#C2410C;">HTG</span>
-          <input id="sellPromoPrice" type="number" min="1" placeholder="0" style="border:none;border-radius:0;"/>
+      <div id="attrWrap"></div>
+      <div class="field">
+        <label>Photo principale *</label>
+        <input type="file" id="sellImage" accept="image/*" style="padding:8px 14px;" onchange="previewPhoto(this,'preview1')"/>
+        <div id="preview1" style="display:none;position:relative;margin-top:8px;width:100px;">
+          <img style="width:100px;height:100px;object-fit:cover;border-radius:10px;border:2px solid var(--purple);"/>
+          <button type="button" onclick="clearPhoto('sellImage','preview1')" style="position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;background:#DC2626;color:#fff;border:none;cursor:pointer;font-size:12px;font-weight:700;">✕</button>
         </div>
       </div>
-      <div class="field" style="margin-bottom:10px;">
-        <label style="color:#C2410C;">Type de promotion</label>
-        <select id="sellPromoLabel" style="border-color:#FED7AA;">
-          <option value="Promo">🏷️ Promotion</option>
-          <option value="Weekend">🎉 Promo Weekend</option>
-          <option value="Fin de mois">📅 Fin de mois</option>
-          <option value="Black Friday">🖤 Black Friday</option>
-          <option value="Flash">⚡ Vente Flash</option>
-          <option value="Soldes">🛍️ Soldes</option>
-          <option value="Liquidation">🔥 Liquidation</option>
-        </select>
+      <div class="field">
+        <label>Photo 2 (optionnel)</label>
+        <input type="file" id="sellImage2" accept="image/*" style="padding:8px 14px;" onchange="previewPhoto(this,'preview2')"/>
+        <div id="preview2" style="display:none;position:relative;margin-top:8px;width:100px;">
+          <img style="width:100px;height:100px;object-fit:cover;border-radius:10px;border:2px solid var(--border);"/>
+          <button type="button" onclick="clearPhoto('sellImage2','preview2')" style="position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;background:#DC2626;color:#fff;border:none;cursor:pointer;font-size:12px;font-weight:700;">✕</button>
+        </div>
       </div>
-      <div class="field" style="margin-bottom:0;">
-        <label style="color:#C2410C;">Date de fin (optionnel)</label>
-        <input id="sellPromoEnd" type="datetime-local" style="border-color:#FED7AA;"/>
+      <div class="field">
+        <label>Photo 3 (optionnel)</label>
+        <input type="file" id="sellImage3" accept="image/*" style="padding:8px 14px;" onchange="previewPhoto(this,'preview3')"/>
+        <div id="preview3" style="display:none;position:relative;margin-top:8px;width:100px;">
+          <img style="width:100px;height:100px;object-fit:cover;border-radius:10px;border:2px solid var(--border);"/>
+          <button type="button" onclick="clearPhoto('sellImage3','preview3')" style="position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;background:#DC2626;color:#fff;border:none;cursor:pointer;font-size:12px;font-weight:700;">✕</button>
+        </div>
+      </div>
+      <label style="display:flex;align-items:flex-start;gap:10px;padding:14px;background:#F2EFF9;border-radius:12px;margin-bottom:12px;cursor:pointer;">
+        <input type="checkbox" id="sellAffiliation" style="width:18px;height:18px;margin-top:2px;flex-shrink:0;"/>
+        <span style="font-size:13px;color:var(--muted);line-height:1.5;">Activer le <strong>marketing d'affiliation (2%)</strong> — Des affiliés partageront ton produit et toucheront 2% sur les ventes générées.</span>
+      </label>
+      <label style="display:flex;align-items:flex-start;gap:10px;padding:14px;background:#FFF7ED;border-radius:12px;margin-bottom:16px;cursor:pointer;border:1.5px solid #FED7AA;">
+        <input type="checkbox" id="sellPromoActive" style="width:18px;height:18px;margin-top:2px;flex-shrink:0;" onchange="togglePromoFields()"/>
+        <span style="font-size:13px;color:#C2410C;line-height:1.5;font-weight:600;">🏷️ Activer une promotion sur ce produit</span>
+      </label>
+      <div id="promoFields" style="display:none;background:#FFF7ED;border-radius:12px;padding:14px;margin-bottom:16px;border:1.5px solid #FED7AA;">
+        <div class="field" style="margin-bottom:10px;">
+          <label style="color:#C2410C;">Prix promotionnel (HTG) *</label>
+          <div class="input-with-prefix">
+            <span class="input-prefix-label" style="color:#C2410C;">HTG</span>
+            <input id="sellPromoPrice" type="number" min="1" placeholder="0" style="border:none;border-radius:0;"/>
+          </div>
+        </div>
+        <div class="field" style="margin-bottom:10px;">
+          <label style="color:#C2410C;">Type de promotion</label>
+          <select id="sellPromoLabel" style="border-color:#FED7AA;">
+            <option value="Promo">🏷️ Promotion</option>
+            <option value="Weekend">🎉 Promo Weekend</option>
+            <option value="Fin de mois">📅 Fin de mois</option>
+            <option value="Black Friday">🖤 Black Friday</option>
+            <option value="Flash">⚡ Vente Flash</option>
+            <option value="Soldes">🛍️ Soldes</option>
+            <option value="Liquidation">🔥 Liquidation</option>
+          </select>
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <label style="color:#C2410C;">Date de fin (optionnel)</label>
+          <input id="sellPromoEnd" type="datetime-local" style="border-color:#FED7AA;"/>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="goToSellStep2()">Continuer →</button>
+    </div>
+
+    <!-- ── ÉTAPE 2 : VENDEUR ── -->
+    <div id="sell-step-2" style="display:none;">
+      <div class="sell-hero">
+        <h2>Tes coordonnées</h2>
+        <p>Pour que les acheteurs puissent te contacter</p>
+      </div>
+      <div class="field"><label>Nom complet *</label><input id="sellVendorName" placeholder="Ton nom ou pseudo" maxlength="60"/></div>
+      <div class="field"><label>Nom de la boutique (optionnel)</label><input id="sellShopName" placeholder="Ex : Boutique Marie, TechShop509…" maxlength="60"/></div>
+      <div class="field"><label>WhatsApp *</label><input id="sellVendorWa" placeholder="+509 XXXX XXXX" type="tel" maxlength="16"/></div>
+      <div class="field-row">
+        <div class="field" style="margin-bottom:0;"><label>MonCash</label><input id="sellVendorMc" placeholder="+509 XXXX XXXX" type="tel" maxlength="16"/></div>
+        <div class="field" style="margin-bottom:0;"><label>NatCash</label><input id="sellVendorNc" placeholder="+509 XXXX XXXX" type="tel" maxlength="16"/></div>
+      </div>
+      <div style="background:linear-gradient(135deg,#7C3AED,#A855F7);border-radius:14px;padding:16px;margin:20px 0;color:#fff;">
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px;">🏆 Fais vérifier ton compte <span style="font-weight:400;opacity:.8;">(Optionnel)</span></div>
+        <div style="font-size:12px;opacity:.85;line-height:1.5;margin-bottom:10px;">Les vendeurs certifiés inspirent plus confiance et vendent plus. Obtiens ton badge ✓ violet — c'est gratuit !</div>
+        <button class="btn" style="background:#fff;color:var(--purple);font-size:12px;padding:7px 14px;border-radius:10px;font-weight:700;" onclick="navigate('vendor-signup')">Soumettre ma vérification →</button>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-ghost" style="flex:1;" onclick="goToSellStep1()">← Retour</button>
+        <button class="btn btn-primary" style="flex:2;" onclick="goToSellStep3()">Continuer →</button>
       </div>
     </div>
-    <button class="btn btn-primary btn-full" id="publishBtn" onclick="publishProduct()">Publier le produit</button>
+
+    <!-- ── ÉTAPE 3 : PUBLIER ── -->
+    <div id="sell-step-3" style="display:none;">
+      <div class="sell-hero">
+        <h2>Prêt à publier !</h2>
+        <p>Vérifie et confirme ta publication</p>
+      </div>
+      <div id="sell-recap" style="background:var(--bg);border-radius:14px;padding:16px;margin-bottom:20px;border:1px solid var(--border);"></div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-ghost" style="flex:1;" onclick="goToSellStep2()">← Retour</button>
+        <button class="btn btn-primary" style="flex:2;" id="publishBtn" onclick="publishProduct()">🚀 Publier le produit</button>
+      </div>
+    </div>
+
   </div>
+
   <!-- ══ PAGE MES PRODUITS ══ -->
   <div class="page" id="page-my-products">
     <div class="section-hd" style="margin-bottom:14px;">

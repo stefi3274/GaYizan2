@@ -55,8 +55,128 @@ function updateHeroStats() {
   const el3 = document.getElementById('heroStatCats');
   if (el3) el3.textContent = new Set(S.products.map(function(p) { return p.cat; })).size;
 }
+
+// ════════════════════════════════
+// PUBLICATION EN 3 ÉTAPES
+// ════════════════════════════════
+function updateStepIndicator(step) {
+  for (var i = 1; i <= 3; i++) {
+    var el = document.getElementById('step-ind-' + i);
+    if (!el) continue;
+    if (i === step) {
+      el.style.background = 'var(--purple)';
+      el.style.color = '#fff';
+      el.style.border = 'none';
+    } else {
+      el.style.background = 'var(--bg)';
+      el.style.color = 'var(--muted)';
+      el.style.border = '1px solid var(--border)';
+    }
+  }
+}
+
+function showSellStep(step) {
+  document.getElementById('sell-step-1').style.display = step === 1 ? 'block' : 'none';
+  document.getElementById('sell-step-2').style.display = step === 2 ? 'block' : 'none';
+  document.getElementById('sell-step-3').style.display = step === 3 ? 'block' : 'none';
+  updateStepIndicator(step);
+  window.scrollTo(0, 0);
+}
+
+function goToSellStep1() {
+  showSellStep(1);
+}
+
+function goToSellStep2() {
+  if (!S.user) { toast('Connecte-toi pour publier', 'error'); setTimeout(function() { openAuthModal(); }, 800); return; }
+  var name = document.getElementById('sellName') ? document.getElementById('sellName').value.trim() : '';
+  var price = document.getElementById('sellPrice') ? document.getElementById('sellPrice').value : '';
+  var cat = document.getElementById('sellCat') ? document.getElementById('sellCat').value : '';
+  if (!name) { toast('Le nom du produit est obligatoire', 'error'); return; }
+  if (!price || parseInt(price) <= 0) { toast('Le prix doit être supérieur à 0', 'error'); return; }
+  if (!cat) { toast('Choisis une catégorie', 'error'); return; }
+
+  // Pré-remplir avec les infos du profil si disponibles
+  if (S.profile.name && document.getElementById('sellVendorName')) {
+    document.getElementById('sellVendorName').value = S.profile.name || '';
+  }
+  if (S.profile.shop_name && document.getElementById('sellShopName')) {
+    document.getElementById('sellShopName').value = S.profile.shop_name || '';
+  }
+  if (S.profile.whatsapp && document.getElementById('sellVendorWa')) {
+    document.getElementById('sellVendorWa').value = S.profile.whatsapp || '';
+  }
+  if (S.profile.moncash && document.getElementById('sellVendorMc')) {
+    document.getElementById('sellVendorMc').value = S.profile.moncash || '';
+  }
+  if (S.profile.natcash && document.getElementById('sellVendorNc')) {
+    document.getElementById('sellVendorNc').value = S.profile.natcash || '';
+  }
+
+  // Si profil déjà complet, sauter l'étape 2
+  if (S.profile.name && S.profile.whatsapp) {
+    goToSellStep3();
+    return;
+  }
+
+  showSellStep(2);
+}
+
+function goToSellStep3() {
+  var wa = document.getElementById('sellVendorWa') ? document.getElementById('sellVendorWa').value.trim() : S.profile.whatsapp;
+  var vendorName = document.getElementById('sellVendorName') ? document.getElementById('sellVendorName').value.trim() : S.profile.name;
+  if (!vendorName) { toast('Ton nom est obligatoire', 'error'); showSellStep(2); return; }
+  if (!wa) { toast('Ton WhatsApp est obligatoire', 'error'); showSellStep(2); return; }
+
+  // Afficher le récapitulatif
+  var name = document.getElementById('sellName').value.trim();
+  var price = document.getElementById('sellPrice').value;
+  var cat = document.getElementById('sellCat').value;
+  var promoActive = document.getElementById('sellPromoActive') && document.getElementById('sellPromoActive').checked;
+  var promoPrice = promoActive && document.getElementById('sellPromoPrice') ? document.getElementById('sellPromoPrice').value : null;
+  var recap = document.getElementById('sell-recap');
+  if (recap) {
+    recap.innerHTML =
+      '<div style="font-size:14px;font-weight:700;margin-bottom:12px;">📋 Récapitulatif</div>' +
+      '<div style="font-size:13px;line-height:2;color:var(--ink2);">' +
+      '🛍️ <strong>' + name + '</strong><br>' +
+      '💰 Prix : <strong>' + parseInt(price).toLocaleString('fr-FR') + ' HTG</strong>' +
+      (promoActive && promoPrice ? ' → <strong style="color:var(--purple);">' + parseInt(promoPrice).toLocaleString('fr-FR') + ' HTG (promo)</strong>' : '') + '<br>' +
+      '📦 Catégorie : ' + cat + '<br>' +
+      '👤 Vendeur : <strong>' + vendorName + '</strong><br>' +
+      '📱 WhatsApp : ' + wa +
+      '</div>';
+  }
+  showSellStep(3);
+}
+
 async function publishProduct() {
-  if (!S.user) { saveDraft(); toast('Connecte-toi pour finaliser ta publication', 'error'); setTimeout(function() { openAuthModal(); }, 800); return; }
+  if (!S.user) { toast('Connecte-toi pour publier', 'error'); setTimeout(function() { openAuthModal(); }, 800); return; }
+
+  // Sauvegarder les infos vendeur sur le profil si modifiées
+  var sellVendorName = document.getElementById('sellVendorName') ? document.getElementById('sellVendorName').value.trim() : '';
+  var sellShopName = document.getElementById('sellShopName') ? document.getElementById('sellShopName').value.trim() : '';
+  var sellVendorWa = document.getElementById('sellVendorWa') ? document.getElementById('sellVendorWa').value.trim() : '';
+  var sellVendorMc = document.getElementById('sellVendorMc') ? document.getElementById('sellVendorMc').value.trim() : '';
+  var sellVendorNc = document.getElementById('sellVendorNc') ? document.getElementById('sellVendorNc').value.trim() : '';
+
+  var vendorName = sellVendorName || S.profile.name || '';
+  var vendorWa = sellVendorWa || S.profile.whatsapp || '';
+  var vendorMc = sellVendorMc || S.profile.moncash || '';
+  var vendorNc = sellVendorNc || S.profile.natcash || '';
+  var shopName = sellShopName || S.profile.shop_name || '';
+
+  // Sauvegarder sur le profil si nouvelles infos
+  if (sellVendorName || sellVendorWa) {
+    var profileUpdate = {};
+    if (sellVendorName) profileUpdate.name = sellVendorName;
+    if (sellShopName) profileUpdate.shop_name = sellShopName;
+    if (sellVendorWa) profileUpdate.whatsapp = sellVendorWa;
+    if (sellVendorMc) profileUpdate.moncash = sellVendorMc;
+    if (sellVendorNc) profileUpdate.natcash = sellVendorNc;
+    await sb.from('profiles').update(profileUpdate).eq('id', S.user.id);
+    S.profile = Object.assign({}, S.profile, profileUpdate);
+  }
   // Encourager la vérification sans bloquer
   if (S.profile.verification_status !== 'verified') {
     toast('💡 Astuce : fais vérifier ton compte pour gagner la confiance des acheteurs !', 'success');
@@ -96,10 +216,10 @@ async function publishProduct() {
   const attributes = getCategoryAttributeValues();
   const { error } = await sb.from('products').insert([{
     name: name, description: desc, category: cat,
-    seller_name: S.profile.name,
-    whatsapp: S.profile.whatsapp,
-    moncash: S.profile.moncash,
-    natcash: S.profile.natcash,
+    seller_name: vendorName,
+    whatsapp: vendorWa,
+    moncash: vendorMc,
+    natcash: vendorNc,
     price: parseInt(price), views: 0,
     user_id: S.user.id, is_active: true,
     image_url: image_url,
@@ -129,6 +249,7 @@ async function publishProduct() {
   if (document.getElementById('sellPromoActive')) { document.getElementById('sellPromoActive').checked = false; togglePromoFields(); }
   if (document.getElementById('sellPromoPrice')) document.getElementById('sellPromoPrice').value = '';
   if (document.getElementById('sellPromoEnd')) document.getElementById('sellPromoEnd').value = '';
+  showSellStep(1);
   toast('Produit publie !', 'success');
   await loadProducts();
   setTimeout(function() { navigate('my-products'); }, 800);
