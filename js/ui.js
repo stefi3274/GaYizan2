@@ -160,6 +160,25 @@ function filterHomeCat(el, cat) {
   el.classList.add('active'); S.homeCat = cat; renderHome();
 }
 function renderHome() {
+  // Message de bienvenue pour visiteurs non connectés
+  var welcomeBanner = document.getElementById('welcomeBanner');
+  if (welcomeBanner) {
+    if (!S.user) {
+      var isFirstVisit = !localStorage.getItem('ga_visited');
+      if (isFirstVisit) localStorage.setItem('ga_visited', '1');
+      welcomeBanner.innerHTML = '<div style="background:linear-gradient(135deg,#4C1D95,#7C3AED);border-radius:16px;padding:18px;margin-bottom:16px;color:#fff;display:flex;align-items:center;gap:14px;">' +
+        '<div style="font-size:36px;flex-shrink:0;">🛍️</div>' +
+        '<div style="flex:1;">' +
+        '<div style="font-size:15px;font-weight:700;margin-bottom:4px;">Bienvenue sur Ga-Izan !</div>' +
+        '<div style="font-size:12px;opacity:.8;line-height:1.5;margin-bottom:10px;">Découvre des produits locaux haïtiens. Achète et vends en toute confiance — Payez à la livraison.</div>' +
+        '<button class="btn btn-sm" style="background:#FDE68A;color:#4C1D95;font-weight:700;" onclick="openAuthModal()">✨ Rejoins Ga-Izan</button>' +
+        '</div>' +
+        '<button onclick="this.parentElement.parentElement.style.display=\'none\'" style="background:none;border:none;color:rgba(255,255,255,0.5);font-size:20px;cursor:pointer;flex-shrink:0;align-self:flex-start;">×</button>' +
+        '</div>';
+    } else {
+      welcomeBanner.innerHTML = '';
+    }
+  }
   // Produits mis en avant
   const featured = S.products.filter(function(p) { return p.is_featured; });
   const featuredSection = document.getElementById('featuredSection');
