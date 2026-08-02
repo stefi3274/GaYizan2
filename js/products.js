@@ -89,6 +89,15 @@ function goToSellStep1() {
 
 function goToSellStep2() {
   if (!S.user) { toast('Connecte-toi pour publier', 'error'); setTimeout(function() { openAuthModal(); }, 800); return; }
+
+  // Rate limiting : max 10 publications par heure
+  var now = Date.now();
+  var pubHistory = JSON.parse(localStorage.getItem('ga_pub_history') || '[]');
+  pubHistory = pubHistory.filter(function(t) { return now - t < 3600000; });
+  if (pubHistory.length >= 10) {
+    toast('Limite atteinte : 10 publications par heure maximum.', 'error');
+    return;
+  }
   var name = document.getElementById('sellName') ? document.getElementById('sellName').value.trim() : '';
   var price = document.getElementById('sellPrice') ? document.getElementById('sellPrice').value : '';
   var cat = document.getElementById('sellCat') ? document.getElementById('sellCat').value : '';
@@ -152,6 +161,15 @@ function goToSellStep3() {
 
 async function publishProduct() {
   if (!S.user) { toast('Connecte-toi pour publier', 'error'); setTimeout(function() { openAuthModal(); }, 800); return; }
+
+  // Rate limiting : max 10 publications par heure
+  var now = Date.now();
+  var pubHistory = JSON.parse(localStorage.getItem('ga_pub_history') || '[]');
+  pubHistory = pubHistory.filter(function(t) { return now - t < 3600000; });
+  if (pubHistory.length >= 10) {
+    toast('Limite atteinte : 10 publications par heure maximum.', 'error');
+    return;
+  }
 
   // Sauvegarder les infos vendeur sur le profil si modifiées
   var sellVendorName = document.getElementById('sellVendorName') ? document.getElementById('sellVendorName').value.trim() : '';
@@ -249,6 +267,8 @@ async function publishProduct() {
   if (document.getElementById('sellPromoActive')) { document.getElementById('sellPromoActive').checked = false; togglePromoFields(); }
   if (document.getElementById('sellPromoPrice')) document.getElementById('sellPromoPrice').value = '';
   if (document.getElementById('sellPromoEnd')) document.getElementById('sellPromoEnd').value = '';
+  pubHistory.push(Date.now());
+  localStorage.setItem('ga_pub_history', JSON.stringify(pubHistory));
   showSellStep(1);
   toast('Produit publie !', 'success');
   await loadProducts();
