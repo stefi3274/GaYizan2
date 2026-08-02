@@ -181,6 +181,37 @@ function renderHome() {
   }
   // Démarrer messages flottants si pas encore démarrés
   if (!window._floatingStarted) { window._floatingStarted = true; startFloatingMessages(); }
+
+  // Générer les catégories dynamiquement depuis les produits existants
+  var catLabels = {
+    'vetement':'👕 Vêtements','electronique':'📱 Électronique','alimentation':'🛒 Alimentation',
+    'formation':'📚 Formation','beaute':'💄 Beauté','services':'🔧 Services','divers':'📦 Divers',
+    'chaussures':'👟 Chaussures','bijoux':'💍 Bijoux','maison':'🏠 Maison','construction':'🏗️ Construction',
+    'agriculture':'🌿 Agriculture','animaux':'🐄 Animaux','sport':'🏋️ Sport','jouets':'🎮 Jouets',
+    'musique':'🎵 Musique','auto':'🚗 Auto & Moto','art':'🖼️ Art','artisanat':'🎨 Artisanat',
+    'photo':'📷 Photo','digital':'💾 Digital','electrique':'💡 Électrique','others':'🌐 Autres'
+  };
+  var existingCats = [];
+  S.products.forEach(function(p) {
+    if (p.cat && existingCats.indexOf(p.cat) === -1) existingCats.push(p.cat);
+  });
+  var homeCatsEl = document.getElementById('homeCats');
+  if (homeCatsEl && existingCats.length > 0) {
+    var pillsHtml = '<div class="cat-pill active" onclick="filterHomeCat(this,\'all\')">Tout</div>';
+    existingCats.forEach(function(cat) {
+      var label = catLabels[cat] || cat;
+      pillsHtml += '<div class="cat-pill" onclick="filterHomeCat(this,\'' + cat + '\')">' + label + '</div>';
+    });
+    homeCatsEl.innerHTML = pillsHtml;
+    // Remettre la catégorie active
+    if (S.homeCat && S.homeCat !== 'all') {
+      homeCatsEl.querySelectorAll('.cat-pill').forEach(function(pill) {
+        if (pill.textContent.includes(catLabels[S.homeCat] || S.homeCat)) pill.classList.add('active');
+        else pill.classList.remove('active');
+      });
+    }
+  }
+
   // Produits mis en avant
   const featured = S.products.filter(function(p) { return p.is_featured; });
   const featuredSection = document.getElementById('featuredSection');
