@@ -374,3 +374,9 @@
 .onboard-dot.active{ background:var(--purple); width:22px; border-radius:4px; }
 
 
+
+/* Animation badge promo */
+@keyframes promoPulse {
+  0%, 100% { transform:scale(1); box-shadow:0 0 0 0 rgba(124,58,237,0.4); }
+  50% { transform:scale(1.08); box-shadow:0 0 0 6px rgba(124,58,237,0); }
+}

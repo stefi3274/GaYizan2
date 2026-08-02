@@ -179,6 +179,8 @@ function renderHome() {
       welcomeBanner.innerHTML = '';
     }
   }
+  // Démarrer messages flottants si pas encore démarrés
+  if (!window._floatingStarted) { window._floatingStarted = true; startFloatingMessages(); }
   // Produits mis en avant
   const featured = S.products.filter(function(p) { return p.is_featured; });
   const featuredSection = document.getElementById('featuredSection');
@@ -515,8 +517,9 @@ function promoBadgeHtml(p) {
   };
   var emoji = labels[p.promo_label] || '🏷️';
   return '<span style="display:inline-flex;align-items:center;gap:4px;background:var(--purple);color:#fff;' +
-    'font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;margin-left:6px;">' +
-    emoji + ' ' + (p.promo_label || 'Promo') + ' -' + promoPct(p) + '%</span>';
+    'font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;margin-left:6px;' +
+    'animation:promoPulse 1.5s ease-in-out infinite;">' +
+    emoji + ' ' + (p.promo_label || 'Promo') + ' <span style="font-size:12px;font-weight:900;color:#FDE68A;">-' + promoPct(p) + '%</span></span>';
 }
 
 function promoPriceHtml(p, size) {
@@ -529,6 +532,75 @@ function promoPriceHtml(p, size) {
     formatPrice(p.promo_price) + '</span>' +
     '<span style="font-family:DM Mono,monospace;font-size:11px;color:var(--muted2);text-decoration:line-through;margin-left:6px;">' +
     formatPrice(p.price) + '</span>';
+}
+
+
+// ════════════════════════════════
+// MESSAGES FLOTTANTS
+// ════════════════════════════════
+var floatingMessages = [
+  { fr: 'Payez à la livraison.', ht: 'Peye lè yo livre.' },
+  { fr: 'Peye lè yo livre.', ht: 'Payez à la livraison.' },
+];
+var floatingIdx = 0;
+
+function showFloatingMessage() {
+  var existing = document.getElementById('floatingMsg');
+  if (existing) existing.remove();
+
+  var msg = floatingMessages[floatingIdx % floatingMessages.length];
+  floatingIdx++;
+
+  var el = document.createElement('div');
+  el.id = 'floatingMsg';
+  el.style.cssText = [
+    'position:fixed',
+    'bottom:90px',
+    'left:50%',
+    'transform:translateX(-50%) translateY(20px)',
+    'background:linear-gradient(135deg,#4C1D95,#7C3AED)',
+    'color:#fff',
+    'padding:12px 22px',
+    'border-radius:100px',
+    'font-size:13px',
+    'font-weight:600',
+    'z-index:300',
+    'box-shadow:0 0 0 0 rgba(124,58,237,0.7)',
+    'opacity:0',
+    'transition:all 0.5s cubic-bezier(0.34,1.56,0.64,1)',
+    'pointer-events:none',
+    'white-space:nowrap',
+    'max-width:90vw',
+    'text-align:center',
+    'border:1px solid rgba(253,230,138,0.3)'
+  ].join(';');
+
+  el.innerHTML = '<span style="color:#FDE68A;margin-right:6px;">💵</span>' +
+    msg.fr + '<span style="color:rgba(255,255,255,0.5);margin:0 8px;">·</span>' +
+    '<span style="color:#FDE68A;">' + msg.ht + '</span>';
+
+  document.body.appendChild(el);
+
+  // Animation entrée
+  setTimeout(function() {
+    el.style.opacity = '1';
+    el.style.transform = 'translateX(-50%) translateY(0)';
+    el.style.boxShadow = '0 0 24px 4px rgba(124,58,237,0.5), 0 8px 32px rgba(0,0,0,0.3)';
+  }, 50);
+
+  // Animation sortie après 4 secondes
+  setTimeout(function() {
+    el.style.opacity = '0';
+    el.style.transform = 'translateX(-50%) translateY(-15px)';
+    setTimeout(function() { if (el.parentNode) el.remove(); }, 500);
+  }, 4500);
+}
+
+function startFloatingMessages() {
+  setTimeout(function() {
+    showFloatingMessage();
+    setInterval(showFloatingMessage, 30000);
+  }, 5000); // Première apparition après 5 secondes
 }
 
 // ════════════════════════════════
