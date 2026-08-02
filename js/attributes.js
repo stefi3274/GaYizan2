@@ -22,10 +22,11 @@ const CATEGORY_ATTRIBUTES = {
     { id: 'attr_couleur', label: 'Couleur', type: 'text', placeholder: 'Ex: Noir...' },
   ],
   maison: [
-    { id: 'attr_type', label: 'Type', type: 'select', options: ['Meuble','Électroménager','Décoration','Autre'] },
-    { id: 'attr_etat', label: 'État', type: 'select', options: ['Neuf','Très bon','Bon','Usagé'] },
-    { id: 'attr_matiere', label: 'Matière', type: 'text', placeholder: 'Ex: Bois, Métal...' },
-    { id: 'attr_dimensions', label: 'Dimensions', type: 'text', placeholder: 'Ex: 120x60x80 cm' },
+    { id: 'attr_transaction', label: 'Vente ou Location', type: 'select', options: ['Vente','Location','Colocation','Location courte durée'] },
+    { id: 'attr_type', label: 'Type de bien', type: 'select', options: ['Maison','Appartement','Terrain','Bureau','Commerce','Villa','Autre'] },
+    { id: 'attr_surface', label: 'Surface (m²)', type: 'number', placeholder: 'Ex: 120' },
+    { id: 'attr_pieces', label: 'Nombre de pièces', type: 'number', placeholder: 'Ex: 3' },
+    { id: 'attr_etat', label: 'État', type: 'select', options: ['Neuf','Rénové','Bon état','À rénover'] },
   ],
   alimentation: [
     { id: 'attr_quantite', label: 'Quantité', type: 'number', placeholder: 'Ex: 5' },
@@ -120,6 +121,19 @@ const CATEGORY_ATTRIBUTES = {
     { id: 'attr_matiere', label: 'Matière', type: 'select', options: ['Or','Argent','Acier','Plaqué or','Fantaisie'] },
     { id: 'attr_etat', label: 'État', type: 'select', options: ['Neuf','Très bon','Bon'] },
     { id: 'attr_pour', label: 'Pour', type: 'select', options: ['Femme','Homme','Unisexe'] },
+  ],
+  restaurant: [
+    { id: 'attr_type', label: 'Type de cuisine', type: 'select', options: ['Haïtienne','Internationale','Fast-food','Pizza','Seafood','Végétarien','Autre'] },
+    { id: 'attr_livraison', label: 'Livraison', type: 'select', options: ['Oui','Non','Sur commande'] },
+    { id: 'attr_zone', label: 'Zone de livraison', type: 'text', placeholder: 'Ex: Pétion-Ville, Delmas...' },
+    { id: 'attr_horaires', label: 'Horaires', type: 'text', placeholder: 'Ex: Lun-Sam 8h-22h' },
+    { id: 'attr_pour', label: 'Pour', type: 'select', options: ['Sur place','À emporter','Les deux'] },
+  ],
+  services: [
+    { id: 'attr_type', label: 'Type de service', type: 'select', options: ['Plomberie','Électricité','Maçonnerie','Peinture','Nettoyage','Transport','Informatique','Coiffure','Autre'] },
+    { id: 'attr_disponibilite', label: 'Disponibilité', type: 'select', options: ['Immédiate','Sur rendez-vous','Week-end','24h/24'] },
+    { id: 'attr_zone', label: 'Zone d'intervention', type: 'text', placeholder: 'Ex: Port-au-Prince et environs' },
+    { id: 'attr_experience', label: 'Expérience', type: 'select', options: ['Débutant','1-3 ans','3-5 ans','5+ ans','Expert'] },
   ],
 };
 
