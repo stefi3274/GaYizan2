@@ -1,4 +1,5 @@
 
+
 // ════════════════════════════════
 // PRODUITS
 // ════════════════════════════════
@@ -55,7 +56,6 @@ function updateHeroStats() {
   const el3 = document.getElementById('heroStatCats');
   if (el3) el3.textContent = new Set(S.products.map(function(p) { return p.cat; })).size;
 }
-
 // ════════════════════════════════
 // PUBLICATION EN 3 ÉTAPES
 // ════════════════════════════════
@@ -74,7 +74,6 @@ function updateStepIndicator(step) {
     }
   }
 }
-
 function showSellStep(step) {
   document.getElementById('sell-step-1').style.display = step === 1 ? 'block' : 'none';
   document.getElementById('sell-step-2').style.display = step === 2 ? 'block' : 'none';
@@ -82,14 +81,11 @@ function showSellStep(step) {
   updateStepIndicator(step);
   window.scrollTo(0, 0);
 }
-
 function goToSellStep1() {
   showSellStep(1);
 }
-
 function goToSellStep2() {
   if (!S.user) { toast('Connecte-toi pour publier', 'error'); setTimeout(function() { openAuthModal(); }, 800); return; }
-
   // Rate limiting : max 10 publications par heure
   var now = Date.now();
   var pubHistory = JSON.parse(localStorage.getItem('ga_pub_history') || '[]');
@@ -104,7 +100,6 @@ function goToSellStep2() {
   if (!name) { toast('Le nom du produit est obligatoire', 'error'); return; }
   if (!price || parseInt(price) <= 0) { toast('Le prix doit être supérieur à 0', 'error'); return; }
   if (!cat) { toast('Choisis une catégorie', 'error'); return; }
-
   // Pré-remplir avec les infos du profil si disponibles
   if (S.profile.name && document.getElementById('sellVendorName')) {
     document.getElementById('sellVendorName').value = S.profile.name || '';
@@ -121,16 +116,13 @@ function goToSellStep2() {
   if (S.profile.natcash && document.getElementById('sellVendorNc')) {
     document.getElementById('sellVendorNc').value = S.profile.natcash || '';
   }
-
   // Si profil déjà complet, sauter l'étape 2
   if (S.profile.name && S.profile.whatsapp) {
     goToSellStep3();
     return;
   }
-
   showSellStep(2);
 }
-
 function goToSellStep3() {
   var wa = document.getElementById('sellVendorWa') ? document.getElementById('sellVendorWa').value.trim() : S.profile.whatsapp;
   var vendorName = document.getElementById('sellVendorName') ? document.getElementById('sellVendorName').value.trim() : S.profile.name;
@@ -158,10 +150,8 @@ function goToSellStep3() {
   }
   showSellStep(3);
 }
-
 async function publishProduct() {
   if (!S.user) { toast('Connecte-toi pour publier', 'error'); setTimeout(function() { openAuthModal(); }, 800); return; }
-
   // Rate limiting : max 10 publications par heure
   var now = Date.now();
   var pubHistory = JSON.parse(localStorage.getItem('ga_pub_history') || '[]');
@@ -170,20 +160,17 @@ async function publishProduct() {
     toast('Limite atteinte : 10 publications par heure maximum.', 'error');
     return;
   }
-
   // Sauvegarder les infos vendeur sur le profil si modifiées
   var sellVendorName = document.getElementById('sellVendorName') ? document.getElementById('sellVendorName').value.trim() : '';
   var sellShopName = document.getElementById('sellShopName') ? document.getElementById('sellShopName').value.trim() : '';
   var sellVendorWa = document.getElementById('sellVendorWa') ? document.getElementById('sellVendorWa').value.trim() : '';
   var sellVendorMc = document.getElementById('sellVendorMc') ? document.getElementById('sellVendorMc').value.trim() : '';
   var sellVendorNc = document.getElementById('sellVendorNc') ? document.getElementById('sellVendorNc').value.trim() : '';
-
   var vendorName = sellVendorName || S.profile.name || '';
   var vendorWa = sellVendorWa || S.profile.whatsapp || '';
   var vendorMc = sellVendorMc || S.profile.moncash || '';
   var vendorNc = sellVendorNc || S.profile.natcash || '';
   var shopName = sellShopName || S.profile.shop_name || '';
-
   // Sauvegarder sur le profil si nouvelles infos
   if (sellVendorName || sellVendorWa) {
     var profileUpdate = {};
@@ -220,17 +207,21 @@ async function publishProduct() {
   if (!file) { toast('La photo du produit est obligatoire', 'error'); return; }
   var btn = document.getElementById('publishBtn');
   btn.disabled = true; btn.textContent = 'Publication…';
-
   var steps = [{ key: 'photo1', label: 'Photo principale' }];
   if (file2) steps.push({ key: 'photo2', label: 'Photo 2' });
   if (file3) steps.push({ key: 'photo3', label: 'Photo 3' });
   steps.push({ key: 'pub', label: 'Publication du produit' });
   initUploadModal(steps);
   showUploadModal();
-
   var image_url = await uploadImage(file, 'photo1');
   var image_url_2 = file2 ? await uploadImage(file2, 'photo2') : null;
   var image_url_3 = file3 ? await uploadImage(file3, 'photo3') : null;
+  if (!image_url) {
+    hideUploadModal();
+    btn.disabled = false; btn.textContent = 'Publier le produit';
+    toast('Erreur upload photo principale - vérifie ta connexion', 'error');
+    return;
+  }
   const attributes = getCategoryAttributeValues();
   const { error } = await sb.from('products').insert([{
     name: name, description: desc, category: cat,
@@ -252,7 +243,7 @@ async function publishProduct() {
   }]);
   updateUploadModal('pub', error ? 'error' : 'done');
   btn.disabled = false; btn.textContent = 'Publier le produit';
-  if (error) { hideUploadModal(); toast('Erreur lors de la publication', 'error'); return; }
+  if (error) { hideUploadModal(); toast('Erreur: ' + (error.message || 'publication impossible'), 'error'); console.error(error); return; }
   setTimeout(function() { hideUploadModal(); }, 800);
   ['sellName','sellDesc','sellPrice'].forEach(function(id) {
     var elx = document.getElementById(id);
@@ -311,19 +302,15 @@ async function compressImage(file) {
     reader.readAsDataURL(file);
   });
 }
-
 async function uploadImage(file, label) {
   if (!file) return null;
   updateUploadModal(label, 'upload');
-
   // Compression
   var blob = await compressImage(file);
   var path = S.user.id + '/' + Date.now() + '.jpg';
-
   var res = await sb.storage
     .from('Produits')
     .upload(path, blob, { contentType: 'image/jpeg' });
-
   if (res.error) {
     updateUploadModal(label, 'error');
     toast('Erreur upload image', 'error');
@@ -333,17 +320,14 @@ async function uploadImage(file, label) {
   var urlRes = sb.storage.from('Produits').getPublicUrl(path);
   return urlRes.data.publicUrl;
 }
-
 function showUploadModal() {
   var modal = document.getElementById('uploadModal');
   if (modal) modal.classList.add('open');
 }
-
 function hideUploadModal() {
   var modal = document.getElementById('uploadModal');
   if (modal) modal.classList.remove('open');
 }
-
 function updateUploadModal(label, status) {
   var el = document.getElementById('uploadStep_' + label);
   if (!el) return;
@@ -359,7 +343,6 @@ function updateUploadModal(label, status) {
     el.style.background = '#FEE2E2';
   }
 }
-
 function initUploadModal(steps) {
   var content = document.getElementById('uploadModalContent');
   if (!content) return;
@@ -373,5 +356,7 @@ function initUploadModal(steps) {
   html += '</div>';
   content.innerHTML = html;
 }
+
+
 
 
