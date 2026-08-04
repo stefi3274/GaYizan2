@@ -123,7 +123,22 @@ function goToSellStep2() {
   }
   showSellStep(2);
 }
+// Stockage des valeurs entre étapes
+var S_SELL = {};
+
 function goToSellStep3() {
+  // Sauvegarder toutes les valeurs de l'étape 1
+  S_SELL.name = document.getElementById('sellName') ? document.getElementById('sellName').value.trim() : '';
+  S_SELL.desc = document.getElementById('sellDesc') ? document.getElementById('sellDesc').value.trim() : '';
+  S_SELL.cat = document.getElementById('sellCat') ? document.getElementById('sellCat').value : '';
+  S_SELL.price = document.getElementById('sellPrice') ? document.getElementById('sellPrice').value : '';
+  S_SELL.location = document.getElementById('sellLocation') ? document.getElementById('sellLocation').value.trim() : '';
+  S_SELL.affiliationActive = document.getElementById('sellAffiliation') ? document.getElementById('sellAffiliation').checked : false;
+  S_SELL.promoActive = document.getElementById('sellPromoActive') ? document.getElementById('sellPromoActive').checked : false;
+  S_SELL.promoPrice = S_SELL.promoActive && document.getElementById('sellPromoPrice') ? parseInt(document.getElementById('sellPromoPrice').value) || null : null;
+  S_SELL.promoLabel = S_SELL.promoActive && document.getElementById('sellPromoLabel') ? document.getElementById('sellPromoLabel').value : null;
+  S_SELL.promoEnd = S_SELL.promoActive && document.getElementById('sellPromoEnd') && document.getElementById('sellPromoEnd').value ? document.getElementById('sellPromoEnd').value : null;
+  S_SELL.attributes = getCategoryAttributeValues();
   var wa = document.getElementById('sellVendorWa') ? document.getElementById('sellVendorWa').value.trim() : S.profile.whatsapp;
   var vendorName = document.getElementById('sellVendorName') ? document.getElementById('sellVendorName').value.trim() : S.profile.name;
   if (!vendorName) { toast('Ton nom est obligatoire', 'error'); showSellStep(2); return; }
@@ -186,25 +201,25 @@ async function publishProduct() {
   if (S.profile.verification_status !== 'verified') {
     toast('💡 Astuce : fais vérifier ton compte pour gagner la confiance des acheteurs !', 'success');
   }
-  const name = document.getElementById('sellName').value.trim();
-  const desc = document.getElementById('sellDesc').value.trim();
-  const cat = document.getElementById('sellCat').value;
-  const price = document.getElementById('sellPrice').value;
-  var location = document.getElementById('sellLocation') ? document.getElementById('sellLocation').value.trim() : '';
+  // Lire depuis S_SELL (valeurs sauvegardées à l'étape 3)
+  var name = S_SELL.name || '';
+  var desc = S_SELL.desc || '';
+  var cat = S_SELL.cat || '';
+  var price = S_SELL.price || '';
+  var location = S_SELL.location || '';
+  var affiliationActive = S_SELL.affiliationActive || false;
+  var promoPrice = S_SELL.promoPrice || null;
+  var promoLabel = S_SELL.promoLabel || null;
+  var promoEnd = S_SELL.promoEnd || null;
   var fileInput = document.getElementById('sellImage');
   var file = fileInput && fileInput.files[0] ? fileInput.files[0] : null;
   var fileInput2 = document.getElementById('sellImage2');
   var file2 = fileInput2 && fileInput2.files[0] ? fileInput2.files[0] : null;
   var fileInput3 = document.getElementById('sellImage3');
   var file3 = fileInput3 && fileInput3.files[0] ? fileInput3.files[0] : null;
-  var affiliationActive = document.getElementById('sellAffiliation') ? document.getElementById('sellAffiliation').checked : false;
-  var promoActive = document.getElementById('sellPromoActive') ? document.getElementById('sellPromoActive').checked : false;
-  var promoPrice = promoActive && document.getElementById('sellPromoPrice') ? parseInt(document.getElementById('sellPromoPrice').value) || null : null;
-  var promoLabel = promoActive && document.getElementById('sellPromoLabel') ? document.getElementById('sellPromoLabel').value : null;
-  var promoEnd = promoActive && document.getElementById('sellPromoEnd') && document.getElementById('sellPromoEnd').value ? document.getElementById('sellPromoEnd').value : null;
-  if (!name||!desc||!cat||!price) { toast('Remplis tous les champs obligatoires', 'error'); return; }
-  if (parseInt(price) <= 0) { toast('Le prix doit etre superieur a 0', 'error'); return; }
-  if (!file) { toast('La photo du produit est obligatoire', 'error'); return; }
+  if (!name||!desc||!cat||!price) { toast('Remplis tous les champs obligatoires', 'error'); showSellStep(1); return; }
+  if (parseInt(price) <= 0) { toast('Le prix doit etre superieur a 0', 'error'); showSellStep(1); return; }
+  if (!file) { toast('La photo du produit est obligatoire', 'error'); showSellStep(1); return; }
   var btn = document.getElementById('publishBtn');
   btn.disabled = true; btn.textContent = 'Publication…';
   var steps = [{ key: 'photo1', label: 'Photo principale' }];
@@ -222,7 +237,7 @@ async function publishProduct() {
     toast('Erreur upload photo principale - vérifie ta connexion', 'error');
     return;
   }
-  const attributes = getCategoryAttributeValues();
+  var attributes = S_SELL.attributes || {};
   const { error } = await sb.from('products').insert([{
     name: name, description: desc, category: cat,
     seller_name: vendorName,
