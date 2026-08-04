@@ -132,7 +132,7 @@ const CATEGORY_ATTRIBUTES = {
   services: [
     { id: 'attr_type', label: 'Type de service', type: 'select', options: ['Plomberie','Électricité','Maçonnerie','Peinture','Nettoyage','Transport','Informatique','Coiffure','Autre'] },
     { id: 'attr_disponibilite', label: 'Disponibilité', type: 'select', options: ['Immédiate','Sur rendez-vous','Week-end','24h/24'] },
-    { id: 'attr_zone', label: 'Zone d'intervention', type: 'text', placeholder: 'Ex: Port-au-Prince et environs' },
+    { id: 'attr_zone', label: "Zone d'intervention", type: 'text', placeholder: "Ex: Port-au-Prince et environs" },
     { id: 'attr_experience', label: 'Expérience', type: 'select', options: ['Débutant','1-3 ans','3-5 ans','5+ ans','Expert'] },
   ],
 };
