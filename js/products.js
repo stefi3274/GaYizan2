@@ -191,7 +191,7 @@ async function publishProduct() {
   }
   // Encourager la vérification sans bloquer
   if (S.profile.verification_status !== 'verified') {
-    toast('💡 Astuce : fais vérifier ton compte pour gagner la confiance des acheteurs !', 'success');
+    toast('💡 Compte vérifié = plus de ventes !', 'success');
   }
   // Lire depuis S_SELL (valeurs sauvegardées à l'étape 3)
   var name = S_SELL.name || '';
