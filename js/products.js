@@ -10,7 +10,22 @@ async function loadProducts() {
     .select('*')
     .eq('is_active', true)
     .order('created_at', { ascending: false });
-  if (error) { setSyncStatus('error'); toast('⚠️ Erreur de chargement', 'error'); return; }
+  if (error) {
+    setSyncStatus('error');
+    // Charger depuis le cache si disponible
+    var cached = localStorage.getItem('ga_products_cache');
+    if (cached) {
+      try {
+        S.products = JSON.parse(cached);
+        toast('📶 Hors ligne — produits en cache', 'error');
+        renderHome();
+        renderMarket();
+        return;
+      } catch(e) {}
+    }
+    toast('⚠️ Pas de connexion — réessaie plus tard', 'error');
+    return;
+  }
   S.products = (data||[]).map(function(p) {
     return {
       id: p.id,
